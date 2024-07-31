@@ -13,7 +13,7 @@ $ yarn install
 to make sure dependencies are installed. Then run a development server with:
 
 ```console
-$ yarn start
+$ yarn dev
 ```
 
 The web app can then be accessed at [http://localhost:3000/](http://localhost:3000/).
