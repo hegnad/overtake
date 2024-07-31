@@ -10,7 +10,7 @@ With .NET SDK 8.0 installed, run from the current folder:
 $ dotnet run
 ```
 
-The Swagger page can then be accessed at [http://localhost:5083/swagger](http://localhost:5083/swagger).
+The Swagger page can then be accessed at [http://localhost:8080/swagger](http://localhost:8080/swagger).
 
 ## Configuration
 
