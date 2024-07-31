@@ -52,3 +52,15 @@ jobs:
         run: |
           cd ./web
           yarn build
+
+  docker:
+    name: "Build Docker image"
+    runs-on: "ubuntu-latest"
+
+    steps:
+      - name: "Checkout source code"
+        uses: "actions/checkout@v4"
+
+      - name: "Build Docker image"
+        run: |
+          docker build -f ./web/Dockerfile ./web/

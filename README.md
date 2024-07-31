@@ -21,7 +21,10 @@ With [Docker Compose](https://docs.docker.com/compose/) installed:
 $ docker compose up -d --build
 ```
 
-and the backend server will be accessible locally at [http://localhost:8080/](http://localhost:8080/).
+and then:
+
+- the backend server will be accessible locally at [http://localhost:8080/](http://localhost:8080/); and
+- the web app will be served locally at [http://localhost:3000/](http://localhost:3000/).
 
 To stop the stack:
 
