@@ -1,0 +1,54 @@
+on:
+  push:
+    branches:
+      - "master"
+  pull_request:
+
+name: "Web CI checks"
+
+jobs:
+  format:
+    name: "Code formatting"
+    runs-on: "ubuntu-latest"
+
+    steps:
+      - name: "Checkout source code"
+        uses: "actions/checkout@v4"
+
+      - name: "Setup Node.js 20"
+        uses: "actions/setup-node@v4"
+        with:
+          node-version: "20"
+
+      - name: "Install dependencies"
+        run: |
+          cd ./web
+          yarn install
+
+      - name: "Check code format"
+        run: |
+          cd ./web
+          yarn prettier --check .
+
+  build:
+    name: "Build project"
+    runs-on: "ubuntu-latest"
+
+    steps:
+      - name: "Checkout source code"
+        uses: "actions/checkout@v4"
+
+      - name: "Setup Node.js 20"
+        uses: "actions/setup-node@v4"
+        with:
+          node-version: "20"
+
+      - name: "Install dependencies"
+        run: |
+          cd ./web
+          yarn install
+
+      - name: "Build project"
+        run: |
+          cd ./web
+          yarn build
