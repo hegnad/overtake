@@ -11,3 +11,11 @@ $ dotnet run
 ```
 
 The Swagger page can then be accessed at [http://localhost:5083/swagger](http://localhost:5083/swagger).
+
+## Configuration
+
+Any default [ASP.NET Core configuration options](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/configuration/?view=aspnetcore-8.0) can be used. The recommended way to configure the server is through environment variables:
+
+| Key        | Example Value                                              | Description                |
+| ---------- | ---------------------------------------------------------- | -------------------------- |
+| `DATABASE` | `Host=localhost;Username=test;Password=test;Database=test` | Postgres connection string |
