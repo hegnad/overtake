@@ -21,11 +21,12 @@ public class PostgresDatabase : IDatabase
         _dataSource = NpgsqlDataSource.Create(connectionString);
     }
 
-    public async Task InsertAccountAsync(string username, string firstName, string lastName, string email, string password)
+    public async Task<int> InsertAccountAsync(string username, string firstName, string lastName, string email, string password)
     {
         await using var cmd = _dataSource.CreateCommand(
             @"INSERT INTO account (username, first_name, last_name, email, password_hash)
-                VALUES (@username, @first_name, @last_name, @email, @password_hash)"
+                VALUES (@username, @first_name, @last_name, @email, @password_hash)
+                RETURNING account_id"
         );
 
         cmd.Parameters.AddWithValue("username", username);
@@ -36,6 +37,11 @@ public class PostgresDatabase : IDatabase
         // TODO: use actual salted hash
         cmd.Parameters.AddWithValue("password_hash", new byte[] { 1, 2, 3 });
 
-        await cmd.ExecuteNonQueryAsync();
+        await using var reader = await cmd.ExecuteReaderAsync();
+
+        await reader.ReadAsync();
+        int newAccountId = reader.GetInt32(0);
+
+        return newAccountId;
     }
 }
