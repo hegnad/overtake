@@ -16,7 +16,7 @@ This repository provides a [`docker-compose.yml`](./docker-compose.yml) file for
 With [Docker Compose](https://docs.docker.com/compose/) installed:
 
 ```console
-$ docker compose up -d
+$ docker compose up -d --build
 ```
 
 and the backend server will be accessible locally at [http://localhost:8080/](http://localhost:8080/).

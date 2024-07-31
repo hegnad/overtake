@@ -2,6 +2,6 @@ services:
   server:
     build:
       context: "./server/"
-      dockerfile: "./server/Dockerfile"
+      dockerfile: "./Dockerfile"
     ports:
       - "8080:8080"
