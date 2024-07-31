@@ -6,8 +6,10 @@ Monorepo for Overtake.
 
 This monorepo contains all complete stack of components needed for running the Overtake application:
 
-- [server](./server): Backend API server written in C# with [.NET](https://dotnet.microsoft.com/).
-- [web](./web): Frontend web app written in TypeScript with [Next.js](https://nextjs.org/).
+- [`server`](./server): Backend API server written in C# with [.NET](https://dotnet.microsoft.com/).
+- [`web`](./web): Frontend web app written in TypeScript with [Next.js](https://nextjs.org/).
+
+`server` is responsible for initializing a new database with [the initialization script](./server/Resources/Initialize.sql).
 
 ## Quickstart
 

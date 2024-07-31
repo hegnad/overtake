@@ -28,7 +28,7 @@ public class DbInitService : BackgroundService
         }
 
         await using var dataSource = NpgsqlDataSource.Create(connectionString);
-        await WaitForConnectionAsync(dataSource);
+        await WaitForConnectionAsync(dataSource, stoppingToken);
 
         if (await IsDatabaseInitializedAsync(dataSource))
         {
@@ -36,16 +36,23 @@ public class DbInitService : BackgroundService
             return;
         }
 
-        await using var cmd = dataSource.CreateCommand("CREATE TABLE account (account_id INTEGER NOT NULL);");
+        // Reads the embedded `Initialize.sql` resource file
+        using var initScriptStream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream(
+            "Overtake.Resources.Initialize.sql"
+        );
+        using var initScriptStreamReader = new StreamReader(initScriptStream!);
+        var initScript = initScriptStreamReader.ReadToEnd();
+
+        await using var cmd = dataSource.CreateCommand(initScript);
         await cmd.ExecuteNonQueryAsync();
 
         _logger.LogInformation("Database successfully initialized");
     }
 
-    private async Task WaitForConnectionAsync(NpgsqlDataSource dataSource)
+    private async Task WaitForConnectionAsync(NpgsqlDataSource dataSource, CancellationToken stoppingToken)
     {
         _logger.LogDebug("Establishing database connection");
-        for (int attempts = 0; attempts < ATTEMPT_COUNT; attempts++)
+        for (int attempts = 0; attempts < ATTEMPT_COUNT && !stoppingToken.IsCancellationRequested; attempts++)
         {
             try
             {
