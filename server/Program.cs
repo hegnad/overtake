@@ -1,4 +1,5 @@
 using System.Reflection;
+using Overtake.Interfaces;
 using Overtake.Services;
 
 namespace Overtake;
@@ -22,6 +23,8 @@ public class Program
         builder.Services.AddHostedService<DbInitService>();
 
         builder.Services.AddControllers();
+
+        builder.Services.AddSingleton<IDatabase, PostgresDatabase>();
 
         var app = builder.Build();
 
