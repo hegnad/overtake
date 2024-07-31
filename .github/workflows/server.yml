@@ -1,0 +1,44 @@
+on:
+  push:
+    branches:
+      - "master"
+  pull_request:
+
+name: "Server CI checks"
+
+jobs:
+  format:
+    name: "Code formatting"
+    runs-on: "ubuntu-latest"
+
+    steps:
+      - name: "Checkout source code"
+        uses: "actions/checkout@v4"
+
+      - name: "Setup .NET 8.0"
+        uses: "actions/setup-dotnet@v3"
+        with:
+          dotnet-version: "8.0"
+
+      - name: "Check code format"
+        run: |
+          cd ./server
+          dotnet format --verify-no-changes
+
+  build:
+    name: "Build project"
+    runs-on: "ubuntu-latest"
+
+    steps:
+      - name: "Checkout source code"
+        uses: "actions/checkout@v4"
+
+      - name: "Setup .NET 8.0"
+        uses: "actions/setup-dotnet@v3"
+        with:
+          dotnet-version: "8.0"
+
+      - name: "Build project"
+        run: |
+          cd ./server
+          dotnet build
