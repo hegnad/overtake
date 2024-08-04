@@ -1,4 +1,7 @@
-# Overtake
+<p align="center">
+  <img src="./images/logo.svg" alt="Logo"/>
+  <h1 align="center">Overtake</h1>
+</p>
 
 Monorepo for Overtake.
 
