@@ -1,0 +1,68 @@
+.container {
+  display: flex;
+  height: 100vh;
+}
+
+.sidebar {
+  width: 20%;
+  background-color: #2a0a0a;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logoContainer {
+  display: flex;
+  align-items: center;
+  padding: 1.5rem;
+}
+
+.logoImage {
+  width: 40px; /* Adjust size as needed */
+  height: 40px; /* Adjust size as needed */
+  margin-right: 1rem;
+}
+
+.logoLink {
+  font-size: 2rem;
+  color: white;
+  text-decoration: none;
+}
+
+.nav {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 1rem;
+}
+
+.navItem {
+  display: block;
+  width: 100%;
+  margin: 0.5rem 0;
+  padding: 0.5rem;
+  background-color: red;
+  color: white;
+  text-align: center;
+  text-decoration: none;
+  border-radius: 5px;
+  font-size: 1.2rem;
+}
+
+.navItem:hover {
+  background-color: darkred;
+}
+
+.user {
+  margin: 1rem;
+  text-align: center;
+}
+
+.main {
+  width: 80%;
+  background-color: #3b0a0a;
+  color: #fff;
+  padding: 2rem;
+}
