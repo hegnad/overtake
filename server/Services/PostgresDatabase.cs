@@ -1,4 +1,5 @@
 using Npgsql;
+using Overtake.Entities;
 using Overtake.Interfaces;
 
 namespace Overtake.Services;
@@ -43,5 +44,27 @@ public class PostgresDatabase : IDatabase
         int newAccountId = reader.GetInt32(0);
 
         return newAccountId;
+    }
+
+    public async Task<Account> GetAccountAsync(int accountId)
+    {
+        await using var cmd = _dataSource.CreateCommand(
+            @"SELECT username, first_name, last_name, email FROM account
+                WHERE account_id=@account_id"
+        );
+
+        cmd.Parameters.AddWithValue("account_id", accountId);
+
+        await using var reader = await cmd.ExecuteReaderAsync();
+
+        await reader.ReadAsync();
+
+        return new Account
+        {
+            Username = reader.GetString(0),
+            FirstName = reader.GetString(1),
+            LastName = reader.GetString(2),
+            Email = reader.GetString(3),
+        };
     }
 }

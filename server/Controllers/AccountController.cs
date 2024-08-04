@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Overtake.Interfaces;
+using Overtake.Models;
 using Overtake.Models.Requests;
 
 namespace Overtake.Controllers;
@@ -49,5 +50,23 @@ public class AccountController : ControllerBase
         await _database.InsertAccountAsync(request.Username, request.FirstName, request.LastName, request.Email, request.Password);
 
         return new OkResult();
+    }
+
+    /// <summary>
+    /// Gets account information.
+    /// </summary>
+    [HttpGet]
+    [Route("info")]
+    [Produces("application/json")]
+    public async Task<AccountInfo> InfoAsync()
+    {
+        int userId = Convert.ToInt32(HttpContext.User.Claims.First(x => x.Type == "userId").Value);
+
+        var account = await _database.GetAccountAsync(userId);
+
+        return new AccountInfo
+        {
+            Username = account.Username,
+        };
     }
 }

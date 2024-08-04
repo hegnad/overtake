@@ -1,4 +1,5 @@
 using System.Reflection;
+using Overtake.Auth;
 using Overtake.Interfaces;
 using Overtake.Services;
 
@@ -29,6 +30,8 @@ public class Program
                 });
         });
 
+        builder.Services.AddAuthentication().AddScheme<MockAuthenticationOptions, MockAuthenticationHandler>("mock_auth", null);
+
         builder.Services.AddHostedService<DbInitService>();
 
         builder.Services.AddControllers();
@@ -44,6 +47,7 @@ public class Program
         app.UseHttpsRedirection();
 
         app.UseCors();
+        app.UseAuthentication();
 
         app.MapControllers();
 
