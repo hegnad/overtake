@@ -1,12 +1,10 @@
-import Layout from "../components/layout";
-import Overtake from "@/components/overtake";
+import SidebarLayout from "./ui/sidebar-layout";
+import Overtake from "./ui/overtake";
 
-const Home = () => {
+export default function Home() {
   return (
-    <Layout>
+    <SidebarLayout>
       <Overtake />
-    </Layout>
+    </SidebarLayout>
   );
-};
-
-export default Home;
+}

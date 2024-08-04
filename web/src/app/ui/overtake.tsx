@@ -1,6 +1,6 @@
 import styles from "./overtake.module.css";
 
-const Overtake = () => {
+export default function Overtake() {
   return (
     <div className={styles.container}>
       <div className={styles.main}>
@@ -123,6 +123,4 @@ const Overtake = () => {
       </div>
     </div>
   );
-};
-
-export default Overtake;
+}

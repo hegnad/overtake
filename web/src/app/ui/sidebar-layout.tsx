@@ -1,12 +1,12 @@
 import { ReactNode } from "react";
 import Link from "next/link";
-import styles from "./layout.module.css";
+import styles from "./sidebar-layout.module.css";
 
 interface LayoutProps {
   children: ReactNode;
 }
 
-const Layout = ({ children }: LayoutProps) => {
+export default function SidebarLayout({ children }: LayoutProps) {
   return (
     <div className={styles.container}>
       <div className={styles.sidebar}>
@@ -36,6 +36,4 @@ const Layout = ({ children }: LayoutProps) => {
       <div className={styles.main}>{children}</div>
     </div>
   );
-};
-
-export default Layout;
+}

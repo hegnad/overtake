@@ -1,8 +1,16 @@
-import "../app/globals.css";
+import type { Metadata } from "next";
+import "./globals.css";
 
-import React, { ReactNode } from "react";
+export const metadata: Metadata = {
+  title: "Overtake",
+  description: "Your ultimate F1 companion",
+};
 
-export default function RootLayout({ children }: { children: ReactNode }) {
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
   return (
     <html lang="en">
       <body>{children}</body>
