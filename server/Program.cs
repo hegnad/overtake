@@ -20,6 +20,15 @@ public class Program
             options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
         });
 
+        builder.Services.AddCors(options =>
+        {
+            options.AddDefaultPolicy(
+                policy =>
+                {
+                    policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+                });
+        });
+
         builder.Services.AddHostedService<DbInitService>();
 
         builder.Services.AddControllers();
@@ -33,6 +42,8 @@ public class Program
         app.UseSwaggerUI();
 
         app.UseHttpsRedirection();
+
+        app.UseCors();
 
         app.MapControllers();
 
