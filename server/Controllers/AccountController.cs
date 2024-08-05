@@ -1,3 +1,5 @@
+using System.Security.Cryptography;
+using System.Text;
 using Microsoft.AspNetCore.Mvc;
 using Overtake.Interfaces;
 using Overtake.Models;
@@ -48,12 +50,49 @@ public class AccountController : ControllerBase
 
         // TODO: check email/username existence
 
-        int newUserId = await _database.InsertAccountAsync(request.Username, request.FirstName, request.LastName, request.Email, request.Password);
+        using var sha256 = SHA256.Create();
+        byte[] passwordHash = sha256.ComputeHash(Encoding.ASCII.GetBytes("overtake|" + request.Password));
+
+        int newUserId = await _database.InsertAccountAsync(request.Username, request.FirstName, request.LastName, request.Email, passwordHash);
 
         // Mock session token with just the account ID
         return new OkObjectResult(new Session
         {
             Token = newUserId.ToString(),
+        });
+    }
+
+    /// <summary>
+    /// Creates a new session for an account by logging in.
+    /// </summary>
+    [HttpPost]
+    [Route("login")]
+    [Produces("application/json")]
+    public async Task<ActionResult<Session>> LoginAsync([FromBody] LoginRequest request)
+    {
+        _logger.LogTrace(
+            "Login request: username={0}",
+            request.Username
+        );
+
+        if (string.IsNullOrWhiteSpace(request.Username))
+        {
+            return new BadRequestResult();
+        }
+
+        using var sha256 = SHA256.Create();
+        byte[] requestPasswordHash = sha256.ComputeHash(Encoding.ASCII.GetBytes("overtake|" + request.Password));
+
+        var account = await _database.GetAccountByUsernameAsync(request.Username);
+        if (!requestPasswordHash.SequenceEqual(account.PasswordHash))
+        {
+            return new BadRequestResult();
+        }
+
+        // Mock session token with just the account ID
+        return new OkObjectResult(new Session
+        {
+            Token = account.AccountId.ToString(),
         });
     }
 
@@ -67,7 +106,7 @@ public class AccountController : ControllerBase
     {
         int userId = Convert.ToInt32(HttpContext.User.Claims.First(x => x.Type == "userId").Value);
 
-        var account = await _database.GetAccountAsync(userId);
+        var account = await _database.GetAccountByIdAsync(userId);
 
         return new AccountInfo
         {

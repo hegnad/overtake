@@ -22,7 +22,7 @@ public class PostgresDatabase : IDatabase
         _dataSource = NpgsqlDataSource.Create(connectionString);
     }
 
-    public async Task<int> InsertAccountAsync(string username, string firstName, string lastName, string email, string password)
+    public async Task<int> InsertAccountAsync(string username, string firstName, string lastName, string email, byte[] passwordHash)
     {
         await using var cmd = _dataSource.CreateCommand(
             @"INSERT INTO account (username, first_name, last_name, email, password_hash)
@@ -34,9 +34,7 @@ public class PostgresDatabase : IDatabase
         cmd.Parameters.AddWithValue("first_name", firstName);
         cmd.Parameters.AddWithValue("last_name", lastName);
         cmd.Parameters.AddWithValue("email", email);
-
-        // TODO: use actual salted hash
-        cmd.Parameters.AddWithValue("password_hash", new byte[] { 1, 2, 3 });
+        cmd.Parameters.AddWithValue("password_hash", passwordHash);
 
         await using var reader = await cmd.ExecuteReaderAsync();
 
@@ -46,10 +44,10 @@ public class PostgresDatabase : IDatabase
         return newAccountId;
     }
 
-    public async Task<Account> GetAccountAsync(int accountId)
+    public async Task<Account> GetAccountByIdAsync(int accountId)
     {
         await using var cmd = _dataSource.CreateCommand(
-            @"SELECT username, first_name, last_name, email FROM account
+            @"SELECT username, first_name, last_name, email, password_hash FROM account
                 WHERE account_id=@account_id"
         );
 
@@ -59,12 +57,45 @@ public class PostgresDatabase : IDatabase
 
         await reader.ReadAsync();
 
+        byte[] passwordHash = new byte[32];
+        reader.GetBytes(4, 0, passwordHash, 0, passwordHash.Length);
+
         return new Account
         {
+            AccountId = accountId,
             Username = reader.GetString(0),
             FirstName = reader.GetString(1),
             LastName = reader.GetString(2),
             Email = reader.GetString(3),
+            PasswordHash = passwordHash,
         };
+    }
+
+    public async Task<Account> GetAccountByUsernameAsync(string username)
+    {
+        await using var cmd = _dataSource.CreateCommand(
+            @"SELECT account_id, first_name, last_name, email, password_hash FROM account
+                WHERE username=@username"
+        );
+
+        cmd.Parameters.AddWithValue("username", username);
+
+        await using var reader = await cmd.ExecuteReaderAsync();
+
+        await reader.ReadAsync();
+
+        byte[] passwordHash = new byte[32];
+        reader.GetBytes(4, 0, passwordHash, 0, passwordHash.Length);
+
+        return new Account
+        {
+            AccountId = reader.GetInt32(0),
+            Username = username,
+            FirstName = reader.GetString(1),
+            LastName = reader.GetString(2),
+            Email = reader.GetString(3),
+            PasswordHash = passwordHash,
+        };
+
     }
 }
