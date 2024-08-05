@@ -13,7 +13,15 @@ export default function ProfileButton() {
       {identity.sessionToken ? (
         <div className={styles.user}>
           {identity.accountInfo ? (
-            <span>{identity.accountInfo.username}</span>
+            <span
+              onClick={() => {
+                // Temp feature for demo only
+                // TODO: replace with real logout button
+                identity.setSessionToken(undefined);
+              }}
+            >
+              {identity.accountInfo.username}
+            </span>
           ) : (
             <span>Loading...</span>
           )}
