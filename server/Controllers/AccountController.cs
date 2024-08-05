@@ -26,7 +26,8 @@ public class AccountController : ControllerBase
     /// </summary>
     [HttpPost]
     [Route("register")]
-    public async Task<IActionResult> RegisterAsync([FromBody] RegisterRequest request)
+    [Produces("application/json")]
+    public async Task<ActionResult<Session>> RegisterAsync([FromBody] RegisterRequest request)
     {
         _logger.LogTrace(
             "Registration request: username={0}, firstname={1}, lastname={2}, email={3}",
@@ -47,9 +48,13 @@ public class AccountController : ControllerBase
 
         // TODO: check email/username existence
 
-        await _database.InsertAccountAsync(request.Username, request.FirstName, request.LastName, request.Email, request.Password);
+        int newUserId = await _database.InsertAccountAsync(request.Username, request.FirstName, request.LastName, request.Email, request.Password);
 
-        return new OkResult();
+        // Mock session token with just the account ID
+        return new OkObjectResult(new Session
+        {
+            Token = newUserId.ToString(),
+        });
     }
 
     /// <summary>
