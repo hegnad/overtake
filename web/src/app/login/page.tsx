@@ -1,12 +1,11 @@
 "use client";
 
 import { MouseEvent, useContext, useState } from "react";
-import Link from "next/link";
 import SidebarLayout from "../ui/sidebar-layout";
-import styles from "./login.module.css";
 import { IdentityContext } from "../lib/context/identity";
 import { useRouter } from "next/navigation";
 import { Session } from "../lib/models/session";
+import SignupLoginTabs from "../ui/signup-login-tabs";
 
 export default function Login() {
   const router = useRouter();
@@ -43,14 +42,15 @@ export default function Login() {
 
   return (
     <SidebarLayout>
-      <Link href="/signup">Sign Up</Link>
-      <div className={styles.container}>
-        <form className={styles.form}>
-          <div>
-            <p>
+      <div className="w-full h-full flex flex-col">
+        <SignupLoginTabs isLoginActive />
+        <form className="flex flex-col rounded-2xl p-4 gap-4 bg-accent grow">
+          <div className="flex flex-col gap-2">
+            <p className="text-white">
               <label>Username:</label>
             </p>
             <input
+              className="px-2 py-1 rounded-lg bg-input max-w-sm"
               type="text"
               value={username}
               onChange={(e) => {
@@ -58,11 +58,12 @@ export default function Login() {
               }}
             />
           </div>
-          <div>
-            <p>
-              <label>Enter password:</label>
+          <div className="flex flex-col gap-2">
+            <p className="text-white">
+              <label>Password:</label>
             </p>
             <input
+              className="px-2 py-1 rounded-lg bg-input max-w-sm"
               type="password"
               value={password}
               onChange={(e) => {
@@ -70,7 +71,14 @@ export default function Login() {
               }}
             />
           </div>
-          <input onClick={handleSubmit} type="submit" value="Login" />
+          <div>
+            <input
+              className="px-4 py-2 bg-primary text-white cursor-pointer"
+              onClick={handleSubmit}
+              type="submit"
+              value="LOGIN"
+            />
+          </div>
         </form>
       </div>
     </SidebarLayout>

@@ -5,7 +5,7 @@
 
 .sidebar {
   width: 20%;
-  background-color: #2a0a0a;
+  background-color: #2e0000;
   color: #fff;
   display: flex;
   flex-direction: column;
@@ -53,11 +53,4 @@
 
 .navItem:hover {
   background-color: darkred;
-}
-
-.main {
-  width: 80%;
-  background-color: #3b0a0a;
-  color: #fff;
-  padding: 2rem;
 }

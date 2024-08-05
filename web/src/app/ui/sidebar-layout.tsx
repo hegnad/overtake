@@ -34,7 +34,7 @@ export default function SidebarLayout({ children }: SidebarLayoutProps) {
         </nav>
         <ProfileButton />
       </div>
-      <div className={styles.main}>{children}</div>
+      <div className="overflow-scroll bg-background w-4/5 p-4">{children}</div>
     </div>
   );
 }
