@@ -1,12 +1,13 @@
 import { ReactNode } from "react";
 import Link from "next/link";
 import styles from "./sidebar-layout.module.css";
+import ProfileButton from "./profile-button";
 
-interface LayoutProps {
+interface SidebarLayoutProps {
   children: ReactNode;
 }
 
-export default function SidebarLayout({ children }: LayoutProps) {
+export default function SidebarLayout({ children }: SidebarLayoutProps) {
   return (
     <div className={styles.container}>
       <div className={styles.sidebar}>
@@ -31,7 +32,7 @@ export default function SidebarLayout({ children }: LayoutProps) {
             FormulaLearn
           </Link>
         </nav>
-        <div className={styles.user}>Username123</div>
+        <ProfileButton />
       </div>
       <div className={styles.main}>{children}</div>
     </div>

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { IdentityProvider } from "./lib/context/identity";
 
 export const metadata: Metadata = {
   title: "Overtake",
@@ -13,7 +14,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <IdentityProvider>{children}</IdentityProvider>
+      </body>
     </html>
   );
 }
