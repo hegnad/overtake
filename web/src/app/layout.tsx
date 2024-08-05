@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
+import { Josefin_Sans } from "next/font/google";
 import "./globals.css";
 import { IdentityProvider } from "./lib/context/identity";
+
+const josefinSans = Josefin_Sans({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Overtake",
@@ -14,7 +17,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>
+      <body className={josefinSans.className}>
         <IdentityProvider>{children}</IdentityProvider>
       </body>
     </html>
