@@ -20,5 +20,10 @@ services:
     build:
       context: "./web/"
       dockerfile: "./Dockerfile"
+    volumes:
+      - ./web/:/app/ #mount local 'web' directory into the container
     ports:
       - "3000:3000"
+    command: npm run dev #enable live updating after running 'docker compose up -d --build'
+    environment:
+        CHOKIDAR_USEPOLLING: "true" #helps ensure live reload works on all systems
