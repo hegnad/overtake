@@ -1,5 +1,8 @@
+'use client'
+
 import { JSXElementConstructor, Key, ReactElement, ReactNode, ReactPortal, useEffect, useState } from "react";
 import SidebarLayout from "../ui/sidebar-layout";
+import styles from "../home.module.css";
 
 export default function LastRace() {
   const [raceResults, setRaceResults] = useState(null);
@@ -35,7 +38,7 @@ export default function LastRace() {
 
   return (
     <SidebarLayout>
-      <h1>Last Race Results</h1>
+      <h1 className={styles.title}>Last Race Results</h1>
       <div>
         <h2>{raceName}</h2>
         <p>Date: {new Date(date).toLocaleDateString()}</p>
