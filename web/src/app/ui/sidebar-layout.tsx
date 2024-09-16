@@ -31,6 +31,9 @@ export default function SidebarLayout({ children }: SidebarLayoutProps) {
           <Link href="/formulalearn" className={styles.navItem}>
             FormulaLearn
           </Link>
+          <Link href="/lastrace" className={styles.navItem}>
+            Last Race
+          </Link>
         </nav>
         <ProfileButton />
       </div>
