@@ -1,12 +1,12 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react"; // Make sure to import useRef
+import { useState, useEffect, useRef } from "react";
 import { getNextRace } from "../utils/api/ergast";
 
 export default function RaceCountdown() {
   const [raceData, setRaceData] = useState(null);
   const [timeLeft, setTimeLeft] = useState(null);
-  const timer = useRef(null); // Use useRef to persist the timer across renders
+  const timer = useRef(null);
 
   useEffect(() => {
     async function fetchRace() {
@@ -19,8 +19,7 @@ export default function RaceCountdown() {
 
     fetchRace();
 
-    // Cleanup the interval when component unmounts
-    return () => clearInterval(timer.current); // Access timer using useRef
+    return () => clearInterval(timer.current);
   }, []);
 
   // Function to calculate remaining time
@@ -54,7 +53,7 @@ export default function RaceCountdown() {
             <div>
               <p>
                 {timeLeft.days} Days {timeLeft.hours} Hours {timeLeft.minutes}{" "}
-                Minutes {timeLeft.seconds} Seconds
+                Minutes
               </p>
             </div>
           ) : (
