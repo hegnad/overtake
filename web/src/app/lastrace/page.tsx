@@ -11,11 +11,18 @@ import {
 } from "react";
 import SidebarLayout from "../ui/sidebar-layout";
 import styles from "../home.module.css";
+import { getNextRace } from "../utils/api/ergast";
 
 export default function LastRace() {
   const [raceResults, setRaceResults] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [nextRace, setNextRace] = useState<null | {
+    raceName: any;
+    circuitName: any;
+    circuitLocation: string;
+    raceTimeDate: Date;
+  }>(null);
 
   // Fetch race results when the component mounts
   useEffect(() => {
@@ -30,13 +37,22 @@ export default function LastRace() {
         const data = await response.json();
         setRaceResults(data.MRData.RaceTable.Races[0]); // Set the last race results
         setLoading(false);
-      } catch (err) {
-        // setError(err.message);
-        // setLoading(false);
+      } catch (err: any) {
+        setError(err.message);
+        setLoading(false);
       }
     };
 
     fetchRaceResults();
+  }, []);
+
+  useEffect(() => {
+    async function fetchData() {
+      const race = await getNextRace();
+      setNextRace(race);
+    }
+
+    fetchData();
   }, []);
 
   if (loading)
@@ -127,6 +143,32 @@ export default function LastRace() {
             )}
           </ul>
         </div>
+      </div>
+      <br></br>
+      <div className={styles.driversResults}>
+        <h1>Next F1 Race</h1>
+        {nextRace ? (
+          <div>
+            <p>
+              <strong>Race: </strong>
+              {(nextRace as any)?.raceName}
+            </p>
+            <p>
+              <strong>Circuit: </strong>
+              {(nextRace as any)?.circuitName}
+            </p>
+            <p>
+              <strong>Location: </strong>
+              {(nextRace as any)?.circuitLocation}
+            </p>
+            <p>
+              <strong>Time & Date: </strong>
+              {nextRace.raceTimeDate.toString()}
+            </p>
+          </div>
+        ) : (
+          <p>Loading race data...</p>
+        )}
       </div>
     </SidebarLayout>
   );
