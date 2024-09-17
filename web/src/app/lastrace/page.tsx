@@ -11,6 +11,7 @@ import {
 } from "react";
 import SidebarLayout from "../ui/sidebar-layout";
 import styles from "../home.module.css";
+import RaceCountdown from "../components/racecountdown";
 import { getNextRace } from "../utils/api/ergast";
 
 export default function LastRace() {
@@ -169,6 +170,11 @@ export default function LastRace() {
         ) : (
           <p>Loading race data...</p>
         )}
+      </div>
+      <br></br>
+      <div className={styles.driversResults}>
+        <h1>Time to next race:</h1>
+        <RaceCountdown />
       </div>
     </SidebarLayout>
   );
