@@ -23,16 +23,16 @@ export default function SidebarLayout({ children }: SidebarLayoutProps) {
         </div>
         <nav className={styles.nav}>
           <Link href="/races" className={styles.navItem}>
-            Races
+            RACES
           </Link>
           <Link href="/raceleague" className={styles.navItem}>
-            Race League
+            RACE LEAGUE
           </Link>
           <Link href="/formulalearn" className={styles.navItem}>
-            FormulaLearn
+            FORMULALEARN
           </Link>
           <Link href="/lastrace" className={styles.navItem}>
-            Last Race
+            LAST RACE
           </Link>
         </nav>
         <ProfileButton />
