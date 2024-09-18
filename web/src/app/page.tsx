@@ -15,7 +15,7 @@ export default function Home() {
                     style={{ width: "100%" }}
                           />
                  <div className={styles.driverInfo}>
-                        <div classname={styles.driverDetails}>
+                        <div className={styles.driverDetails}>
                             <div className={styles.driverName}>
                                 LEWIS<br />HAMILTON
                             </div>
