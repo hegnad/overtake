@@ -98,7 +98,7 @@ public class PostgresDatabase : IDatabase
         };
     }
 
-    public async Task<int> InsertLeagueAsync(int ownerId, string name, bool isPublic, DateTime createTime)
+    public async Task<int> InsertLeagueAsync(int ownerId, string name, bool isPublic)
     {
         await using var cmd = _dataSource.CreateCommand(
             @"INSERT INTO raceLeague (owner_id, name, is_public, create_time)
@@ -109,7 +109,7 @@ public class PostgresDatabase : IDatabase
         cmd.Parameters.AddWithValue("owner_id", ownerId);
         cmd.Parameters.AddWithValue("name", name);
         cmd.Parameters.AddWithValue("is_public", isPublic);
-        cmd.Parameters.AddWithValue("create_time", createTime);
+        cmd.Parameters.AddWithValue("create_time", Now());
 
         await using var reader = await cmd.ExecuteReaderAsync();
 
