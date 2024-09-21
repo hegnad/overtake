@@ -1,14 +1,14 @@
 'use client'
 
-import { useState } from "react";
+import { IdentityContext } from "../lib/context/identity";
+import { useState, useContext } from "react";
 import SidebarLayout from "../ui/sidebar-layout";
 
 
 export default function RaceLeague() {
-
+    const identity = useContext(IdentityContext);
     const [ballot, setBallot] = useState(null);
     const [leagues, setLeagues] = useState(null);
-    const [ownerId, setOwnerId] = useState("");
     const [name, setName] = useState<string>("");
     const [isPublic, setIsPublic] = useState<boolean>(false);
 
@@ -29,13 +29,13 @@ export default function RaceLeague() {
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
-        const response = await fetch("http://localhost:8080/api/league/register", {
+        const response = await fetch("http://localhost:8080/api/league/create", {
             method: "POST",
             headers: {
+                Authorization: `Bearer ${identity.sessionToken}`,
                 "Content-Type": "application/json",
             },
             body: JSON.stringify({
-                ownerId,
                 name,
                 isPublic
             }),
@@ -48,6 +48,8 @@ export default function RaceLeague() {
             // TODO: ???
         }
     }
+
+    
 
     return (
         <SidebarLayout>
@@ -76,10 +78,10 @@ export default function RaceLeague() {
                         </select>
                     </div>
                     <div>
-                        <input
+                        <button
                             type="submit"
                             value="CREATE LEAGUE"
-                        />
+                        >CREATE</button>
                     </div>
                 </form>
             </div>

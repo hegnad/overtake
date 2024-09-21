@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Overtake.Interfaces;
 using Overtake.Models;
 using Overtake.Models.Requests;
-using Overtake.Entities
+using Overtake.Entities;
 
 /// <summary>
 /// API related to league operations.
@@ -13,9 +13,9 @@ using Overtake.Entities
 public class LeagueController : ControllerBase
 {
     private readonly IDatabase _database;
-    private readonly ILogger<AccountController> _logger;
+    private readonly ILogger<LeagueController> _logger;
 
-    public AccountController(IDatabase database, ILogger<AccountController> logger)
+    public LeagueController(IDatabase database, ILogger<LeagueController> logger)
     {
         _database = database;
         _logger = logger;
@@ -25,18 +25,24 @@ public class LeagueController : ControllerBase
     /// Creates a new race league
     /// </summary>
     [HttpPost]
-    [Route("register")]]
+    [Route("create")]
     [Produces("application/json")]
-    public async Task<RaceLeague> RegisterAsync([FromBody] CreateLeaugueRequest request)
+    public async Task<ActionResult<RaceLeagueInfo>> CreateAsync([FromBody] CreateLeagueRequest request)
     {
-        if (int.IsNullOrWhiteSpace(request.OwnerId)
-            || string.IsNullOrWhiteSpace(request.Name)
-            || bool.IsNullOrEmpty(request.IsPublic)
-            ) 
+        if (string.IsNullOrWhiteSpace(request.Name))
         {
             return new BadRequestResult();
         }
 
-        int newLeagueId = await._database.InsertLeagueAsync(request.OwnerId, request.Name, request.IsPublic);
+        int userId = Convert.ToInt32(HttpContext.User.Claims.First(x => x.Type == "userId").Value);
+
+        var account = await _database.GetAccountByIdAsync(userId);
+
+        int newLeagueId = await _database.InsertLeagueAsync(account.AccountId, request.Name, request.IsPublic);
+
+        int membership = await _database.InsertLeagueMembershipAsync(newLeagueId, account.AccountId);
+
+        return new OkObjectResult(new RaceLeagueInfo {OwnerId = account.AccountId, Name = request.Name, IsPublic = request.IsPublic});
+
     }
 }

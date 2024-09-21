@@ -10,13 +10,15 @@ public interface IDatabase
 
     Task<Account> GetAccountByUsernameAsync(string username);
 
-    Task<int> InsertLeagueAsync(int ownerId, string name, bool isPublic, DateTime createTime);
+    Task<int> InsertLeagueAsync(int ownerId, string name, bool isPublic);
 
     Task<RaceLeague> GetLeagueByIdAsync(int leagueId);
 
     Task<RaceLeague> GetLeagueByNameAsync(string name);
 
-    Task<int> InsertLeagueMembershipAsync(int leagueId, int accountId, DateTime joinTime);
+    Task<RaceLeague[]> PopulateLeaguesAsync(int accountId);
+
+    Task<int> InsertLeagueMembershipAsync(int leagueId, int accountId);
 
     Task<RaceLeagueMembership> GetMembershipByIdAsync(int leagueId);
 

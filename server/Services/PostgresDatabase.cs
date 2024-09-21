@@ -109,7 +109,7 @@ public class PostgresDatabase : IDatabase
         cmd.Parameters.AddWithValue("owner_id", ownerId);
         cmd.Parameters.AddWithValue("name", name);
         cmd.Parameters.AddWithValue("is_public", isPublic);
-        cmd.Parameters.AddWithValue("create_time", Now());
+        cmd.Parameters.AddWithValue("create_time", new DateTime());
 
         await using var reader = await cmd.ExecuteReaderAsync();
 
@@ -163,7 +163,7 @@ public class PostgresDatabase : IDatabase
         };
     }
 
-    public async Task<int> InsertLeagueMembershipAsync(int leagueId, int accountId, DateTime joinTime)
+    public async Task<int> InsertLeagueMembershipAsync(int leagueId, int accountId)
     {
         await using var cmd = _dataSource.CreateCommand(
             @"INSERT INTO raceLeagueMembership (league_id, user_id, join_time)
@@ -173,7 +173,7 @@ public class PostgresDatabase : IDatabase
 
         cmd.Parameters.AddWithValue("league_id", leagueId);
         cmd.Parameters.AddWithValue("user_id", accountId);
-        cmd.Parameters.AddWithValue("join_time", joinTime);
+        cmd.Parameters.AddWithValue("join_time", new DateTime());
 
         await using var reader = await cmd.ExecuteReaderAsync();
 
@@ -236,7 +236,7 @@ public class PostgresDatabase : IDatabase
 
         return new LeagueInvite
         {
-            InviteID = reader.GetInt32(0),
+            InviteId = reader.GetInt32(0),
             LeagueId = reader.GetInt32(1),
             InviteeId = inviteeId,
             RequestTime = reader.GetDateTime(3),
