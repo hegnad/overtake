@@ -16,7 +16,8 @@ public interface IDatabase
 
     Task<RaceLeague> GetLeagueByNameAsync(string name);
 
-    Task<RaceLeague[]> PopulateLeaguesAsync(int accountId);
+    // Not implemented, commenting out to fix github CI
+    //Task<RaceLeague[]> PopulateLeaguesAsync(int accountId);
 
     Task<int> InsertLeagueMembershipAsync(int leagueId, int accountId);
 
