@@ -35,7 +35,10 @@ export default function SidebarLayout({ children }: SidebarLayoutProps) {
             LAST RACE
           </Link>
           <Link href="/liverace" className={styles.navItem}>
-            Live Race
+            Live Intervals
+          </Link>
+          <Link href="/livepos" className={styles.navItem}>
+            Live Positions
           </Link>
         </nav>
         <ProfileButton />

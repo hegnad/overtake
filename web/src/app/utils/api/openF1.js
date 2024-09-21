@@ -4,8 +4,8 @@ import { useState, useEffect } from "react";
 
 export default function OpenF1() {
   const [intervalData, setIntervalData] = useState([]);
-  const apiUrl = "https://api.openf1.org/v1/intervals?session_key=latest";
-
+  //const apiUrl = "https://api.openf1.org/v1/intervals?session_key=latest";
+  const apiUrl = "https://api.openf1.org/v1/position?session_key=9599";
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -29,14 +29,14 @@ export default function OpenF1() {
       <h2>Live Data</h2>
       {intervalData.length === 0 && <p>Loading...</p>}
       {intervalData}
-      <ul>
+      {/* <ul>
         {intervalData.map((item, index) => (
           <li key={index}>
             Driver Number: {item.driver_number}, Gap to Leader:{" "}
             {item.gap_to_leader}
           </li>
         ))}
-      </ul>
+      </ul> */}
     </div>
   );
 }
