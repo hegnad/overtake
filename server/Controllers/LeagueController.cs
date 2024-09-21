@@ -42,7 +42,7 @@ public class LeagueController : ControllerBase
 
         int membership = await _database.InsertLeagueMembershipAsync(newLeagueId, account.AccountId);
 
-        return new OkObjectResult(new RaceLeagueInfo {OwnerId = account.AccountId, Name = request.Name, IsPublic = request.IsPublic});
+        return new OkObjectResult(new RaceLeagueInfo { OwnerId = account.AccountId, Name = request.Name, IsPublic = request.IsPublic });
 
     }
 }
