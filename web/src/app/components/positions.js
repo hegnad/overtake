@@ -1,24 +1,28 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import styles from "../home.module.css";
 import { getDrivers } from "../utils/api/openF1";
 import extractOldestRecords from "../utils/dataManipulation";
 
 export default function Positions() {
   const [postitions, setPositions] = useState([]);
+  const drivers = useRef([]);
   const apiUrl = `https://api.openf1.org/v1/position?session_key=latest`;
 
   useEffect(() => {
     const fetchData = async () => {
       try {
+        if (drivers.current.length === 0) {
+          drivers.current = await getDrivers();
+        }
         const response = await fetch(apiUrl);
         const data = await response.json();
         const latestPosData = extractOldestRecords(data);
         latestPosData.sort((a, b) => a.position - b.position);
-        const driverData = await getDrivers();
+
         latestPosData.forEach((pos) => {
-          const driver = driverData.find(
+          const driver = drivers.current.find(
             (driver) => driver.driver_number === pos.driver_number
           );
           pos.full_name = driver?.broadcast_name || "Unknown";
