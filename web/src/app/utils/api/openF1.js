@@ -40,3 +40,11 @@ export default function OpenF1() {
     </div>
   );
 }
+
+export async function getDrivers() {
+  const apiUrl = "https://api.openf1.org/v1/drivers?session_key=latest";
+  const response = await fetch(apiUrl);
+  const data = await response.json();
+  console.log(data);
+  return data;
+}
