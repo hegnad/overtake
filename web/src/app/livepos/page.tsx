@@ -31,7 +31,8 @@ export default function LivePos() {
     const timeNow = new Date(new Date().getTime() - 5000);
     console.log(new Date(timeNow));
     const fetchData = async () => {
-      const data = await fetch(`${apiurl}&date>${timeNow.toISOString()}`);
+      //const data = await fetch(`${apiurl}&date>${timeNow.toISOString()}`);
+      const data = await fetch(apiurl);
       const json = await data.json();
       json.sort((a: any, b: any) => {
         return new Date(b.date).getTime() - new Date(a.date).getTime();
@@ -45,7 +46,7 @@ export default function LivePos() {
     };
 
     fetchData(); // Initial fetch
-    const intervalId = setInterval(fetchData, 15000); // Fetch every 15 seconds
+    const intervalId = setInterval(fetchData, 10000); // Fetch every 15 seconds
 
     return () => clearInterval(intervalId); // Cleanup on unmount
   }, []);
