@@ -37,6 +37,9 @@ export default function SidebarLayout({ children }: SidebarLayoutProps) {
           <Link href="/livepos" className={styles.navItem}>
             Live Positions
           </Link>
+          <Link href="/ballot" className={styles.navItem}>
+            BALLOT
+          </Link>
         </nav>
         <ProfileButton />
       </div>
