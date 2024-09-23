@@ -2,7 +2,7 @@
 // "use strict";
 
 import SidebarLayout from "../ui/sidebar-layout";
-import Positions from "../components/Positions";
+import Positions from "../components/positions";
 import { useEffect, useState } from "react";
 import styles from "../home.module.css";
 
@@ -17,7 +17,7 @@ export default function LivePos() {
     sector: string;
   }
 
-  const [events, setEvents] = useState<Events>([]);
+  const [events, setEvents] = useState<Events>();
   const [liveFlag, setLiveFlag] = useState<string>("");
   const [lapNumber, setLapNumber] = useState<number>(0);
 
