@@ -34,6 +34,9 @@ export default function SidebarLayout({ children }: SidebarLayoutProps) {
           <Link href="/lastrace" className={styles.navItem}>
             LAST RACE
           </Link>
+          <Link href="/livepos" className={styles.navItem}>
+            Live Positions
+          </Link>
           <Link href="/ballot" className={styles.navItem}>
             BALLOT
           </Link>

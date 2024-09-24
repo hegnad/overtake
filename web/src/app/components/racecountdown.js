@@ -45,9 +45,9 @@ export default function RaceCountdown() {
     <div>
       {raceData ? (
         <div>
-          <h2>Countdown to {raceData.raceName}</h2>
+          <h2>{raceData.gpName} ligths out in:</h2>
           <p>
-            Circuit: {raceData.circuitName} in {raceData.circuitLocation}
+            Circuit: {raceData.circuitName} at {raceData.circuitLocation}
           </p>
           {timeLeft ? (
             <div>
