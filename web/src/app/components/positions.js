@@ -2,11 +2,12 @@
 
 import { useState, useEffect, useRef } from "react";
 import styles from "../home.module.css";
-import { getDrivers } from "../utils/api/openF1";
+import { getDrivers, getIntervals, getLapNumber } from "../utils/api/openF1";
 import extractOldestRecords from "../utils/dataManipulation";
 
 export default function Positions() {
   const [postitions, setPositions] = useState([]);
+  const [lapNumber, setLapNumber] = useState("Loading...");
   const drivers = useRef([]);
   const apiUrl = `https://api.openf1.org/v1/position?session_key=latest`;
 
@@ -16,6 +17,7 @@ export default function Positions() {
         if (drivers.current.length === 0) {
           drivers.current = await getDrivers();
         }
+        let intervalData = await getIntervals();
         const response = await fetch(apiUrl);
         const data = await response.json();
         const latestPosData = extractOldestRecords(data);
@@ -29,6 +31,15 @@ export default function Positions() {
           pos.driverUrl = driver?.url || "";
           pos.team_name = driver?.team_name || "";
         });
+        latestPosData.forEach((pos) => {
+          const interval = intervalData.find(
+            (interval) => interval.driver_number == pos.driver_number
+          );
+          pos.gap_to_leader = interval?.gap_to_leader || "";
+          pos.interval = interval?.interval || "";
+        });
+        let lapNumber = await getLapNumber(latestPosData[0].driver_number);
+        setLapNumber(lapNumber);
         setPositions(latestPosData);
       } catch (error) {
         console.error("Error fetching live data: ", error);
@@ -45,12 +56,14 @@ export default function Positions() {
     <div className={styles.driversResults}>
       <h1>Live Pos</h1>
       {postitions.length === 0 && <p>Loading...</p>}
+      <h3>Lap: {lapNumber}</h3>
       <ul>
         {postitions.map((item, index) => (
           <li key={index}>
             <p>
               {item.position} - {item.driver_number} - {item.full_name} -{" "}
-              {item.team_name} - {item.date.toLocaleTimeString()}
+              {item.team_name} - {item.interval} - {item.gap_to_leader} -{" "}
+              {item.date.toLocaleTimeString()}
             </p>
           </li>
         ))}
