@@ -18,7 +18,7 @@ export async function getNextRace() {
       const apiUrlGPName = `https://api.openf1.org/v1/meetings?year=2024&country_name=${raceInfo.Circuit.Location.country}`;
       const responseGPName = await fetch(apiUrlGPName);
       const dataGPName = await responseGPName.json();
-      const gpName = dataGPName[0].meeting_official_name;
+      gpName = dataGPName[0].meeting_official_name;
     } catch (error) {
       console.error("Error fetching GP name: ", error);
     }
