@@ -13,12 +13,15 @@ export async function getNextRace() {
     const raceTime = raceInfo.time;
     const raceTimeDate = new Date(`${raceDate}T${raceTime}`);
     const circuitLocation = raceInfo.Circuit.Location.country;
-
-    const apiUrlGPName = `https://api.openf1.org/v1/meetings?year=2024&country_name=${raceInfo.Circuit.Location.country}`;
-
-    const responseGPName = await fetch(apiUrlGPName);
-    const dataGPName = await responseGPName.json();
-    const gpName = dataGPName[0].meeting_official_name;
+    let gpName = raceName;
+    try {
+      const apiUrlGPName = `https://api.openf1.org/v1/meetings?year=2024&country_name=${raceInfo.Circuit.Location.country}`;
+      const responseGPName = await fetch(apiUrlGPName);
+      const dataGPName = await responseGPName.json();
+      gpName = dataGPName[0].meeting_official_name;
+    } catch (error) {
+      console.error("Error fetching GP name: ", error);
+    }
 
     return {
       raceName,
