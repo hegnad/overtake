@@ -1,4 +1,5 @@
 using Overtake.Entities;
+using Overtake.Models;
 
 namespace Overtake.Interfaces;
 
@@ -16,8 +17,7 @@ public interface IDatabase
 
     Task<RaceLeague> GetLeagueByNameAsync(string name);
 
-    // Not implemented, commenting out to fix github CI
-    //Task<RaceLeague[]> PopulateLeaguesAsync(int accountId);
+    Task<RaceLeagueInfo[]> PopulateLeaguesAsync(int accountId);
 
     Task<int> InsertLeagueMembershipAsync(int leagueId, int accountId);
 

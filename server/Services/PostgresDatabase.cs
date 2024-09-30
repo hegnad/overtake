@@ -1,6 +1,7 @@
 using Npgsql;
 using Overtake.Entities;
 using Overtake.Interfaces;
+using Overtake.Models;
 
 namespace Overtake.Services;
 
@@ -161,6 +162,52 @@ public class PostgresDatabase : IDatabase
             IsPublic = reader.GetBoolean(2),
             CreateTime = reader.GetDateTime(3),
         };
+    }
+
+    public async Task<RaceLeagueInfo[]> PopulateLeaguesAsync(int accountId)
+    {
+        var leagueIds = new List<int>();
+        var userLeagues = new List<RaceLeagueInfo>();
+
+        await using var cmd = _dataSource.CreateCommand(
+            @"SELECT league_id FROM raceLeagueMembership
+                where user_id=@accountId"
+        );
+
+        cmd.Parameters.AddWithValue("accountId", accountId);
+
+        await using var reader = await cmd.ExecuteReaderAsync();
+        while (await reader.ReadAsync())
+        {
+            leagueIds.Add(reader.GetInt32(0));
+        }
+
+        for (int i = 0; i < leagueIds.Count; i++)
+        {
+            await using var cmdLeague = _dataSource.CreateCommand(
+                @"SELECT owner_id, name, is_public FROM raceLeague
+                    where league_id=@league_id"
+            );
+
+            cmdLeague.Parameters.AddWithValue("league_id", leagueIds[i]);
+
+            await using var leagueReader = await cmdLeague.ExecuteReaderAsync();
+
+            if (await leagueReader.ReadAsync())
+            {
+                RaceLeagueInfo leagueInfo = new RaceLeagueInfo
+                {
+                    OwnerId = leagueReader.GetInt32(0),
+                    Name = leagueReader.GetString(1),
+                    IsPublic = leagueReader.GetBoolean(2),
+                };
+
+                userLeagues.Add(leagueInfo);
+
+            }
+        }
+
+        return userLeagues.ToArray();
     }
 
     public async Task<int> InsertLeagueMembershipAsync(int leagueId, int accountId)

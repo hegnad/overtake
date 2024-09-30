@@ -45,4 +45,20 @@ public class LeagueController : ControllerBase
         return new OkObjectResult(new RaceLeagueInfo { OwnerId = account.AccountId, Name = request.Name, IsPublic = request.IsPublic });
 
     }
+
+    /// <summary>
+    ///  Retrieves all race leagues for the current user.
+    /// </summary>
+    [HttpGet]
+    [Route("populate")]
+    [Produces("application/json")]
+    public async Task<ActionResult<RaceLeagueInfo[]>> PopulateAsync()
+    { 
+        int userId = Convert.ToInt32(HttpContext.User.Claims.First(x => x.Type == "userId").Value);
+
+        RaceLeagueInfo[] leagues = await _database.PopulateLeaguesAsync(userId);
+
+        return new OkObjectResult(leagues);
+    }
+    
 }
