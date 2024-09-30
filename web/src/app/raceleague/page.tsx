@@ -1,16 +1,40 @@
 "use client";
 
 import { IdentityContext } from "../lib/context/identity";
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import SidebarLayout from "../ui/sidebar-layout";
 import styles from "../home.module.css";
 
 export default function RaceLeague() {
   const identity = useContext(IdentityContext);
   const [ballot, setBallot] = useState(null);
-  const [leagues, setLeagues] = useState(null);
+  const [leagues, setLeagues] = useState<string[]>([]);
   const [name, setName] = useState<string>("");
   const [isPublic, setIsPublic] = useState<boolean>(false);
+
+  useEffect(() => {
+    const fetchLeagues = async () => {
+      const response = await fetch("http://localhost:8080/api/league/populate", {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${identity.sessionToken}`,
+        "Content-Type": "application/json",
+        },
+      });
+
+      if (response.status === 200) {
+        const data = await response.json();
+        
+        setLeagues(data.map((league: { name: string }) => league.name));
+      } else {
+        console.error(`non-successful status code: ${response.status}`)
+      }
+    };
+
+    if (identity.sessionToken) {
+      fetchLeagues();
+    }
+  }, [identity.sessionToken]);
 
   /*
    **ChatGPT generated parameter**
@@ -83,6 +107,18 @@ export default function RaceLeague() {
             </button>
           </div>
         </form>
+        <div>
+          <h2>Your Leagues</h2>
+          <ul>
+            {leagues.length > 0 ? (
+              leagues.map((leagueName, index) => (
+                <li key={index}>{leagueName}</li>
+              ))
+            ) : (
+              <p>No Leagues Found.</p>
+            )}
+          </ul>
+        </div>
       </div>
     </SidebarLayout>
   );
