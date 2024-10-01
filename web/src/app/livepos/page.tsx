@@ -19,7 +19,6 @@ export default function LivePos() {
 
   const [events, setEvents] = useState<Events>();
   const [liveFlag, setLiveFlag] = useState<string>("");
-  const [lapNumber, setLapNumber] = useState<number>(0);
 
   const apiurl = "https://api.openf1.org/v1/race_control?session_key=latest";
 
@@ -39,10 +38,8 @@ export default function LivePos() {
       });
       //filters events of category Flag
       let flagEvents = json.filter((event: any) => event.flag !== null);
-      let lapNumber = json.filter((event: any) => event.lap_number !== null);
       setEvents(json);
       setLiveFlag(flagEvents[0].flag);
-      setLapNumber(lapNumber[0].lap_number ?? 0);
     };
 
     fetchData(); // Initial fetch
@@ -56,7 +53,6 @@ export default function LivePos() {
       <div className={styles.driversResults}>
         <h1>Live Positions</h1>
         <h2>Live Flag: {liveFlag}</h2>
-        <h2>Lap Number: {lapNumber}</h2>
       </div>
       <div>
         <Positions />
