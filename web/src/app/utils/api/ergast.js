@@ -60,3 +60,20 @@ export async function getRaceResults(season, round) {
     return null;
   }
 }
+
+export async function getSeasonRounds(season) {
+  const apiUrl = `https://ergast.com/api/f1/${season}.json`;
+
+  try {
+    const response = await fetch(apiUrl);
+    const data = await response.json();
+
+    const seasonRounds = data.MRData.RaceTable.Races.map(
+      (race) => race.raceName
+    );
+    return seasonRounds;
+  } catch (error) {
+    console.error("Error fetching season rounds: ", error);
+    return null;
+  }
+}
