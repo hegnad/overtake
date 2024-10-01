@@ -290,4 +290,41 @@ public class PostgresDatabase : IDatabase
             Status = reader.GetInt32(4),
         };
     }
+
+    public async Task<int> InsertBallotAsync(int userId, int leagueId, int raceId, List<string> driverPredictions)
+    {
+        await using var cmd = _dataSource.CreateCommand(
+            @"INSERT INTO ballot (user_id, league_id, race_id, create_time)
+          VALUES (@user_id, @league_id, @race_id, @create_time)
+          RETURNING ballot_id"
+        );
+
+        // Add values to the parameters
+        cmd.Parameters.AddWithValue("user_id", userId);
+        cmd.Parameters.AddWithValue("league_id", leagueId);
+        cmd.Parameters.AddWithValue("race_id", raceId);
+        cmd.Parameters.AddWithValue("create_time", DateTime.Now);
+
+        await using var reader = await cmd.ExecuteReaderAsync();
+        await reader.ReadAsync();
+        int newBallotId = reader.GetInt32(0);
+
+        // Insert driver predictions into a separate table if necessary
+        foreach (var prediction in driverPredictions)
+        {
+            var predictionCmd = _dataSource.CreateCommand(
+                @"INSERT INTO ballot_predictions (ballot_id, position, driver_name)
+              VALUES (@ballot_id, @position, @driver_name)"
+            );
+
+            predictionCmd.Parameters.AddWithValue("ballot_id", newBallotId);
+            predictionCmd.Parameters.AddWithValue("position", driverPredictions.IndexOf(prediction) + 1);
+            predictionCmd.Parameters.AddWithValue("driver_name", prediction);
+
+            await predictionCmd.ExecuteNonQueryAsync();
+        }
+
+        return newBallotId;
+    }
+
 }
