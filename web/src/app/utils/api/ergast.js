@@ -35,3 +35,28 @@ export async function getNextRace() {
     return null;
   }
 }
+
+export async function getRaceResults(season, round) {
+  const apiUrl = `https://ergast.com/api/f1/${season}/${round}/results.json`;
+
+  try {
+    const response = await fetch(apiUrl);
+    const data = await response.json();
+
+    const raceInfo = data.MRData.RaceTable.Races[0];
+    const raceName = raceInfo.raceName;
+    const raceResults = raceInfo.Results;
+    const season = raceInfo.season;
+    const round = raceInfo.round;
+
+    return {
+      raceName,
+      raceResults,
+      season,
+      round,
+    };
+  } catch (error) {
+    console.error("Error fetching race data: ", error);
+    return null;
+  }
+}

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import extractOldestRecords from "../dataManipulation";
 
 export default function OpenF1() {
   const [intervalData, setIntervalData] = useState([]);
@@ -47,4 +48,23 @@ export async function getDrivers() {
   const data = await response.json();
   console.log(data);
   return data;
+}
+
+export async function getIntervals() {
+  const apiUrl = "https://api.openf1.org/v1/intervals?session_key=latest";
+  const response = await fetch(apiUrl);
+  const data = await response.json();
+  const intervals = extractOldestRecords(data);
+  console.log(intervals);
+  return intervals;
+}
+
+export async function getLapNumber(driver) {
+  const apiUrl = `https://api.openf1.org/v1/laps?session_key=latest&driver_number=${driver}`;
+  const response = await fetch(apiUrl);
+  const data = await response.json();
+  data.reverse();
+  console.log(`lap number`);
+  console.log(data[0].lap_number);
+  return data[0].lap_number;
 }
