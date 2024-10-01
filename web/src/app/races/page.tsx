@@ -1,7 +1,7 @@
 "use client";
 
 import SidebarLayout from "../ui/sidebar-layout";
-import { getRaceResults } from "../utils/api/ergast";
+import { getRaceResults, getSeasonRounds } from "../utils/api/ergast";
 import styles from "../home.module.css";
 import { useEffect, useState } from "react";
 
@@ -9,7 +9,23 @@ export default function Races() {
   const [raceResults, setRaceResults] = useState<any[]>([]);
   const [raceName, setRaceName] = useState<string>("");
   const [raceSeason, setRaceSeason] = useState<string>("");
-  const [raceRound, setRaceRound] = useState<string>("");
+  const [raceRound, setRaceRound] = useState<string>(""); // Change to string to directly store the round
+  const [rounds, setRounds] = useState<string[]>([]);
+
+  const seasons = [2020, 2021, 2022, 2023, 2024];
+
+  useEffect(() => {
+    const fetchRounds = async () => {
+      if (raceSeason !== "") {
+        const data = await getSeasonRounds(raceSeason);
+        if (data) {
+          setRounds(data);
+        }
+      }
+    };
+
+    fetchRounds();
+  }, [raceSeason]);
 
   useEffect(() => {
     const fetchRaceResults = async () => {
@@ -37,32 +53,43 @@ export default function Races() {
           <select
             className="text-black"
             value={raceSeason}
-            onChange={(e) => setRaceSeason(e.target.value)}
+            onChange={(e) => {
+              setRaceSeason(e.target.value);
+              setRaceRound(""); // Reset round when season changes
+            }}
           >
             <option value="" disabled>
               Select a season
             </option>
-            {[2020, 2021, 2022, 2023, 2024].map((year) => (
+            {seasons.map((year) => (
               <option key={year} value={year}>
                 {year}
               </option>
             ))}
           </select>
-          <h3>Select the round: </h3>
-          <select
-            className="text-black"
-            value={raceRound}
-            onChange={(e) => setRaceRound(e.target.value)}
-          >
-            <option value="" disabled>
-              Select a round
-            </option>
-            {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((round) => (
-              <option key={round} value={round}>
-                {round}
-              </option>
-            ))}
-          </select>
+          {raceSeason == "" && rounds.length === 0 ? (
+            <p></p>
+          ) : raceSeason && rounds.length > 0 ? (
+            <div>
+              <h3>Select the round: </h3>
+              <select
+                className="text-black"
+                value={raceRound} // Use the round directly
+                onChange={(e) => setRaceRound(e.target.value)} // Set selected round directly
+              >
+                <option value="" disabled>
+                  Select a round
+                </option>
+                {rounds.map((round, index) => (
+                  <option key={index + 1} value={index + 1}>
+                    {round}
+                  </option>
+                ))}
+              </select>
+            </div>
+          ) : (
+            <p>Loading Rounds...</p>
+          )}
         </div>
         <div>
           {raceResults && raceResults.length > 0 && (
