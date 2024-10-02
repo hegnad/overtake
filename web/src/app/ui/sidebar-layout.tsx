@@ -35,7 +35,7 @@ export default function SidebarLayout({ children }: SidebarLayoutProps) {
             LAST RACE
           </Link>
           <Link href="/livepos" className={styles.navItem}>
-            Live Positions
+            LIVE POSITIONS
           </Link>
           <Link href="/ballot" className={styles.navItem}>
             BALLOT

@@ -44,17 +44,39 @@ export default function RaceCountdown() {
   return (
     <div>
       {raceData ? (
-        <div>
-          <h2>{raceData.gpName} ligths out in:</h2>
-          <p>
-            Circuit: {raceData.circuitName} at {raceData.circuitLocation}
-          </p>
+        <div className="border-2 rounded-xl text-center m-2">
+          <div className="m-2">
+            <h2>{raceData.gpName} ligths out in:</h2>
+            <p>
+              Circuit: {raceData.circuitName} at {raceData.circuitLocation}
+            </p>
+          </div>
           {timeLeft ? (
-            <div>
-              <p>
-                {timeLeft.days} Days {timeLeft.hours} Hours {timeLeft.minutes}{" "}
-                Minutes
-              </p>
+            <div className="grid grid-flow-col gap-1 text-center auto-cols-max justify-center">
+              <div className="flex flex-col p-2 bg-slate-800 rounded-2xl text-neutral-content m-2 w-20">
+                <span className="countdown font-mono text-5xl">
+                  <span>{timeLeft.days}</span>
+                </span>
+                days
+              </div>
+              <div className="flex flex-col p-2 bg-slate-800 rounded-2xl text-neutral-content m-2 w-20">
+                <span className="countdown font-mono text-5xl">
+                  <span>{timeLeft.hours}</span>
+                </span>
+                hours
+              </div>
+              <div className="flex flex-col p-2 bg-slate-800 rounded-2xl text-neutral-content m-2 w-20">
+                <span className="countdown font-mono text-5xl">
+                  <span>{timeLeft.minutes}</span>
+                </span>
+                min
+              </div>
+              <div className="flex flex-col p-2 bg-slate-800 rounded-2xl text-neutral-content m-2 w-20">
+                <span className="countdown font-mono text-5xl">
+                  <span>{timeLeft.seconds}</span>
+                </span>
+                sec
+              </div>
             </div>
           ) : (
             <p>The race has started or the data is not available.</p>

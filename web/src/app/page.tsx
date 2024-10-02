@@ -1,5 +1,6 @@
 import SidebarLayout from "./ui/sidebar-layout";
 import styles from "./home.module.css";
+import RaceCountdown from "./components/racecountdown";
 
 export default function Home() {
   return (
@@ -8,80 +9,58 @@ export default function Home() {
         <div className={styles.main}>
           <div className={styles.top}>
             <div className={styles.driver}>
-                <div className={styles.title}>OVERTAKE DRIVER OF THE DAY</div>
-                <img
-                    src="/images/yellowline.png"
-                    alt="Yellow Line"
-                    style={{ width: "100%" }}
-                          />
-                 <div className={styles.driverInfo}>
-                        <div className={styles.driverDetails}>
-                            <div className={styles.driverName}>
-                                LEWIS<br />HAMILTON
-                            </div>
-                        <div className={styles.driverNoAndFlag}>
-                            <div className={styles.driverNumber}>44</div>
-                            <div className={styles.driverFlag}>
-                                <img
-                                    src="/images/uk.png"
-                                    alt="UK Flag"
-                                    style={{
-                                        width: "109px",
-                                        height: "63px",
-                                        borderRadius: "5px",
-                                        marginRight: "1rem",
-                                    }}
-                                />
-                            </div>
-                        </div>
+              <div className={styles.title}>OVERTAKE DRIVER OF THE DAY</div>
+              <img
+                src="/images/yellowline.png"
+                alt="Yellow Line"
+                style={{ width: "100%" }}
+              />
+              <div className={styles.driverInfo}>
+                <div className={styles.driverDetails}>
+                  <div className={styles.driverName}>
+                    LEWIS
+                    <br />
+                    HAMILTON
+                  </div>
+                  <div className={styles.driverNoAndFlag}>
+                    <div className={styles.driverNumber}>44</div>
+                    <div className={styles.driverFlag}>
+                      <img
+                        src="/images/uk.png"
+                        alt="UK Flag"
+                        style={{
+                          width: "109px",
+                          height: "63px",
+                          borderRadius: "5px",
+                          marginRight: "1rem",
+                        }}
+                      />
                     </div>
-                    <div className={styles.driverPhoto}>
-                        <img
-                            src="/images/hamilton.png"
-                            style={{
-                                width: "240px",
-                                height: "240px",
-                                display: "block",            
-                            }}
-                            alt="Lewis Hamilton"
-                            className={styles.driverImage}
-                        />
-                    </div>
+                  </div>
                 </div>
-                <img
-                    src="/images/yellowline.png"
-                    alt="Yellow Line"
-                    style={{ width: "100%" }}
-                />
+                <div className={styles.driverPhoto}>
+                  <img
+                    src="/images/hamilton.png"
+                    style={{
+                      width: "240px",
+                      height: "240px",
+                      display: "block",
+                    }}
+                    alt="Lewis Hamilton"
+                    className={styles.driverImage}
+                  />
+                </div>
+              </div>
+              <img
+                src="/images/yellowline.png"
+                alt="Yellow Line"
+                style={{ width: "100%" }}
+              />
             </div>
             <div className={styles.nextRace}>
               <div className={styles.title}>UPCOMING GRAND PRIX</div>
-              <div className={styles.raceInfo}>
-                <img
-                  src="/images/hungarycircuit.png"
-                  style={{ width: "300px", height: "300px", display: "block" }}
-                  alt="Hungary Circuit"
-                  className={styles.circuitImage}
-                />
-                <div className={styles.raceDetails}>
-                  <div className={styles.raceName}>HUNGARY</div>
-                  <div className={styles.raceDate}>
-                    JUL 19-21
-                    <br />
-                    2024
-                  </div>
-                  <div className={styles.raceFlag}>
-                    <img
-                      src="/images/hungary.png"
-                      alt="Hungary Flag"
-                      style={{
-                        width: "95px",
-                        height: "55px",
-                        borderRadius: "15px",
-                      }}
-                    />
-                  </div>
-                </div>
+              <div className="">
+                <RaceCountdown />
               </div>
             </div>
           </div>

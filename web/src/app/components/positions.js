@@ -57,17 +57,38 @@ export default function Positions() {
       <h1>Live Pos</h1>
       {postitions.length === 0 && <p>Loading...</p>}
       <h3>Lap: {lapNumber}</h3>
-      <ul>
-        {postitions.map((item, index) => (
-          <li key={index}>
-            <p>
-              {item.position} - {item.driver_number} - {item.full_name} -{" "}
-              {item.team_name} - {item.interval} - {item.gap_to_leader} -{" "}
-              {item.date.toLocaleTimeString()}
-            </p>
-          </li>
-        ))}
-      </ul>
+      <table className="table-fixed border-separate border-spacing-1 border border-slate-500 border-spacing-2 p-5">
+        <thead>
+          <tr className="border border-slate-600">
+            <th className="border border-slate-700 w-16">Position</th>
+            <th className="border border-slate-700 w-16">Number</th>
+            <th className="border border-slate-700 w-40">Driver Name</th>
+            <th className="border border-slate-700 w-36">Team Name</th>
+            <th className="border border-slate-700 w-24">Interval</th>
+            <th className="border border-slate-700 w-24">Gap to Leader</th>
+            {/* <th>Time</th> */}
+          </tr>
+        </thead>
+        <tbody>
+          {postitions.map((item, index) => (
+            <tr key={index}>
+              <td className="border border-slate-700 px-2">{item.position}</td>
+              <td className="border border-slate-700 px-2">
+                <a href={item.driverUrl}>{item.driver_number}</a>
+              </td>
+              <td className="border border-slate-700 px-2">{item.full_name}</td>
+              <td className="border border-slate-700 px-2">{item.team_name}</td>
+              <td className="border border-slate-700 px-2 text-right">
+                {item.interval}
+              </td>
+              <td className="border border-slate-700 px-2 text-right">
+                {item.gap_to_leader}
+              </td>
+              {/* <td>{item.date.toLocaleTimeString()}</td> */}
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 }

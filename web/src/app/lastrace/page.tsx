@@ -86,32 +86,50 @@ export default function LastRace() {
           </p>
 
           <h3>Race Results:</h3>
-          <ul>
-            {Results.map(
-              (result: {
-                Driver: {
-                  driverId: Key | null | undefined;
-                  givenName: string;
+          <table className="table-fixed border-separate border-spacing-1 border border-slate-500 border-spacing-2 p-5">
+            <thead>
+              <tr>
+                <th className="border border-slate-700 w-16 p-1">Position</th>
+                <th className="border border-slate-700 w-40 p-1">Driver</th>
+                <th className="border border-slate-700 w-40 p-1">
+                  Constructor
+                </th>
+                <th className="border border-slate-700 w-24 p-1">Time</th>
+              </tr>
+            </thead>
+            <tbody>
+              {Results.map(
+                (result: {
+                  Driver: {
+                    driverId: Key | null | undefined;
+                    givenName: string;
 
-                  familyName: string;
-                };
-                position: number | undefined;
-                Constructor: {
-                  name: string | undefined;
-                };
-                Time: { time: any };
-              }) => (
-                <li key={result.Driver.driverId}>
-                  <strong>
-                    {result.position}. {result.Driver.givenName}{" "}
-                    {result.Driver.familyName}
-                  </strong>{" "}
-                  ({result.Constructor.name}) - Time:{" "}
-                  {result.Time?.time || "N/A"}
-                </li>
-              )
-            )}
-          </ul>
+                    familyName: string;
+                  };
+                  position: number | undefined;
+                  Constructor: {
+                    name: string | undefined;
+                  };
+                  Time: { time: any };
+                }) => (
+                  <tr key={result.Driver.driverId}>
+                    <td className="border border-slate-700 px-2">
+                      {result.position}
+                    </td>
+                    <td className="border border-slate-700 px-2">
+                      {result.Driver.givenName} {result.Driver.familyName}
+                    </td>
+                    <td className="border border-slate-700 px-2">
+                      {result.Constructor.name}
+                    </td>
+                    <td className="border border-slate-700 px-2">
+                      {result.Time?.time || "+1 Lap"}
+                    </td>
+                  </tr>
+                )
+              )}
+            </tbody>
+          </table>
         </div>
       </div>
       <br></br>
