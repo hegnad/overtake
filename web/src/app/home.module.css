@@ -64,6 +64,9 @@
 /* Image styling for driver and circuit */
 .driverImage {
     margin-right: 1rem;
+    max-height: 240px;
+    height: auto;
+    width: 20vw;
 }
 
 .circuitImage {
@@ -74,7 +77,7 @@
 }
 
 .driverName {
-    font-size: 40px;
+    font-size: 2vw;
     font-weight: bold;
     text-align: left;
     margin-top: 1rem;
@@ -113,6 +116,9 @@
 
 .driverFlag,
 .raceFlag {
+    max-height: 100px;
+    height: auto;
+    width: 5.5vw;
     margin-left: 0.5rem;
     border-radius: 15px;
 }

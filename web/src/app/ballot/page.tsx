@@ -4,8 +4,9 @@ import { useState, useEffect, useContext } from "react";
 import SidebarLayout from "../ui/sidebar-layout";
 import styles from "./ballot.module.css";
 import { IdentityContext } from "../lib/context/identity";
-import { ErgastDriver, OpenF1Driver, CombinedDriver } from '../../../../server/Entities/apiDriver';
+import { CombinedDriver } from './apiDriver';
 import Image from "next/image";
+import defaultDriverImage from '../../../public/images/defaultdriverimg.png';
 
 export default function Top10GridPrediction() {
     const [selectedBox, setSelectedBox] = useState<number | null>(null); // Tracks selected box
@@ -19,6 +20,12 @@ export default function Top10GridPrediction() {
     const identity = useContext(IdentityContext);
 
     useEffect(() => {
+
+        // Helper function to remove accents from names
+        const removeAccents = (str: string) => {
+            return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+        };
+
         // Fetch drivers from the Ergast API
         const fetchDrivers = async () => {
             try {
@@ -45,13 +52,26 @@ export default function Top10GridPrediction() {
                 }));
 
                 // Combine Ergast and OpenF1 data by matching driver names
-                const combinedDrivers: CombinedDriver[] = ergastDrivers.map((ergastDriver: { firstName: any; lastName: any; name: any; }) => {
-                    const matchingDriver = openF1Drivers.find(
-                        (openF1Driver: { fullName: string; }) => openF1Driver.fullName.toLowerCase() === `${ergastDriver.firstName} ${ergastDriver.lastName}`.toLowerCase()
-                    );
+                const combinedDrivers: CombinedDriver[] = ergastDrivers.map((ergastDriver: { firstName: any; lastName: any; }) => {
+                    const ergastFullName = `${ergastDriver.firstName} ${ergastDriver.lastName}`;
+                    const ergastFullNameNoAccents = removeAccents(ergastFullName.toLowerCase());
+
+                    const matchingDriver = openF1Drivers.find((openF1Driver: { fullName: string; }) => {
+                        const openF1FullNameNoAccents = removeAccents(openF1Driver.fullName.toLowerCase());
+
+                        // Compare both regular and reversed name order
+                        const openF1FullNameReversed = openF1Driver.fullName.split(" ").reverse().join(" ").toLowerCase();
+                        const openF1FullNameReversedNoAccents = removeAccents(openF1FullNameReversed);
+
+                        return (
+                            openF1FullNameNoAccents === ergastFullNameNoAccents ||
+                            openF1FullNameReversedNoAccents === ergastFullNameNoAccents
+                        );
+                    });
+
                     return {
-                        name: ergastDriver.name, // This is the full name
-                        headshotUrl: matchingDriver?.headshotUrl || "", // Fallback to an empty string if no match
+                        name: ergastFullName, // Use Ergast full name
+                        headshotUrl: matchingDriver?.headshotUrl || defaultDriverImage, // Fallback to an empty string if no match
                     };
                 });
 
