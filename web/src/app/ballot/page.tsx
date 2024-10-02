@@ -140,23 +140,51 @@ export default function Top10GridPrediction() {
         setSelectedBox(null);
     };
 
+    // Get top three selected drivers
+    const topThreeDrivers = gridPredictions.slice(0, 3);
+
     if (loading) return <SidebarLayout><p>Loading drivers...</p></SidebarLayout>;
     if (error) return <SidebarLayout><p>Error: {error}</p></SidebarLayout>;
 
     return (
         <SidebarLayout>
             <div className={styles.container}>
+
+                {/* Display top three selected drivers' images */}
+                
+
                 {/* Left side: Top 10 positions */}
                 <div className={styles.ballot}>
                     <h1>Top 10 Grid Prediction</h1>
                     <br />
+
+                    <div className={styles.topThreeImages}>
+                        {topThreeDrivers.map((driver, index) => {
+                            const driverData = availableDrivers.find(d => d.name === driver);
+                            if (!driverData) return null; // Skip if driver data is not available
+
+                            return (
+                                <div key={index} className={`${styles.driverImageContainer} ${index === 1 ? styles.firstImage : index === 0 ? styles.secondImage : styles.thirdImage}`}>
+                                    <Image
+                                        src={driverData.headshotUrl}
+                                        alt={driverData.name}
+                                        width={100}
+                                        height={100}
+                                        className={styles.driverImage}
+                                        unoptimized
+                                    />
+                                </div>
+                            );
+                        })}
+                    </div>
+
                     {gridPredictions.map((driver, index) => (
                         <div
                             key={index}
                             className={`${styles.ballotBox} ${selectedBox === index ? styles.selected : ""} ${driver ? styles.filledBox : ""}`}
                             onClick={() => handleBoxClick(index)}
                         >
-                            {index + 1}. {driver || "Select Driver"}
+                            {index + 1}. {driver || "____________________________________________"}
                         </div>
                     ))}
                     <button onClick={submitText === "TRY AGAIN" ? handleTryAgain : handleSubmit} className={styles.submitButton}>
