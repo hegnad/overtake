@@ -50,4 +50,17 @@ public class BallotController : ControllerBase
         return new OkObjectResult(newBallotId);
     }
 
+    [HttpGet]
+    [Route("populate")]
+    [Produces("application/json")]
+    public async Task<ActionResult<BallotContent[]>> PopulateAync()
+    {
+        int userId = Convert.ToInt32(HttpContext.User.Claims.First(x => x.Type == "userId").Value);
+        int ballotId = await _database.GetBallotByUserIdAsync(userId);
+
+        BallotContent[] ballot = await _database.GetBallotContentAsync(ballotId);
+
+        return new OkObjectResult(ballot);
+    }
+
 }

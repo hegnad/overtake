@@ -1,20 +1,7 @@
 {
   "Version": 1,
   "WorkspaceRootPath": "C:\\Repos\\Overtake\\overtake\\",
-  "Documents": [
-    {
-      "AbsoluteMoniker": "D:0:0:{AED117CB-D641-430A-994B-65C5354CDD20}|server\\overtake-server.csproj|c:\\repos\\overtake\\overtake\\server\\controllers\\leaguecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{AED117CB-D641-430A-994B-65C5354CDD20}|server\\overtake-server.csproj|solutionrelative:server\\controllers\\leaguecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{AED117CB-D641-430A-994B-65C5354CDD20}|server\\overtake-server.csproj|c:\\repos\\overtake\\overtake\\server\\services\\dbinitservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{AED117CB-D641-430A-994B-65C5354CDD20}|server\\overtake-server.csproj|solutionrelative:server\\services\\dbinitservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{AED117CB-D641-430A-994B-65C5354CDD20}|server\\overtake-server.csproj|c:\\repos\\overtake\\overtake\\server\\services\\postgresdatabase.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{AED117CB-D641-430A-994B-65C5354CDD20}|server\\overtake-server.csproj|solutionrelative:server\\services\\postgresdatabase.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    }
-  ],
+  "Documents": [],
   "DocumentGroupContainers": [
     {
       "Orientation": 0,
@@ -22,50 +9,11 @@
       "DocumentGroups": [
         {
           "DockedWidth": 191,
-          "SelectedChildIndex": 3,
+          "SelectedChildIndex": -1,
           "Children": [
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "DbInitService.cs",
-              "DocumentMoniker": "C:\\Repos\\Overtake\\overtake\\server\\Services\\DbInitService.cs",
-              "RelativeDocumentMoniker": "server\\Services\\DbInitService.cs",
-              "ToolTip": "C:\\Repos\\Overtake\\overtake\\server\\Services\\DbInitService.cs",
-              "RelativeToolTip": "server\\Services\\DbInitService.cs",
-              "ViewState": "AQIAAAsAAAAAAAAAAAAQwAAAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-09-30T20:48:50.541Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "PostgresDatabase.cs",
-              "DocumentMoniker": "C:\\Repos\\Overtake\\overtake\\server\\Services\\PostgresDatabase.cs",
-              "RelativeDocumentMoniker": "server\\Services\\PostgresDatabase.cs",
-              "ToolTip": "C:\\Repos\\Overtake\\overtake\\server\\Services\\PostgresDatabase.cs",
-              "RelativeToolTip": "server\\Services\\PostgresDatabase.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-09-30T20:48:48.124Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "LeagueController.cs",
-              "DocumentMoniker": "C:\\Repos\\Overtake\\overtake\\server\\Controllers\\LeagueController.cs",
-              "RelativeDocumentMoniker": "server\\Controllers\\LeagueController.cs",
-              "ToolTip": "C:\\Repos\\Overtake\\overtake\\server\\Controllers\\LeagueController.cs",
-              "RelativeToolTip": "server\\Controllers\\LeagueController.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAABoAAAAOAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-09-30T20:48:41.768Z",
-              "EditorCaption": ""
             }
           ]
         }
