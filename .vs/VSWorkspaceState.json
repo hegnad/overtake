@@ -2,12 +2,15 @@
   "ExpandedNodes": [
     "",
     "\\server",
-    "\\web\\nginx",
-    "\\web\\public",
-    "\\web\\public\\images",
+    "\\server\\Models",
+    "\\server\\Models\\Requests",
+    "\\server\\Resources",
+    "\\web",
     "\\web\\src",
-    "\\web\\src\\app"
+    "\\web\\src\\app",
+    "\\web\\src\\app\\ballot",
+    "\\web\\src\\app\\raceleague"
   ],
-  "SelectedNode": "\\docker-compose.yml",
+  "SelectedNode": "\\server\\Entities\\DriverPrediction.cs",
   "PreviewInSolutionExplorer": false
 }

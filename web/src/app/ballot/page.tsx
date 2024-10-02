@@ -4,11 +4,13 @@ import { useState, useEffect, useContext } from "react";
 import SidebarLayout from "../ui/sidebar-layout";
 import styles from "./ballot.module.css";
 import { IdentityContext } from "../lib/context/identity";
+import { ErgastDriver, OpenF1Driver, CombinedDriver } from '../../../../server/Entities/apiDriver';
+import Image from "next/image";
 
 export default function Top10GridPrediction() {
     const [selectedBox, setSelectedBox] = useState<number | null>(null); // Tracks selected box
     const [gridPredictions, setGridPredictions] = useState<(string | null)[]>(Array(10).fill(null)); // Stores the top 10 driver predictions
-    const [availableDrivers, setAvailableDrivers] = useState<string[]>([]); // List of drivers
+    const [availableDrivers, setAvailableDrivers] = useState<CombinedDriver[]>([]); // List of drivers
     const [actualResults, setActualResults] = useState<string[]>([]); // List of actual top 10 results
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
@@ -24,12 +26,36 @@ export default function Top10GridPrediction() {
                 if (!response.ok) {
                     throw new Error("Failed to fetch drivers");
                 }
-                const data = await response.json();
-                const drivers = data.MRData.DriverTable.Drivers.map(
-                    (driver: { givenName: string; familyName: string }) =>
-                        `${driver.givenName} ${driver.familyName}`
+                const ergastData = await response.json();
+                const ergastDrivers = ergastData.MRData.DriverTable.Drivers.map((driver: { givenName: string; familyName: string }) => ({
+                        name: `${driver.givenName} ${driver.familyName}`, // Create the full name for the CombinedDriver
+                        firstName: driver.givenName,
+                        lastName: driver.familyName,
+                    })
                 );
-                setAvailableDrivers(drivers);
+
+                const openF1Response = await fetch("https://api.openf1.org/v1/drivers?session_key=latest");
+                if (!openF1Response.ok) {
+                    throw new Error("Failed to fetch driver image from openF1.")
+                }
+                const openF1data = await openF1Response.json();
+                const openF1Drivers = openF1data.map((driver: { full_name: string; headshot_url: string; }) => ({
+                    fullName: driver.full_name,
+                    headshotUrl: driver.headshot_url
+                }));
+
+                // Combine Ergast and OpenF1 data by matching driver names
+                const combinedDrivers: CombinedDriver[] = ergastDrivers.map((ergastDriver: { firstName: any; lastName: any; name: any; }) => {
+                    const matchingDriver = openF1Drivers.find(
+                        (openF1Driver: { fullName: string; }) => openF1Driver.fullName.toLowerCase() === `${ergastDriver.firstName} ${ergastDriver.lastName}`.toLowerCase()
+                    );
+                    return {
+                        name: ergastDriver.name, // This is the full name
+                        headshotUrl: matchingDriver?.headshotUrl || "", // Fallback to an empty string if no match
+                    };
+                });
+
+                setAvailableDrivers(combinedDrivers);
                 setLoading(false);
             } catch (err: any) {
                 setError(err.message);
@@ -64,14 +90,6 @@ export default function Top10GridPrediction() {
             setSubmitText("INVALID BALLOT, TRY AGAIN");
             return;
         }
-
-        // Example values (replace these with actual values from your application context)
-        const predictionList = ["Bob", "Steve"];
-
-        // Generate random LeagueId and RaceId (replace these with actual logic later)
-        const randomLeagueId = Math.floor(Math.random() * 100); // Placeholder logic
-        const randomRaceId = Math.floor(Math.random() * 100);   // Placeholder logic
-
         
         const requestBody = {
             DriverPredictions: gridPredictions, // Ensure this is an array of strings
@@ -150,17 +168,29 @@ export default function Top10GridPrediction() {
                 <div className={styles.driverList}>
                     <h2>{actualResults.length > 0 ? "Actual Results" : "Available Drivers"}</h2>
                     <br />
-                    <div className={styles.driverGrid}>
-                        {actualResults.length === 0
-                            ? availableDrivers.map((driver, index) => (
+                    <div className={styles.driverListContainer}>
+                        {actualResults.length === 0 ?
+                        <ul className={styles.driverGrid} style={{ listStyleType: 'none', padding: 0 }}>
+                                {availableDrivers.map((driver, index) => (
                                 <li
                                     key={index}
-                                    className={isDriverSelected(driver) ? styles.crossedOut : ""}
-                                    onClick={() => handleDriverClick(driver)}
+                                    className={isDriverSelected(driver.name) ? styles.crossedOut : ""}
+                                    onClick={() => handleDriverClick(driver.name)}
                                 >
-                                    {driver}
+                                    <div className={styles.driverNameAndImage}>
+                                        <Image
+                                            src={driver.headshotUrl}
+                                            alt={driver.name}
+                                            width={100}
+                                            height={100}
+                                            className={styles.driverImage}
+                                            unoptimized
+                                        />
+                                        {driver.name}
+                                    </div>
                                 </li>
-                            ))
+                                ))}
+                            </ul>
                             : actualResults.map((driver, index) => (
                                 <div
                                     key={index}
