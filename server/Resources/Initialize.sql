@@ -92,7 +92,7 @@ CREATE TABLE driver (
 CREATE TABLE ballotContent(
 	ballot_id INT REFERENCES ballot(ballot_id) ON DELETE CASCADE,
 	position INT,
-	driver_id INT REFERENCES driver(driver_id) ON DELETE SET NULL,
+	driver_name VARCHAR(50) NULL,
 	PRIMARY KEY (ballot_id, position)
 );
 
@@ -215,13 +215,13 @@ VALUES
   (14, 'Fernando', 'Alonso', 42, 'Spain', 1.71, 5);
 
 -- Insert test data for ballotContent table
-INSERT INTO ballotContent (ballot_id, position, driver_id)
+INSERT INTO ballotContent (ballot_id, position, driver_name)
 VALUES 
-  (1, 1, 1),
-  (2, 2, 2),
-  (3, 3, 3),
-  (4, 4, 4),
-  (5, 5, 5);
+  (1, 1, 'Bob'),
+  (2, 2, 'Bob'),
+  (3, 3, 'Bob'),
+  (4, 4, 'Bob'),
+  (5, 5, 'Bob');
 
 -- Insert test data for raceResult table
 INSERT INTO raceResult (race_id, position, driver_id)

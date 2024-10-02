@@ -290,4 +290,47 @@ public class PostgresDatabase : IDatabase
             Status = reader.GetInt32(4),
         };
     }
+
+    public async Task<int> InsertBallotAsync(int userId, int leagueId, int raceId, List<DriverPrediction> driverPredictions)
+    {
+
+        // Step 1: Insert into ballot table
+        using var cmd = _dataSource.CreateCommand(
+            @"INSERT INTO ballot (league_id, race_id, user_id, create_time)
+                VALUES (@league_id, @race_id, @user_id, NOW())
+                RETURNING ballot_id"
+        );
+
+        cmd.Parameters.AddWithValue("league_id", leagueId);
+        cmd.Parameters.AddWithValue("race_id", raceId);
+        cmd.Parameters.AddWithValue("user_id", userId);
+
+        // Execute command and read the result
+        int ballotId;
+        await using (var reader = await cmd.ExecuteReaderAsync()) // Use ExecuteReaderAsync
+        {
+            await reader.ReadAsync(); // Read from the reader
+            ballotId = reader.GetInt32(0); // Get the returned ballot ID
+        }
+
+        // Step 2: Insert into ballotContent table
+        for (int i = 0; i < driverPredictions.Count; i++)
+        {
+            using var cmdContent = _dataSource.CreateCommand(
+            @"INSERT INTO ballotContent (ballot_id, position, driver_name)
+                VALUES (@ballot_id, @position, @driver_name)"
+
+            );
+
+            cmdContent.Parameters.AddWithValue("ballot_id", ballotId);
+            cmdContent.Parameters.AddWithValue("position", driverPredictions[i].Position);
+            cmdContent.Parameters.AddWithValue("driver_name", driverPredictions[i].DriverName);
+
+            await using var contentReader = await cmdContent.ExecuteReaderAsync();
+
+        }
+
+        return ballotId; // Return the newly generated ballot ID
+    }
+
 }
