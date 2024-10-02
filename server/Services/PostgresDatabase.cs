@@ -347,9 +347,13 @@ public class PostgresDatabase : IDatabase
         cmd.Parameters.AddWithValue("user_id", accountId);
 
         await using var reader = await cmd.ExecuteReaderAsync();
-        int ballotId = reader.GetInt32(0);
 
-        return ballotId;
+        if (await reader.ReadAsync())
+        {
+            return reader.GetInt32(0);
+        }
+
+        throw new Exception("No ballot found for this user");
     }
 
     public async Task<BallotContent[]> GetBallotContentAsync(int ballotId)
@@ -357,19 +361,19 @@ public class PostgresDatabase : IDatabase
         var ballotContents = new List<BallotContent>();
 
         await using var cmd = _dataSource.CreateCommand(
-            @"SELECT position, driver_id FROM ballotContent
+            @"SELECT position, driver_name FROM ballotContent
                 WHERE ballot_id=@ballot_id"
         );
 
         cmd.Parameters.AddWithValue("ballot_id", ballotId);
 
         await using var reader = await cmd.ExecuteReaderAsync();
-        while (await reader.ReadAsync() ) 
+        while (await reader.ReadAsync()) 
         {
             var ballotContent = new BallotContent
             {
                 Position = reader.GetInt32(0),
-                DriverId = reader.GetInt32(1)
+                DriverId = reader.GetString(1)
             };
 
             ballotContents.Add( ballotContent );

@@ -13,7 +13,7 @@ export default function UserRaceLeagues() {
             method: "GET",
             headers: {
               Authorization: `Bearer ${identity.sessionToken}`,
-            "Content-Type": "application/json",
+              "Content-Type": "application/json",
             },
           });
     

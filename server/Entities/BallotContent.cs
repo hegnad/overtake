@@ -3,5 +3,5 @@
 public class BallotContent
 {
     public required int Position { get; set; }
-    public required int DriverId { get; set; }
+    public required string DriverId { get; set; }
 }

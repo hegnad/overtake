@@ -1,28 +1,7 @@
 {
   "Version": 1,
   "WorkspaceRootPath": "C:\\Repos\\Overtake\\overtake\\",
-  "Documents": [
-    {
-      "AbsoluteMoniker": "D:0:0:{AED117CB-D641-430A-994B-65C5354CDD20}|server\\overtake-server.csproj|c:\\repos\\overtake\\overtake\\server\\controllers\\leaguecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{AED117CB-D641-430A-994B-65C5354CDD20}|server\\overtake-server.csproj|solutionrelative:server\\controllers\\leaguecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{AED117CB-D641-430A-994B-65C5354CDD20}|server\\overtake-server.csproj|c:\\repos\\overtake\\overtake\\server\\services\\postgresdatabase.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{AED117CB-D641-430A-994B-65C5354CDD20}|server\\overtake-server.csproj|solutionrelative:server\\services\\postgresdatabase.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{AED117CB-D641-430A-994B-65C5354CDD20}|server\\overtake-server.csproj|c:\\repos\\overtake\\overtake\\server\\entities\\ballotcontent.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{AED117CB-D641-430A-994B-65C5354CDD20}|server\\overtake-server.csproj|solutionrelative:server\\entities\\ballotcontent.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{AED117CB-D641-430A-994B-65C5354CDD20}|server\\overtake-server.csproj|c:\\repos\\overtake\\overtake\\server\\interfaces\\idatabase.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{AED117CB-D641-430A-994B-65C5354CDD20}|server\\overtake-server.csproj|solutionrelative:server\\interfaces\\idatabase.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{AED117CB-D641-430A-994B-65C5354CDD20}|server\\overtake-server.csproj|c:\\repos\\overtake\\overtake\\server\\resources\\initialize.sql||{3B902123-F8A7-4915-9F01-361F908088D0}",
-      "RelativeMoniker": "D:0:0:{AED117CB-D641-430A-994B-65C5354CDD20}|server\\overtake-server.csproj|solutionrelative:server\\resources\\initialize.sql||{3B902123-F8A7-4915-9F01-361F908088D0}"
-    }
-  ],
+  "Documents": [],
   "DocumentGroupContainers": [
     {
       "Orientation": 0,
@@ -30,76 +9,11 @@
       "DocumentGroups": [
         {
           "DockedWidth": 191,
-          "SelectedChildIndex": 1,
+          "SelectedChildIndex": -1,
           "Children": [
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "LeagueController.cs",
-              "DocumentMoniker": "C:\\Repos\\Overtake\\overtake\\server\\Controllers\\LeagueController.cs",
-              "RelativeDocumentMoniker": "server\\Controllers\\LeagueController.cs",
-              "ToolTip": "C:\\Repos\\Overtake\\overtake\\server\\Controllers\\LeagueController.cs",
-              "RelativeToolTip": "server\\Controllers\\LeagueController.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAoAAAAVAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-10-02T00:23:22.949Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "IDatabase.cs",
-              "DocumentMoniker": "C:\\Repos\\Overtake\\overtake\\server\\Interfaces\\IDatabase.cs",
-              "RelativeDocumentMoniker": "server\\Interfaces\\IDatabase.cs",
-              "ToolTip": "C:\\Repos\\Overtake\\overtake\\server\\Interfaces\\IDatabase.cs",
-              "RelativeToolTip": "server\\Interfaces\\IDatabase.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAB4AAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-10-01T23:52:56.793Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "PostgresDatabase.cs",
-              "DocumentMoniker": "C:\\Repos\\Overtake\\overtake\\server\\Services\\PostgresDatabase.cs",
-              "RelativeDocumentMoniker": "server\\Services\\PostgresDatabase.cs",
-              "ToolTip": "C:\\Repos\\Overtake\\overtake\\server\\Services\\PostgresDatabase.cs",
-              "RelativeToolTip": "server\\Services\\PostgresDatabase.cs",
-              "ViewState": "AQIAABwBAAAAAAAAAADwvykBAAAnAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-10-01T23:52:46.329Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "BallotContent.cs",
-              "DocumentMoniker": "C:\\Repos\\Overtake\\overtake\\server\\Entities\\BallotContent.cs",
-              "RelativeDocumentMoniker": "server\\Entities\\BallotContent.cs",
-              "ToolTip": "C:\\Repos\\Overtake\\overtake\\server\\Entities\\BallotContent.cs",
-              "RelativeToolTip": "server\\Entities\\BallotContent.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAcAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-10-02T00:09:57.025Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "Initialize.sql",
-              "DocumentMoniker": "C:\\Repos\\Overtake\\overtake\\server\\Resources\\Initialize.sql",
-              "RelativeDocumentMoniker": "server\\Resources\\Initialize.sql",
-              "ToolTip": "C:\\Repos\\Overtake\\overtake\\server\\Resources\\Initialize.sql",
-              "RelativeToolTip": "server\\Resources\\Initialize.sql",
-              "ViewState": "AQIAACwAAAAAAAAAAAAAAEAAAAAVAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000826|",
-              "WhenOpened": "2024-10-01T23:54:31.404Z",
-              "EditorCaption": ""
             }
           ]
         }
