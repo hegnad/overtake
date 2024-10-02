@@ -1,3 +1,4 @@
+using System.Security.Cryptography;
 using System.Text;
 using Microsoft.AspNetCore.Mvc;
 using Overtake.Interfaces;
@@ -21,8 +22,9 @@ public class BallotController : ControllerBase
     [HttpPost]
     [Route("create")]
     [Produces("application/json")]
-    public async Task<ActionResult> CreateAsync([FromBody] CreateBallotRequest request)
+    public async Task<ActionResult<int>> CreateAsync([FromBody] CreateBallotRequest request)
     {
+        
         // Validate request
         if (request.DriverPredictions == null || request.DriverPredictions.Count != 10)
         {
@@ -32,9 +34,20 @@ public class BallotController : ControllerBase
         // Get current user ID
         int userId = Convert.ToInt32(HttpContext.User.Claims.First(x => x.Type == "userId").Value);
 
-        // Call the InsertBallotAsync method
-        int newBallotId = await _database.InsertBallotAsync(userId, request.LeagueId, request.RaceId, request.DriverPredictions);
+        int leagueId = 1;
+        int raceId = 1;
 
-        return new OkObjectResult(new { BallotId = newBallotId });
+        // Create a list of DriverPrediction objects
+        var driverPredictions = request.DriverPredictions.Select((name, index) => new DriverPrediction
+        {
+            DriverName = name,
+            Position = index + 1 // Assuming the positions are 1-based
+        }).ToList();
+
+        // Call the InsertBallotAsync method
+        int newBallotId = await _database.InsertBallotAsync(userId, leagueId, raceId, driverPredictions);
+
+        return new OkObjectResult(newBallotId);
     }
+
 }

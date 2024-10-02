@@ -65,16 +65,18 @@ export default function Top10GridPrediction() {
             return;
         }
 
+        // Example values (replace these with actual values from your application context)
+        const predictionList = ["Bob", "Steve"];
+
         // Generate random LeagueId and RaceId (replace these with actual logic later)
         const randomLeagueId = Math.floor(Math.random() * 100); // Placeholder logic
         const randomRaceId = Math.floor(Math.random() * 100);   // Placeholder logic
 
-        // Prepare the request body
+        
         const requestBody = {
-            RaceId: randomRaceId,
-            LeagueId: randomLeagueId,
             DriverPredictions: gridPredictions, // Ensure this is an array of strings
         };
+        
 
         // Call the API to submit the ballot
         try {
