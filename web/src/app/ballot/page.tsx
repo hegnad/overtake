@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import SidebarLayout from "../ui/sidebar-layout";
 import styles from "./ballot.module.css";
+import { IdentityContext } from "../lib/context/identity";
 
 export default function Top10GridPrediction() {
     const [selectedBox, setSelectedBox] = useState<number | null>(null); // Tracks selected box
@@ -12,6 +13,8 @@ export default function Top10GridPrediction() {
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
     const [submitText, setSubmitText] = useState<string>("SUBMIT BALLOT");
+
+    const identity = useContext(IdentityContext);
 
     useEffect(() => {
         // Fetch drivers from the Ergast API
@@ -56,32 +59,52 @@ export default function Top10GridPrediction() {
         return gridPredictions.includes(driver);
     };
 
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
         if (gridPredictions.includes(null)) {
             setSubmitText("INVALID BALLOT, TRY AGAIN");
-        } else {
-            // Fetch actual race results and compare with the predictions
-            const fetchResults = async () => {
-                try {
-                    const response = await fetch("https://ergast.com/api/f1/current/last/results.json");
-                    if (!response.ok) {
-                        throw new Error("Failed to fetch race results");
-                    }
-                    const data = await response.json();
-                    const results = data.MRData.RaceTable.Races[0].Results.slice(0, 10).map(
-                        (result: { Driver: { givenName: string; familyName: string } }) =>
-                            `${result.Driver.givenName} ${result.Driver.familyName}`
-                    );
-                    setActualResults(results);
-                } catch (err: any) {
-                    setError(err.message);
-                }
-            };
+            return;
+        }
 
-            fetchResults();
-            setSubmitText("TRY AGAIN");
+        // Example values (replace these with actual values from your application context)
+        const predictionList = ["Bob", "Steve"];
+
+        // Generate random LeagueId and RaceId (replace these with actual logic later)
+        const randomLeagueId = Math.floor(Math.random() * 100); // Placeholder logic
+        const randomRaceId = Math.floor(Math.random() * 100);   // Placeholder logic
+
+        
+        const requestBody = {
+            DriverPredictions: gridPredictions, // Ensure this is an array of strings
+        };
+        
+
+        // Call the API to submit the ballot
+        try {
+            const response = await fetch("http://localhost:8080/api/ballot/create", {
+                method: "POST",
+                headers: {
+                    Authorization: `Bearer ${identity.sessionToken}`, // Ensure identity context is available
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(requestBody),
+            });
+
+            if (!response.ok) {
+                console.error(`Failed to submit ballot: ${response.status}`);
+                setSubmitText("SUBMISSION FAILED, TRY AGAIN");
+                return;
+            }
+
+            const result = await response.json();
+            console.log("Ballot submitted successfully:", result);
+            handleTryAgain(); // Reset for a new ballot or navigate as needed
+        } catch (err) {
+            console.error("Error submitting ballot:", err);
+            setSubmitText("ERROR, TRY AGAIN");
         }
     };
+
+
 
     const getBoxColor = (predictedDriver: string | null, actualPosition: number) => {
         const predictedPosition = gridPredictions.indexOf(predictedDriver);
