@@ -290,4 +290,48 @@ public class PostgresDatabase : IDatabase
             Status = reader.GetInt32(4),
         };
     }
+
+    public async Task<int> GetBallotByUserIdAsync(int accountId)
+    {
+        await using var cmd = _dataSource.CreateCommand(
+            @"SELECT ballot_id FROM ballot
+                WHERE user_id=@user_id 
+                AND settle_time IS NULL
+                ORDER BY create_time DESC
+                LIMIT 1"
+        );
+
+        cmd.Parameters.AddWithValue("user_id", accountId);
+
+        await using var reader = await cmd.ExecuteReaderAsync();
+        int ballotId = reader.GetInt32(0);
+
+        return ballotId;
+    }
+
+    public async Task<BallotContent[]> GetBallotContentAsync(int ballotId)
+    {
+        var ballotContents = new List<BallotContent>();
+
+        await using var cmd = _dataSource.CreateCommand(
+            @"SELECT position, driver_id FROM ballotContent
+                WHERE ballot_id=@ballot_id"
+        );
+
+        cmd.Parameters.AddWithValue("ballot_id", ballotId);
+
+        await using var reader = await cmd.ExecuteReaderAsync();
+        while (await reader.ReadAsync() ) 
+        {
+            var ballotContent = new BallotContent
+            {
+                Position = reader.GetInt32(0),
+                DriverId = reader.GetInt32(1)
+            };
+
+            ballotContents.Add( ballotContent );
+        }
+
+        return ballotContents.ToArray();
+    }
 }

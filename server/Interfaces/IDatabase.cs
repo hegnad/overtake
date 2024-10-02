@@ -26,4 +26,8 @@ public interface IDatabase
     Task<int> InsertLeagueInviteAsync(int leagueId, int inviteeId, DateTime requestTime, int status);
 
     Task<LeagueInvite> GetLeagueInviteByUserIdAsync(int inviteId);
+
+    Task<int> GetBallotByUserIdAsync(int accountId);
+
+    Task<BallotContent[]> GetBallotContentAsync(int ballotId);
 }
