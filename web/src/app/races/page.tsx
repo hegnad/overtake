@@ -12,7 +12,7 @@ export default function Races() {
   const [raceRound, setRaceRound] = useState<string>(""); // Change to string to directly store the round
   const [rounds, setRounds] = useState<string[]>([]);
 
-  const seasons = [2020, 2021, 2022, 2023, 2024];
+  const seasons = Array.from({ length: 2024 - 1950 + 1 }, (_, i) => 2024 - i);
 
   useEffect(() => {
     const fetchRounds = async () => {
@@ -30,6 +30,7 @@ export default function Races() {
   useEffect(() => {
     const fetchRaceResults = async () => {
       if (raceSeason && raceRound) {
+        setRaceResults([]); // Reset results when changing the round
         const data = await getRaceResults(raceSeason, raceRound);
         if (data) {
           const raceResults = data?.raceResults || [];
@@ -46,8 +47,7 @@ export default function Races() {
   return (
     <SidebarLayout>
       <div className={styles.driversResults}>
-        <h1>Races</h1>
-        <p>Information about races.</p>
+        <h1 className={styles.title}>Races: Historical Results</h1>
         <div>
           <h3>Select the season of the race you wish to check: </h3>
           <select
@@ -92,27 +92,48 @@ export default function Races() {
           )}
         </div>
         <div>
-          {raceResults && raceResults.length > 0 && (
+          {raceResults && raceResults.length > 0 ? (
             <h2>
               {raceName} Season {raceSeason} Round #{raceRound}
             </h2>
+          ) : (
+            <p></p>
           )}
-          <ul>
-            {raceSeason == "" || raceRound == "" ? (
-              <p>Select a season and round to see the results.</p>
-            ) : raceResults && raceResults.length === 0 ? (
-              <p>Loading Results...</p>
-            ) : (
-              raceResults?.map((result) => (
-                <li key={result.position}>
-                  <p>
-                    <span>{result.position}</span> {result.Driver.familyName}{" "}
-                    {result.Constructor.name} {result.points}
-                  </p>
-                </li>
-              ))
-            )}
-          </ul>
+
+          {raceSeason == "" || raceRound == "" ? (
+            <p>Select a season and round to see the results.</p>
+          ) : raceResults && raceResults.length === 0 ? (
+            <p>Loading Results...</p>
+          ) : (
+            <table className="table-fixed border-separate border-spacing-1 border border-slate-500 border-spacing-2 p-5">
+              <thead>
+                <tr className="border border-slate-600">
+                  <th className="border border-slate-700 w-16">Position</th>
+                  <th className="border border-slate-700 w-24">Driver</th>
+                  <th className="border border-slate-700 w-36">Constructor</th>
+                  <th className="border border-slate-700 w-24">Points</th>
+                </tr>
+              </thead>
+              <tbody>
+                {raceResults?.map((result) => (
+                  <tr key={result.position}>
+                    <td className="border border-slate-700 px-2">
+                      {result.position}
+                    </td>
+                    <td className="border border-slate-700 px-2">
+                      {result.Driver.familyName}
+                    </td>
+                    <td className="border border-slate-700 px-2">
+                      {result.Constructor.name}
+                    </td>
+                    <td className="border border-slate-700 text-right px-2">
+                      {result.points}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
         </div>
       </div>
     </SidebarLayout>
