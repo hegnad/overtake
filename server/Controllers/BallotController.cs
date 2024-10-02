@@ -58,9 +58,18 @@ public class BallotController : ControllerBase
         int userId = Convert.ToInt32(HttpContext.User.Claims.First(x => x.Type == "userId").Value);
         int ballotId = await _database.GetBallotByUserIdAsync(userId);
 
+        if (ballotId == 0)
+        {
+            return new BadRequestResult();
+        }
+
         BallotContent[] ballot = await _database.GetBallotContentAsync(ballotId);
+
+        if (ballot == null || ballot.Length == 0)
+        {
+            return new BadRequestResult();
+        }
 
         return new OkObjectResult(ballot);
     }
-
 }
