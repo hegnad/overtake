@@ -2,15 +2,15 @@
   "ExpandedNodes": [
     "",
     "\\server",
-    "\\server\\Models",
-    "\\server\\Models\\Requests",
-    "\\server\\Resources",
+    "\\server\\Entities",
+    "\\server\\Services",
     "\\web",
+    "\\web\\public",
+    "\\web\\public\\images",
     "\\web\\src",
     "\\web\\src\\app",
-    "\\web\\src\\app\\ballot",
-    "\\web\\src\\app\\raceleague"
+    "\\web\\src\\app\\ui"
   ],
-  "SelectedNode": "\\server\\Entities\\DriverPrediction.cs",
+  "SelectedNode": "\\web\\public\\images",
   "PreviewInSolutionExplorer": false
 }

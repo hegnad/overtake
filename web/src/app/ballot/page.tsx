@@ -86,6 +86,10 @@ export default function Top10GridPrediction() {
         fetchDrivers();
     }, []);
 
+    useEffect(() => {
+        console.log("actualResults updated:", actualResults);
+    }, [actualResults]);
+
     const handleBoxClick = (index: number) => {
         setSelectedBox(index); // Highlight the clicked box
     };
@@ -105,23 +109,43 @@ export default function Top10GridPrediction() {
         return gridPredictions.includes(driver);
     };
 
+    // Fetch race results (this function will be called after ballot submission)
+    const fetchRaceResults = async () => {
+        try {
+            const raceResultsResponse = await fetch("https://ergast.com/api/f1/current/last/results.json");
+            if (!raceResultsResponse.ok) {
+                throw new Error("Failed to fetch race results");
+            }
+            const raceResultsData = await raceResultsResponse.json();
+            const raceResults = raceResultsData.MRData.RaceTable.Races[0].Results.slice(0, 10).map(
+                (result: { Driver: { givenName: string; familyName: string } }) => (
+                    `${result.Driver.givenName} ${result.Driver.familyName}`
+                )
+            );
+
+            setActualResults(raceResults);
+            console.log("Race results fetched successfully: ", raceResults);
+        } catch (fetchError) {
+            console.error("Error fetching race results:", fetchError);
+            setActualResults([]); // Fallback to an empty array in case of error
+        }
+    };
+
     const handleSubmit = async () => {
         if (gridPredictions.includes(null)) {
             setSubmitText("INVALID BALLOT, TRY AGAIN");
             return;
         }
-        
-        const requestBody = {
-            DriverPredictions: gridPredictions, // Ensure this is an array of strings
-        };
-        
 
-        // Call the API to submit the ballot
+        const requestBody = {
+            DriverPredictions: gridPredictions,
+        };
+
         try {
             const response = await fetch("http://localhost:8080/api/ballot/create", {
                 method: "POST",
                 headers: {
-                    Authorization: `Bearer ${identity.sessionToken}`, // Ensure identity context is available
+                    Authorization: `Bearer ${identity.sessionToken}`,
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify(requestBody),
@@ -133,16 +157,16 @@ export default function Top10GridPrediction() {
                 return;
             }
 
-            const result = await response.json();
-            console.log("Ballot submitted successfully:", result);
-            handleTryAgain(); // Reset for a new ballot or navigate as needed
+            console.log("Ballot submitted successfully.");
+            setSubmitText("TRY AGAIN");
+
+            // Fetch race results after successful ballot submission
+            await fetchRaceResults();
         } catch (err) {
             console.error("Error submitting ballot:", err);
             setSubmitText("ERROR, TRY AGAIN");
         }
     };
-
-
 
     const getBoxColor = (predictedDriver: string | null, actualPosition: number) => {
         const predictedPosition = gridPredictions.indexOf(predictedDriver);
@@ -170,55 +194,61 @@ export default function Top10GridPrediction() {
         <SidebarLayout>
             <div className={styles.container}>
 
-                {/* Display top three selected drivers' images */}
-                
+                {/* Left side: Ballot */}
 
-                {/* Left side: Top 10 positions */}
                 <div className={styles.ballot}>
-                    <h1>Top 10 Grid Prediction</h1>
-                    <br />
 
+                    {/* Ballot Podium */}
                     <div className={styles.topThreeImages}>
                         {topThreeDrivers.map((driver, index) => {
+
                             const driverData = availableDrivers.find(d => d.name === driver);
+
                             if (!driverData) return null; // Skip if driver data is not available
 
                             return (
-                                <div key={index} className={`${styles.driverImageContainer} ${index === 1 ? styles.firstImage : index === 0 ? styles.secondImage : styles.thirdImage}`}>
+                                <div
+                                    key={index}
+                                    className={`${styles.driverImageContainer} ${index === 0 ? styles.firstImage : index === 1 ? styles.secondImage : styles.thirdImage}`}
+                                >
                                     <Image
                                         src={driverData.headshotUrl}
                                         alt={driverData.name}
                                         width={100}
                                         height={100}
-                                        className={styles.driverImage}
+                                        className={styles.podiumImage}
                                         unoptimized
                                     />
                                 </div>
                             );
                         })}
                     </div>
+                    <br />
 
+                    {/* Ballot List */}
                     {gridPredictions.map((driver, index) => (
                         <div
                             key={index}
                             className={`${styles.ballotBox} ${selectedBox === index ? styles.selected : ""} ${driver ? styles.filledBox : ""}`}
                             onClick={() => handleBoxClick(index)}
                         >
-                            {index + 1}. {driver || "____________________________________________"}
+                            {index + 1}. {driver || "_________________________________"}
                         </div>
                     ))}
+
                     <button onClick={submitText === "TRY AGAIN" ? handleTryAgain : handleSubmit} className={styles.submitButton}>
                         {submitText}
                     </button>
+
                 </div>
 
                 {/* Right side: Actual or predicted results */}
+
                 <div className={styles.driverList}>
-                    <h2>{actualResults.length > 0 ? "Actual Results" : "Available Drivers"}</h2>
-                    <br />
+
                     <div className={styles.driverListContainer}>
-                        {actualResults.length === 0 ?
-                        <ul className={styles.driverGrid} style={{ listStyleType: 'none', padding: 0 }}>
+                        {actualResults.length === 0 ? (
+                            <ul className={styles.driverGrid} style={{ listStyleType: 'none', padding: 0 }}>
                                 {availableDrivers.map((driver, index) => (
                                 <li
                                     key={index}
@@ -239,14 +269,49 @@ export default function Top10GridPrediction() {
                                 </li>
                                 ))}
                             </ul>
-                            : actualResults.map((driver, index) => (
-                                <div
-                                    key={index}
-                                    className={`${styles.actualResultsBox} ${getBoxColor(driver, index)}`}
-                                >
-                                    {index + 1}. {driver}
-                                </div>
-                            ))}
+                        ) : (
+                            actualResults.map((driver, index) => {
+
+                                const actualPos = index;
+                                const predictedPos = gridPredictions.indexOf(driver);
+
+                                const posDifference = predictedPos - actualPos;
+
+                                let positionChangeText = "";
+
+                                if (predictedPos === -1) {
+                                    positionChangeText = ""; // Driver not in user's predictions
+                                } else {
+                                    const posDifference = predictedPos - actualPos;
+                                    if (posDifference > 0) {
+                                        positionChangeText = ` (\u2191 ${posDifference})`; // Moved up
+                                    } else if (posDifference < 0) {
+                                        positionChangeText = ` (\u2193 ${Math.abs(posDifference)})`; // Moved down
+                                    }
+                                }
+
+                                const boxColor = getBoxColor(driver, index);
+
+                                const driverData = availableDrivers.find(d => d.name === driver);
+                                const driverImageUrl = driverData ? driverData.headshotUrl : "";
+
+                                return (
+                                    <div key={index} className={`${styles.actualResultsBox} ${boxColor}`}>
+                                        <div className={styles.driverNameAndImage}>
+                                            <Image
+                                                src={driverImageUrl}
+                                                alt={driver}
+                                                width={30}
+                                                height={30}
+                                                className={styles.driverImage}
+                                                unoptimized
+                                            />
+                                            {index + 1}. {driver} {positionChangeText}
+                                        </div>
+                                    </div>
+                                );
+                            })
+                        )}
                     </div>
                 </div>
             </div>

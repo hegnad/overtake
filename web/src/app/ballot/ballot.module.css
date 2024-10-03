@@ -78,20 +78,37 @@
 .topThreeImages {
     display: flex;
     justify-content: center;
-    margin-bottom: 1rem;
+    align-items: center;
 }
 
 .driverImageContainer {
-    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
-.middle {
-    flex: 2;
+.podiumImage {
+    width: 100px;
+    height: 100px;
+    padding: 10px;
 }
 
-.left,
-.right {
-    flex: 1;
+.firstImage {
+    order: 2;
+    margin: 5px;
+    border-bottom: 5px solid #FF8A00;
+}
+
+.secondImage {
+    order: 1;
+    margin-right: 5px;
+    border-bottom: 5px solid #CCCCCC;
+}
+
+.thirdImage {
+    order: 3;
+    margin-left: 5px;
+    border-bottom: 5px solid #944700;
 }
 
 .driverListContainer {
@@ -132,9 +149,10 @@
     }
 
 .actualResultsBox {
-    padding: 10px;
-    margin-bottom: 5px;
-    border: 1px solid #ccc;
+    padding: 5px;
+    background: #42425E;
+    margin: 5px;
+    border-radius: 15px;
     text-align: center;
 }
 
@@ -143,9 +161,9 @@
 }
 
 .nearMiss1 {
-    background-color: #ffeb3b; /* Yellow for 1 position off */
+    background-color: #ff9800; /* Yellow for 1 position off */
 }
 
 .nearMiss2 {
-    background-color: #ff9800; /* Orange for 2 positions off */
+    background-color: #7A1C00; /* Orange for 2 positions off */
 }
