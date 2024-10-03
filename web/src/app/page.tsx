@@ -42,8 +42,6 @@ export default function Home() {
                   <img
                     src="/images/hamilton.png"
                     style={{
-                      width: "240px",
-                      height: "240px",
                       display: "block",
                     }}
                     alt="Lewis Hamilton"

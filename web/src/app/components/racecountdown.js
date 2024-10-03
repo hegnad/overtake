@@ -46,7 +46,7 @@ export default function RaceCountdown() {
       {raceData ? (
         <div className="border-2 rounded-xl text-center m-2">
           <div className="m-2">
-            <h2>{raceData.gpName} ligths out in:</h2>
+            <h2>{raceData.gpName} lights out in:</h2>
             <p>
               Circuit: {raceData.circuitName} at {raceData.circuitLocation}
             </p>
