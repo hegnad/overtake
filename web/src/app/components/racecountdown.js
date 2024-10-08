@@ -8,6 +8,9 @@ export default function RaceCountdown() {
   const [timeLeft, setTimeLeft] = useState(null);
   const timer = useRef(null);
 
+  //Built by chatGPT
+  //Context Prompt: You are a software engineering professor, help me to understand the architecture for this app and provide a step guide to learn what it is required to develop further on top of the existent app.
+  //Request: make a component to generate a countdown to the next race that uses the getNextRace function to set the deadline of the countdown
   useEffect(() => {
     async function fetchRace() {
       const race = await getNextRace();
