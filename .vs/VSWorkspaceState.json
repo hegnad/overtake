@@ -2,12 +2,16 @@
   "ExpandedNodes": [
     "",
     "\\server",
-    "\\web\\nginx",
+    "\\server\\Services",
+    "\\web",
     "\\web\\public",
     "\\web\\public\\images",
     "\\web\\src",
-    "\\web\\src\\app"
+    "\\web\\src\\app",
+    "\\web\\src\\app\\components",
+    "\\web\\src\\app\\lastrace",
+    "\\web\\src\\app\\ui"
   ],
-  "SelectedNode": "\\docker-compose.yml",
+  "SelectedNode": "\\web\\src\\app\\lastrace\\page.tsx",
   "PreviewInSolutionExplorer": false
 }
