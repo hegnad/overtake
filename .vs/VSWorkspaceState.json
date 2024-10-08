@@ -2,15 +2,16 @@
   "ExpandedNodes": [
     "",
     "\\server",
-    "\\server\\Entities",
     "\\server\\Services",
     "\\web",
     "\\web\\public",
     "\\web\\public\\images",
     "\\web\\src",
     "\\web\\src\\app",
+    "\\web\\src\\app\\components",
+    "\\web\\src\\app\\lastrace",
     "\\web\\src\\app\\ui"
   ],
-  "SelectedNode": "\\web\\public\\images",
+  "SelectedNode": "\\web\\src\\app\\lastrace\\page.tsx",
   "PreviewInSolutionExplorer": false
 }
