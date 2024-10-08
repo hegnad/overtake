@@ -11,29 +11,50 @@ import defaultDriverImage from '../../../public/images/defaultdriverimg.png';
 export default function Top10GridPrediction() {
     const [selectedBox, setSelectedBox] = useState<number | null>(null); // Tracks selected box
     const [gridPredictions, setGridPredictions] = useState<(string | null)[]>(Array(10).fill(null)); // Stores the top 10 driver predictions
-    const [availableDrivers, setAvailableDrivers] = useState<CombinedDriver[]>([]); // List of drivers
-    const [actualResults, setActualResults] = useState<string[]>([]); // List of actual top 10 results
+    const [availableDrivers, setAvailableDrivers] = useState<CombinedDriver[]>([]); // List of drivers, this is fetched from API
+    const [actualResults, setActualResults] = useState<string[]>([]); // List of actual top 10 results, this is fetched from API
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
-    const [submitText, setSubmitText] = useState<string>("SUBMIT BALLOT");
+    const [submitText, setSubmitText] = useState<string>("SUBMIT BALLOT"); // Sets the state of our ballot button
 
     const identity = useContext(IdentityContext);
 
     useEffect(() => {
 
-        // Helper function to remove accents from names
+        // ChatGPT prompt: How do I make a method to remove accents from a string.
         const removeAccents = (str: string) => {
             return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
         };
 
-        // Fetch drivers from the Ergast API
-        const fetchDrivers = async () => {
-            try {
+        // Fetch driver data from APIs.
+        // References Dominic and Sebastian's code to fetch data from Ergast API:
+        /*
+         * try {
+
+                // Fetches names from Ergast
                 const response = await fetch("https://ergast.com/api/f1/current/last/drivers.json");
                 if (!response.ok) {
                     throw new Error("Failed to fetch drivers");
                 }
                 const ergastData = await response.json();
+        */
+        const fetchDrivers = async () => {
+
+            try {
+
+                // Fetches names from Ergast
+                const response = await fetch("https://ergast.com/api/f1/current/last/drivers.json");
+                if (!response.ok) {
+                    throw new Error("Failed to fetch drivers");
+                }
+                const ergastData = await response.json();
+
+                // Fetches driver first and last name from Ergast
+
+                // ChatGPT prompt: How do I only fetch the required properties, familyName and givenName, from my api into firstName and lastName.
+                // result: const ergastDrivers = ergastData.MRData.DriverTable.Drivers.map((driver) => ({
+                // I had to assign a type value to the properties within the API e.g. givenName: string;
+
                 const ergastDrivers = ergastData.MRData.DriverTable.Drivers.map((driver: { givenName: string; familyName: string }) => ({
                         name: `${driver.givenName} ${driver.familyName}`, // Create the full name for the CombinedDriver
                         firstName: driver.givenName,
@@ -41,6 +62,7 @@ export default function Top10GridPrediction() {
                     })
                 );
 
+                // Fetches driver photo and name from OpenF1
                 const openF1Response = await fetch("https://api.openf1.org/v1/drivers?session_key=latest");
                 if (!openF1Response.ok) {
                     throw new Error("Failed to fetch driver image from openF1.")
@@ -52,6 +74,10 @@ export default function Top10GridPrediction() {
                 }));
 
                 // Combine Ergast and OpenF1 data by matching driver names
+
+                // ChatGPT prompt: How do I assign the driver photo from OpenF1 to its corresponding driver using the name data from Ergast.
+                // ChatGPT result: I had to create an interface file, apiDriver.ts, to define the shape of the data we want to store from both APIs.
+
                 const combinedDrivers: CombinedDriver[] = ergastDrivers.map((ergastDriver: { firstName: any; lastName: any; }) => {
                     const ergastFullName = `${ergastDriver.firstName} ${ergastDriver.lastName}`;
                     const ergastFullNameNoAccents = removeAccents(ergastFullName.toLowerCase());
@@ -77,6 +103,7 @@ export default function Top10GridPrediction() {
 
                 setAvailableDrivers(combinedDrivers);
                 setLoading(false);
+
             } catch (err: any) {
                 setError(err.message);
                 setLoading(false);
@@ -84,32 +111,41 @@ export default function Top10GridPrediction() {
         };
 
         fetchDrivers();
+
     }, []);
 
+    // Logs to console the contents of the actual race results whenever this component is mounted.
     useEffect(() => {
         console.log("actualResults updated:", actualResults);
     }, [actualResults]);
 
+    // Event that triggers when a BALLOT box is selected.
     const handleBoxClick = (index: number) => {
-        setSelectedBox(index); // Highlight the clicked box
+        setSelectedBox(index);
     };
 
+    // Event that triggers when a DRIVER box is selected.
     const handleDriverClick = (driver: string) => {
         if (selectedBox !== null) {
+            // Googled how to create a copy of an array, which is how I found the Spread Syntax.
             const updatedPredictions = [...gridPredictions];
             updatedPredictions[selectedBox] = driver;
 
             // Mark the driver as selected without removing it from the list
             setGridPredictions(updatedPredictions);
-            setSelectedBox(null); // Reset the selected box after the driver is placed
+
+            // Reset the selected box after the driver is placed
+            setSelectedBox(null);
         }
     };
 
+    // Checks if driver has already been selected by user, returns True if selected driver exists in the gridPredictions.
     const isDriverSelected = (driver: string) => {
         return gridPredictions.includes(driver);
     };
 
     // Fetch race results (this function will be called after ballot submission)
+    // References Sebastian's code to fetch the most recent race results from Ergast API: app/lastrace/page.tsx
     const fetchRaceResults = async () => {
         try {
             const raceResultsResponse = await fetch("https://ergast.com/api/f1/current/last/results.json");
@@ -117,6 +153,8 @@ export default function Top10GridPrediction() {
                 throw new Error("Failed to fetch race results");
             }
             const raceResultsData = await raceResultsResponse.json();
+
+            // Only retrieve the top 10 final positions.
             const raceResults = raceResultsData.MRData.RaceTable.Races[0].Results.slice(0, 10).map(
                 (result: { Driver: { givenName: string; familyName: string } }) => (
                     `${result.Driver.givenName} ${result.Driver.familyName}`
@@ -131,6 +169,7 @@ export default function Top10GridPrediction() {
         }
     };
 
+    // Submits Ballot data to corresponding tables in our postgres server.
     const handleSubmit = async () => {
         if (gridPredictions.includes(null)) {
             setSubmitText("INVALID BALLOT, TRY AGAIN");
@@ -141,6 +180,7 @@ export default function Top10GridPrediction() {
             DriverPredictions: gridPredictions,
         };
 
+        // References Dominic's function to send data to race league tables: app/raceleague/page.tsx
         try {
             const response = await fetch("http://localhost:8080/api/ballot/create", {
                 method: "POST",
@@ -168,6 +208,7 @@ export default function Top10GridPrediction() {
         }
     };
 
+    // Colour-coordinates actual results depending on the user's predictions.
     const getBoxColor = (predictedDriver: string | null, actualPosition: number) => {
         const predictedPosition = gridPredictions.indexOf(predictedDriver);
         if (predictedPosition === actualPosition) return styles.correct;
@@ -176,8 +217,8 @@ export default function Top10GridPrediction() {
         return "";
     };
 
+    // Reset everything to the initial state
     const handleTryAgain = () => {
-        // Reset everything to the initial state
         setGridPredictions(Array(10).fill(null));
         setActualResults([]);
         setSubmitText("SUBMIT BALLOT");
@@ -200,6 +241,7 @@ export default function Top10GridPrediction() {
 
                     {/* Ballot Podium */}
                     <div className={styles.topThreeImages}>
+
                         {topThreeDrivers.map((driver, index) => {
 
                             const driverData = availableDrivers.find(d => d.name === driver);
