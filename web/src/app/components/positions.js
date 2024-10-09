@@ -52,7 +52,7 @@ export default function Positions() {
     const intervalId = setInterval(fetchData, 15000); // Fetch every 15 seconds
 
     return () => clearInterval(intervalId); // Cleanup on unmount
-  }, []);
+  }, [apiUrl]);
 
   return (
     <div className={styles.driversResults}>

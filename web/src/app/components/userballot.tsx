@@ -19,10 +19,9 @@ export default function UserBallot() {
 
             if (response.status === 200) {
                 const data = await response.json();
-
-                setBallots(data.map((ballot: { position: number; driverId: string }) => ballot));
-            } else {
-                console.error(`non-successful status code: ${response.status}`)
+                setBallots(data);
+            } else if (response.status === 404) {
+                setBallots([]);
             }
         };
 
