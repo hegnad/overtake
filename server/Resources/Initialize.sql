@@ -68,7 +68,8 @@ CREATE TABLE ballot (
 	race_id INT REFERENCES race(race_id) ON DELETE CASCADE NOT NULL,
 	user_id INT REFERENCES account(account_id) ON DELETE CASCADE NOT NULL,
 	create_time TIMESTAMP NOT NULL,
-	settle_time TIMESTAMP
+	settle_time TIMESTAMP,
+	score INT NULL
 );
 
 CREATE TABLE team (

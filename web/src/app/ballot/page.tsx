@@ -16,6 +16,8 @@ export default function Top10GridPrediction() {
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
     const [submitText, setSubmitText] = useState<string>("SUBMIT BALLOT"); // Sets the state of our ballot button
+    const [ballotScore, setBallotScore] = useState<number | null>(null); // Track the score of the ballot
+    const [driverPoints, setDriverPoints] = useState<number[]>([]);
 
     const identity = useContext(IdentityContext);
 
@@ -116,8 +118,15 @@ export default function Top10GridPrediction() {
 
     // Logs to console the contents of the actual race results whenever this component is mounted.
     useEffect(() => {
-        console.log("actualResults updated:", actualResults);
-    }, [actualResults]);
+        if (gridPredictions.length > 0 && actualResults.length > 0) {
+            const { totalScore, driverPoints } = calculateBallotScore(gridPredictions, actualResults);
+            console.log(`Final Ballot Score inside useEffect: ${totalScore}`);
+            setBallotScore(totalScore);
+            setDriverPoints(driverPoints);
+        } else {
+            console.log("Waiting for both gridPredictions and actualResults to be ready.");
+        }
+    }, [gridPredictions, actualResults]);
 
     // Event that triggers when a BALLOT box is selected.
     const handleBoxClick = (index: number) => {
@@ -163,21 +172,90 @@ export default function Top10GridPrediction() {
 
             setActualResults(raceResults);
             console.log("Race results fetched successfully: ", raceResults);
+
+            const { totalScore, driverPoints } = calculateBallotScore(gridPredictions, actualResults);
+            console.log(`Final Ballot Score inside fetchRaceResults: ${totalScore}`);
+            setBallotScore(totalScore);
+            setDriverPoints(driverPoints);
+
         } catch (fetchError) {
             console.error("Error fetching race results:", fetchError);
             setActualResults([]); // Fallback to an empty array in case of error
         }
     };
 
+    const calculateBallotScore = (predictions: (string | null)[], results: string[]) => {
+
+        let totalScore = 0;
+
+        // Array to store corresponding points for each driver
+        const driverPoints = new Array(results.length).fill(0);
+
+        predictions.forEach((predictedDriver, predictedPosition) => {
+
+            if (!predictedDriver) return;
+
+            const actualPosition = results.indexOf(predictedDriver);
+
+            // Check for exact matches
+            if (actualPosition === predictedPosition) {
+
+                // 1st place bonus
+                if (predictedPosition === 0) {
+                    totalScore += 25; 
+                    driverPoints[actualPosition] = 25;
+
+                // 2nd place bonus
+                } else if (predictedPosition === 1) {
+                    totalScore += 20; 
+                    driverPoints[actualPosition] = 20;
+
+                // 3rd place bonus
+                } else if (predictedPosition === 2) {
+                    totalScore += 15; 
+                    driverPoints[actualPosition] = 15;
+
+                } else {
+                    totalScore += 10;
+                    driverPoints[actualPosition] = 10;
+                }
+
+            // Check for 1 pos off
+            } else if (Math.abs(actualPosition - predictedPosition) === 1) {
+                totalScore += 5;
+                driverPoints[actualPosition] = 5;
+            // Check for 2 pos off
+            } else if (Math.abs(actualPosition - predictedPosition) === 2) {
+                totalScore += 3;
+                driverPoints[actualPosition] = 3;
+            } else if (actualPosition === -1) {
+                return;
+            }
+
+        });
+
+        return { totalScore, driverPoints };
+
+    }
+
     // Submits Ballot data to corresponding tables in our postgres server.
     const handleSubmit = async () => {
+
         if (gridPredictions.includes(null)) {
             setSubmitText("INVALID BALLOT, TRY AGAIN");
             return;
         }
 
+        
+        // Calculate and update ballot score
+        const { totalScore, driverPoints } = calculateBallotScore(gridPredictions, actualResults);
+        console.log(`Final Ballot Score inside handleSubmit: ${totalScore}`);
+        setBallotScore(totalScore);
+        
+
         const requestBody = {
             DriverPredictions: gridPredictions,
+            totalScore: totalScore,
         };
 
         // References Dominic's function to send data to race league tables: app/raceleague/page.tsx
@@ -202,10 +280,12 @@ export default function Top10GridPrediction() {
 
             // Fetch race results after successful ballot submission
             await fetchRaceResults();
+
         } catch (err) {
             console.error("Error submitting ballot:", err);
             setSubmitText("ERROR, TRY AGAIN");
         }
+
     };
 
     // Colour-coordinates actual results depending on the user's predictions.
@@ -223,6 +303,7 @@ export default function Top10GridPrediction() {
         setActualResults([]);
         setSubmitText("SUBMIT BALLOT");
         setSelectedBox(null);
+        setBallotScore(null);
     };
 
     // Get top three selected drivers
@@ -281,6 +362,13 @@ export default function Top10GridPrediction() {
                     <button onClick={submitText === "TRY AGAIN" ? handleTryAgain : handleSubmit} className={styles.submitButton}>
                         {submitText}
                     </button>
+
+                    {/* Display Ballot Score */}
+                    {ballotScore !== null && (
+                        <div className={styles.scoreDisplay}>
+                            <p>Your Ballot Score: {ballotScore} points</p>
+                        </div>
+                    )}
 
                 </div>
 
@@ -349,6 +437,9 @@ export default function Top10GridPrediction() {
                                                 unoptimized
                                             />
                                             {index + 1}. {driver} {positionChangeText}
+                                            <span className={styles.driverPoints}>
+                                                {driverPoints[index] !== undefined ? `  +${driverPoints[index]}pts` : ""}
+                                            </span>
                                         </div>
                                     </div>
                                 );

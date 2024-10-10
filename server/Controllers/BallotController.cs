@@ -44,8 +44,11 @@ public class BallotController : ControllerBase
             Position = index + 1 // Assuming the positions are 1-based
         }).ToList();
 
+        // Extract totalScore from request
+        int? totalScore = request.TotalScore;
+
         // Call the InsertBallotAsync method
-        int newBallotId = await _database.InsertBallotAsync(userId, leagueId, raceId, driverPredictions);
+        int newBallotId = await _database.InsertBallotAsync(userId, leagueId, raceId, driverPredictions, totalScore);
 
         return new OkObjectResult(newBallotId);
     }

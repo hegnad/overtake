@@ -2,16 +2,17 @@
   "ExpandedNodes": [
     "",
     "\\server",
-    "\\server\\Services",
+    "\\server\\Controllers",
+    "\\server\\Entities",
+    "\\server\\Interfaces",
+    "\\server\\Models",
+    "\\server\\Models\\Requests",
     "\\web",
-    "\\web\\public",
-    "\\web\\public\\images",
     "\\web\\src",
     "\\web\\src\\app",
-    "\\web\\src\\app\\components",
-    "\\web\\src\\app\\lastrace",
-    "\\web\\src\\app\\ui"
+    "\\web\\src\\app\\lib",
+    "\\web\\src\\app\\lib\\context"
   ],
-  "SelectedNode": "\\web\\src\\app\\lastrace\\page.tsx",
+  "SelectedNode": "\\server\\Services\\PostgresDatabase.cs",
   "PreviewInSolutionExplorer": false
 }
