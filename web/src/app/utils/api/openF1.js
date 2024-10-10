@@ -19,10 +19,14 @@ export default function OpenF1() {
       }
     };
 
-    fetchData(); // Initial fetch
+    fetchData(); 
+
+    // Created by ChatGPT
+    //Context prompt is active
+    // Prompt: Set the following useEffect to execute every determined interval
     const intervalId = setInterval(fetchData, 15000); // Fetch every 15 seconds
 
-    return () => clearInterval(intervalId); // Cleanup on unmount
+    return () => clearInterval(intervalId); 
   }, []);
 
   return (
@@ -30,14 +34,6 @@ export default function OpenF1() {
       <h2>Live Data</h2>
       {intervalData.length === 0 && <p>Loading...</p>}
       {intervalData}
-      {/* <ul>
-        {intervalData.map((item, index) => (
-          <li key={index}>
-            Driver Number: {item.driver_number}, Gap to Leader:{" "}
-            {item.gap_to_leader}
-          </li>
-        ))}
-      </ul> */}
     </div>
   );
 }
