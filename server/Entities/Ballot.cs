@@ -8,4 +8,5 @@ public class Ballot
     public required int UserId { get; set; }
     public required DateTime CreateTime { get; set; }
     public DateTime SettleTime { get; set; }
+    public int? Score { get; set; }
 }

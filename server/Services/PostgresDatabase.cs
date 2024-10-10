@@ -291,21 +291,22 @@ public class PostgresDatabase : IDatabase
         };
     }
 
-    public async Task<int> InsertBallotAsync(int userId, int leagueId, int raceId, List<DriverPrediction> driverPredictions)
+    public async Task<int> InsertBallotAsync(int userId, int leagueId, int raceId, List<DriverPrediction> driverPredictions, int? totalScore = null)
     {
 
         // References Dominic's methods above.
 
         // Step 1: Insert into ballot table
         using var cmd = _dataSource.CreateCommand(
-            @"INSERT INTO ballot (league_id, race_id, user_id, create_time)
-                VALUES (@league_id, @race_id, @user_id, NOW())
+            @"INSERT INTO ballot (league_id, race_id, user_id, create_time, score)
+                VALUES (@league_id, @race_id, @user_id, NOW(), @score)
                 RETURNING ballot_id"
         );
 
         cmd.Parameters.AddWithValue("league_id", leagueId);
         cmd.Parameters.AddWithValue("race_id", raceId);
         cmd.Parameters.AddWithValue("user_id", userId);
+        cmd.Parameters.AddWithValue("score", totalScore.HasValue ? (object)totalScore.Value : DBNull.Value);
 
         // Execute command and read the result
         int ballotId;

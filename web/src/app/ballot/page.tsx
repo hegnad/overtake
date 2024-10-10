@@ -120,7 +120,7 @@ export default function Top10GridPrediction() {
     useEffect(() => {
         if (gridPredictions.length > 0 && actualResults.length > 0) {
             const { totalScore, driverPoints } = calculateBallotScore(gridPredictions, actualResults);
-            console.log(`Final Ballot Score: ${totalScore}`);
+            console.log(`Final Ballot Score inside useEffect: ${totalScore}`);
             setBallotScore(totalScore);
             setDriverPoints(driverPoints);
         } else {
@@ -172,6 +172,12 @@ export default function Top10GridPrediction() {
 
             setActualResults(raceResults);
             console.log("Race results fetched successfully: ", raceResults);
+
+            const { totalScore, driverPoints } = calculateBallotScore(gridPredictions, actualResults);
+            console.log(`Final Ballot Score inside fetchRaceResults: ${totalScore}`);
+            setBallotScore(totalScore);
+            setDriverPoints(driverPoints);
+
         } catch (fetchError) {
             console.error("Error fetching race results:", fetchError);
             setActualResults([]); // Fallback to an empty array in case of error
@@ -234,13 +240,22 @@ export default function Top10GridPrediction() {
 
     // Submits Ballot data to corresponding tables in our postgres server.
     const handleSubmit = async () => {
+
         if (gridPredictions.includes(null)) {
             setSubmitText("INVALID BALLOT, TRY AGAIN");
             return;
         }
 
+        
+        // Calculate and update ballot score
+        const { totalScore, driverPoints } = calculateBallotScore(gridPredictions, actualResults);
+        console.log(`Final Ballot Score inside handleSubmit: ${totalScore}`);
+        setBallotScore(totalScore);
+        
+
         const requestBody = {
             DriverPredictions: gridPredictions,
+            totalScore: totalScore,
         };
 
         // References Dominic's function to send data to race league tables: app/raceleague/page.tsx
@@ -266,14 +281,11 @@ export default function Top10GridPrediction() {
             // Fetch race results after successful ballot submission
             await fetchRaceResults();
 
-            // Calculate and update ballot score
-            const { totalScore, driverPoints } = calculateBallotScore(gridPredictions, actualResults);
-            setBallotScore(totalScore);
-
         } catch (err) {
             console.error("Error submitting ballot:", err);
             setSubmitText("ERROR, TRY AGAIN");
         }
+
     };
 
     // Colour-coordinates actual results depending on the user's predictions.

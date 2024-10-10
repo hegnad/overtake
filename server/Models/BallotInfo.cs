@@ -15,6 +15,7 @@ namespace Overtake.Models
 		 */
 
 		public required DateTime CreateTime { get; set; }
+		public int? Score { get; set; }
 
 	}
 }
