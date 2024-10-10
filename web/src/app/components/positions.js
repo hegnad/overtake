@@ -8,6 +8,8 @@ import extractOldestRecords from "../utils/dataManipulation";
 export default function Positions() {
   const [postitions, setPositions] = useState([]);
   const [lapNumber, setLapNumber] = useState("Loading...");
+  //useRef determined to be used in consultation with a friend, since useState caused conflicts and reRenders
+  //only run on initial render, does not re render on change, stores info in between renders
   const drivers = useRef([]);
   const apiUrl = `https://api.openf1.org/v1/position?session_key=latest`;
 
@@ -50,7 +52,7 @@ export default function Positions() {
     const intervalId = setInterval(fetchData, 15000); // Fetch every 15 seconds
 
     return () => clearInterval(intervalId); // Cleanup on unmount
-  }, []);
+  }, [apiUrl]);
 
   return (
     <div className={styles.driversResults}>

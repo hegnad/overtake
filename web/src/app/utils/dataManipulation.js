@@ -1,4 +1,5 @@
 //This function has been created using copilot AI
+//Context prompt is active
 //Propmt: "Create a function that extracts the oldest records for each driver from the data array. The data array contains objects with a driver_number and a date property. The function should return an array of objects, one for each driver, containing the oldest record for that driver. The function should sort the data by date in descending order (latest first) and return the oldest record for each driver."
 
 export default function extractOldestRecords(data) {
