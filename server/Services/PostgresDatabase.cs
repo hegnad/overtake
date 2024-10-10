@@ -294,6 +294,8 @@ public class PostgresDatabase : IDatabase
     public async Task<int> InsertBallotAsync(int userId, int leagueId, int raceId, List<DriverPrediction> driverPredictions)
     {
 
+        // References Dominic's methods above.
+
         // Step 1: Insert into ballot table
         using var cmd = _dataSource.CreateCommand(
             @"INSERT INTO ballot (league_id, race_id, user_id, create_time)
