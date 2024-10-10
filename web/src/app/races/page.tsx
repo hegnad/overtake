@@ -72,10 +72,6 @@ export default function Races() {
           ) : raceSeason && rounds.length > 0 ? (
             <div>
               <h3>Select the round: </h3>
-              {/* This function has been created using copilot AI
-                Context prompt is active
-                Propmt: "Set the select element to use a dafault initial option with no value */}
-
               <select
                 className="text-black"
                 value={raceRound} // Use the round directly

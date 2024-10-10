@@ -24,7 +24,7 @@ public class BallotController : ControllerBase
     [Produces("application/json")]
     public async Task<ActionResult<int>> CreateAsync([FromBody] CreateBallotRequest request)
     {
-
+        
         // Validate request
         if (request.DriverPredictions == null || request.DriverPredictions.Count != 10)
         {
@@ -56,23 +56,20 @@ public class BallotController : ControllerBase
     public async Task<ActionResult<BallotContent[]>> PopulateAync()
     {
         int userId = Convert.ToInt32(HttpContext.User.Claims.First(x => x.Type == "userId").Value);
-        int? ballotId = await _database.GetBallotByUserIdAsync(userId);
+        int ballotId = await _database.GetBallotByUserIdAsync(userId);
 
-        if (ballotId == null)
+        if (ballotId == 0)
         {
-            return NotFound();
+            return new BadRequestResult();
         }
 
-        BallotContent[] ballot = await _database.GetBallotContentAsync(ballotId.Value);
+        BallotContent[] ballot = await _database.GetBallotContentAsync(ballotId);
 
         if (ballot == null || ballot.Length == 0)
         {
-            return Ok(new BallotContent[0]);
+            return new BadRequestResult();
         }
 
         return new OkObjectResult(ballot);
     }
 }
-
-
-

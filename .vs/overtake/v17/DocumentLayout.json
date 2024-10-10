@@ -3,28 +3,12 @@
   "WorkspaceRootPath": "C:\\Repos\\Overtake\\overtake\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Repos\\Overtake\\overtake\\web\\src\\app\\ballot\\page.tsx||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:web\\src\\app\\ballot\\page.tsx||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}"
+      "AbsoluteMoniker": "D:0:0:{AED117CB-D641-430A-994B-65C5354CDD20}|server\\overtake-server.csproj|c:\\repos\\overtake\\overtake\\server\\services\\postgresdatabase.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{AED117CB-D641-430A-994B-65C5354CDD20}|server\\overtake-server.csproj|solutionrelative:server\\services\\postgresdatabase.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Repos\\Overtake\\overtake\\web\\src\\app\\raceleague\\page.tsx||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:web\\src\\app\\raceleague\\page.tsx||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Repos\\Overtake\\overtake\\web\\src\\app\\components\\userraceleagues.tsx||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:web\\src\\app\\components\\userraceleagues.tsx||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Repos\\Overtake\\overtake\\web\\src\\app\\components\\userballot.tsx||{8B382828-6202-11D1-8870-0000F87579D2}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:web\\src\\app\\components\\userballot.tsx||{8B382828-6202-11D1-8870-0000F87579D2}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Repos\\Overtake\\overtake\\server\\Services\\PostgresDatabase.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:server\\Services\\PostgresDatabase.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Repos\\Overtake\\overtake\\server\\Controllers\\LeagueController.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:server\\Controllers\\LeagueController.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{AED117CB-D641-430A-994B-65C5354CDD20}|server\\overtake-server.csproj|c:\\repos\\overtake\\overtake\\server\\controllers\\ballotcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{AED117CB-D641-430A-994B-65C5354CDD20}|server\\overtake-server.csproj|solutionrelative:server\\controllers\\ballotcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -34,93 +18,37 @@
       "DocumentGroups": [
         {
           "DockedWidth": 191,
-          "SelectedChildIndex": 2,
+          "SelectedChildIndex": 0,
           "Children": [
-            {
-              "$type": "Bookmark",
-              "Name": "ST:0:0:{e1b7d1f8-9b3c-49b1-8f4f-bfc63a88835d}"
-            },
-            {
-              "$type": "Bookmark",
-              "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
-            },
             {
               "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "page.tsx",
-              "DocumentMoniker": "C:\\Repos\\Overtake\\overtake\\web\\src\\app\\ballot\\page.tsx",
-              "RelativeDocumentMoniker": "web\\src\\app\\ballot\\page.tsx",
-              "ToolTip": "C:\\Repos\\Overtake\\overtake\\web\\src\\app\\ballot\\page.tsx",
-              "RelativeToolTip": "web\\src\\app\\ballot\\page.tsx",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
-              "WhenOpened": "2024-10-08T07:13:10.905Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "page.tsx",
-              "DocumentMoniker": "C:\\Repos\\Overtake\\overtake\\web\\src\\app\\raceleague\\page.tsx",
-              "RelativeDocumentMoniker": "web\\src\\app\\raceleague\\page.tsx",
-              "ToolTip": "C:\\Repos\\Overtake\\overtake\\web\\src\\app\\raceleague\\page.tsx",
-              "RelativeToolTip": "web\\src\\app\\raceleague\\page.tsx",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAABYAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
-              "WhenOpened": "2024-10-08T07:07:46.064Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "userballot.tsx",
-              "DocumentMoniker": "C:\\Repos\\Overtake\\overtake\\web\\src\\app\\components\\userballot.tsx",
-              "RelativeDocumentMoniker": "web\\src\\app\\components\\userballot.tsx",
-              "ToolTip": "C:\\Repos\\Overtake\\overtake\\web\\src\\app\\components\\userballot.tsx",
-              "RelativeToolTip": "web\\src\\app\\components\\userballot.tsx",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAwAAAAeAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
-              "WhenOpened": "2024-10-08T07:03:21.723Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "userraceleagues.tsx",
-              "DocumentMoniker": "C:\\Repos\\Overtake\\overtake\\web\\src\\app\\components\\userraceleagues.tsx",
-              "RelativeDocumentMoniker": "web\\src\\app\\components\\userraceleagues.tsx",
-              "ToolTip": "C:\\Repos\\Overtake\\overtake\\web\\src\\app\\components\\userraceleagues.tsx",
-              "RelativeToolTip": "web\\src\\app\\components\\userraceleagues.tsx",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAcAAAA5AAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
-              "WhenOpened": "2024-10-08T07:02:51.962Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
               "Title": "PostgresDatabase.cs",
               "DocumentMoniker": "C:\\Repos\\Overtake\\overtake\\server\\Services\\PostgresDatabase.cs",
               "RelativeDocumentMoniker": "server\\Services\\PostgresDatabase.cs",
               "ToolTip": "C:\\Repos\\Overtake\\overtake\\server\\Services\\PostgresDatabase.cs",
               "RelativeToolTip": "server\\Services\\PostgresDatabase.cs",
-              "ViewState": "AQIAAE0BAAAAAAAAAAAAAGIBAAAAAAAA",
+              "ViewState": "AQIAAEIBAAAAAAAAAAAiwE8BAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-10-08T07:01:14.468Z",
+              "WhenOpened": "2024-10-02T18:31:49.115Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "LeagueController.cs",
-              "DocumentMoniker": "C:\\Repos\\Overtake\\overtake\\server\\Controllers\\LeagueController.cs",
-              "RelativeDocumentMoniker": "server\\Controllers\\LeagueController.cs",
-              "ToolTip": "C:\\Repos\\Overtake\\overtake\\server\\Controllers\\LeagueController.cs",
-              "RelativeToolTip": "server\\Controllers\\LeagueController.cs",
-              "ViewState": "AQIAAAkAAAAAAAAAAAAAABQAAAAZAAAA",
+              "DocumentIndex": 1,
+              "Title": "BallotController.cs",
+              "DocumentMoniker": "C:\\Repos\\Overtake\\overtake\\server\\Controllers\\BallotController.cs",
+              "RelativeDocumentMoniker": "server\\Controllers\\BallotController.cs",
+              "ToolTip": "C:\\Repos\\Overtake\\overtake\\server\\Controllers\\BallotController.cs",
+              "RelativeToolTip": "server\\Controllers\\BallotController.cs",
+              "ViewState": "AQIAACEAAAAAAAAAAAAowEUAAAAqAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-10-08T07:00:51.326Z",
+              "WhenOpened": "2024-10-02T18:29:23.062Z",
               "EditorCaption": ""
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
             }
           ]
         }

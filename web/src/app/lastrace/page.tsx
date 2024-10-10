@@ -79,7 +79,6 @@ export default function LastRace() {
         <h1 className={styles.title}>Last Race Results</h1>
         <div>
           <h2>{raceName}</h2>
-          {/* Method available on Date objects that converts the date to a string using the local settings of the user's browser */}
           <p>Date: {new Date(date).toLocaleDateString()}</p>
           <p>Circuit: {circuitName}</p>
           <p>
