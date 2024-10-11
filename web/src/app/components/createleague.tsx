@@ -2,6 +2,7 @@
 
 import { IdentityContext } from "../lib/context/identity";
 import { useState, useContext } from "react";
+import styles from "./createleague.module.css"
 
 export default function CreateRaceLeague() {
     const identity = useContext(IdentityContext);
@@ -46,37 +47,50 @@ export default function CreateRaceLeague() {
         }
       };
 
-    return(
-        <form onSubmit={handleSubmit}>
-          <div>
-            <p>
-              <label>League Name</label>
-            </p>
-            <input
-              type="text"
-              value={name}
-              onChange={(e) => {
-                setName(e.target.value);
-              }}
-            ></input>
-          </div>
-          <div>
-            <p>
-              <label>League Visibility</label>
-            </p>
-            <select
-              value={isPublic ? "true" : "false"}
-              onChange={(e) => setIsPublic(e.target.value === "true")}
-            >
-              <option value="true">Public</option>
-              <option value="false">Private</option>
-            </select>
-          </div>
-          <div>
-            <button type="submit" value="CREATE LEAGUE">
-              CREATE
-            </button>
-          </div>
+    return (
+        <form onSubmit={handleSubmit} className={styles.form}>
+            <div className={styles.formGroup}>
+                <h2 className={styles.heading}>
+                    <label>League Name</label>
+                </h2>
+                <input
+                    type="text"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    className={styles.input}
+                    placeholder="Enter league name"
+                />
+            </div>
+
+            <div className={styles.formGroup}>
+                <h2 className={styles.heading}>
+                    <label>League Visibility</label>
+                </h2>
+                <div className={styles.buttonGroup}>
+                    <button
+                        type="button"
+                        className={`${styles.privacyButton} ${!isPublic ? styles.active : ""
+                            }`}
+                        onClick={() => setIsPublic(false)}
+                    >
+                        Private
+                    </button>
+                    <button
+                        type="button"
+                        className={`${styles.privacyButton} ${isPublic ? styles.active : ""
+                            }`}
+                        onClick={() => setIsPublic(true)}
+                    >
+                        Public
+                    </button>
+                </div>
+            </div>
+
+            <div className={styles.formGroup}>
+                <button type="submit" className={styles.submitButton}>
+                    CREATE LEAGUE
+                </button>
+            </div>
         </form>
     );
 }

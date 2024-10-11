@@ -1,8 +1,9 @@
 "use client"
 
 import { IdentityContext } from "../lib/context/identity";
-import { useState, useContext, useEffect } from "react";
-
+import { useState, useContext, useEffect } from "react";''
+import StyledLine from './styledline';
+import styles from "./userballot.module.css";
 export default function UserBallot() {
     const identity = useContext(IdentityContext);
     const [ballots, setBallots] = useState<{ position: number; driverId: string }[]>([]);
@@ -32,7 +33,8 @@ export default function UserBallot() {
 
     return (
         <div>
-            <h2>Your Ballot</h2>
+            <h2 className={styles.heading}>Your Ballot</h2>
+            <StyledLine color="red" />
             <ul>
                 {ballots.length > 0 ? (
                     ballots.map((ballot, index) => (
@@ -41,7 +43,7 @@ export default function UserBallot() {
                         </li>
                     ))
                 ) : (
-                    <p>No Ballots Found.</p>
+                        <p className={styles.footer}>No Ballots Found.</p>
                 )}
             </ul>
         </div>
