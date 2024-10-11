@@ -37,31 +37,30 @@ export function IdentityProvider({ children }: IdentityProviderProps) {
     setSessionToken(localStorage.getItem(SESSION_TOKEN) ?? undefined);
   }, []);
 
-  useEffect(() => {
-    const loadAccountInfo = async () => {
-      const response = await fetch("http://localhost:8080/api/account/info", {
-        headers: {
-          Authorization: `Bearer ${sessionToken}`,
-        },
-      });
+    useEffect(() => {
+        const loadAccountInfo = async () => {
+            const response = await fetch("http://localhost:8080/api/account/info", {
+                headers: {
+                    Authorization: `Bearer ${sessionToken}`,
+                },
+            });
 
-      if (response.status !== 200) {
-        // TODO: handle error on UI instead
-        console.error(`non-successful status code: ${response.status}`);
-      } else {
-        const accountInfo = (await response.json()) as AccountInfoModel;
-        setAccountInfo({
-          username: accountInfo.username,
-        });
-      }
-    };
+            if (response.status === 200) {
+                const accountInfo = (await response.json()) as AccountInfoModel;
+                setAccountInfo({
+                    username: accountInfo.username,
+                });
+            } else {
+                console.error(`non-successful status code: ${response.status}`);
+            }
+        };
 
-    if (sessionToken) {
-      loadAccountInfo();
-    } else {
-      setAccountInfo(undefined);
-    }
-  }, [sessionToken]);
+        if (sessionToken) {
+            loadAccountInfo();
+        } else {
+            setAccountInfo(undefined);
+        }
+    }, [sessionToken]);
 
   const handleSetSessionToken = (value: string | undefined) => {
     setSessionToken(value);

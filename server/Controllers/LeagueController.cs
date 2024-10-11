@@ -4,10 +4,14 @@ using Overtake.Interfaces;
 using Overtake.Models;
 using Overtake.Models.Requests;
 using Overtake.Entities;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
+
 
 /// <summary>
 /// API related to league operations.
 /// </summary>
+[Authorize]
 [Route("api/league")]
 [ApiController]
 public class LeagueController : ControllerBase
@@ -34,7 +38,7 @@ public class LeagueController : ControllerBase
             return new BadRequestResult();
         }
 
-        int userId = Convert.ToInt32(HttpContext.User.Claims.First(x => x.Type == "userId").Value);
+        int userId = Convert.ToInt32(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
 
         var account = await _database.GetAccountByIdAsync(userId);
 
@@ -53,8 +57,8 @@ public class LeagueController : ControllerBase
     [Route("populate")]
     [Produces("application/json")]
     public async Task<ActionResult<RaceLeagueInfo[]>> PopulateAsync()
-    { 
-        int userId = Convert.ToInt32(HttpContext.User.Claims.First(x => x.Type == "userId").Value);
+    {
+        int userId = Convert.ToInt32(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
 
         RaceLeagueInfo[] leagues = await _database.PopulateLeaguesAsync(userId);
 
