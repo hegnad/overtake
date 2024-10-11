@@ -1,7 +1,9 @@
 using System.Reflection;
-using Overtake.Auth;
 using Overtake.Interfaces;
 using Overtake.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace Overtake;
 
@@ -30,12 +32,31 @@ public class Program
                 });
         });
 
-        builder.Services.AddAuthentication().AddScheme<MockAuthenticationOptions, MockAuthenticationHandler>("mock_auth", null);
+        var key = Encoding.ASCII.GetBytes(builder.Configuration["Jwt:Key"]);
+        builder.Services.AddAuthentication(options =>
+        {
+            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+        })
+        .AddJwtBearer(options =>
+        {
+            options.RequireHttpsMetadata = false;
+            options.SaveToken = true;
+            options.TokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(builder.Configuration["Jwt:Key"])),
+                ValidateIssuer = true,
+                ValidIssuer = builder.Configuration["Jwt:Issuer"],
+                ValidateAudience = true,
+                ValidAudience = builder.Configuration["Jwt:Audience"],
+                ValidateLifetime = true,
+                ClockSkew = TimeSpan.Zero,
+            };
+        });
 
         builder.Services.AddHostedService<DbInitService>();
-
         builder.Services.AddControllers();
-
         builder.Services.AddSingleton<IDatabase, PostgresDatabase>();
 
         var app = builder.Build();
@@ -45,9 +66,9 @@ public class Program
         app.UseSwaggerUI();
 
         app.UseHttpsRedirection();
-
         app.UseCors();
         app.UseAuthentication();
+        app.UseAuthorization();
 
         app.MapControllers();
 

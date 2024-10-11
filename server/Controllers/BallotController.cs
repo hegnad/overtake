@@ -5,7 +5,11 @@ using Overtake.Interfaces;
 using Overtake.Models;
 using Overtake.Models.Requests;
 using Overtake.Entities;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
+
+[Authorize]
 [Route("api/ballot")]
 [ApiController]
 public class BallotController : ControllerBase
@@ -32,7 +36,7 @@ public class BallotController : ControllerBase
         }
 
         // Get current user ID
-        int userId = Convert.ToInt32(HttpContext.User.Claims.First(x => x.Type == "userId").Value);
+        int userId = Convert.ToInt32(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
 
         int leagueId = 1;
         int raceId = 1;
@@ -58,7 +62,7 @@ public class BallotController : ControllerBase
     [Produces("application/json")]
     public async Task<ActionResult<BallotContent[]>> PopulateAync()
     {
-        int userId = Convert.ToInt32(HttpContext.User.Claims.First(x => x.Type == "userId").Value);
+        int userId = Convert.ToInt32(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
         int? ballotId = await _database.GetBallotByUserIdAsync(userId);
 
         if (ballotId == null)

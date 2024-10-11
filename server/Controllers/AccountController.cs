@@ -1,6 +1,10 @@
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 using Overtake.Interfaces;
 using Overtake.Models;
 using Overtake.Models.Requests;
@@ -16,11 +20,13 @@ public class AccountController : ControllerBase
 {
     private readonly IDatabase _database;
     private readonly ILogger<AccountController> _logger;
+    private readonly IConfiguration _configuration;
 
-    public AccountController(IDatabase database, ILogger<AccountController> logger)
+    public AccountController(IDatabase database, ILogger<AccountController> logger, IConfiguration configuration)
     {
         _database = database;
         _logger = logger;
+        _configuration = configuration;
     }
 
     /// <summary>
@@ -55,10 +61,11 @@ public class AccountController : ControllerBase
 
         int newUserId = await _database.InsertAccountAsync(request.Username, request.FirstName, request.LastName, request.Email, passwordHash);
 
-        // Mock session token with just the account ID
+        var token = GenerateJwtToken(newUserId.ToString());
+
         return new OkObjectResult(new Session
         {
-            Token = newUserId.ToString(),
+            Token = token
         });
     }
 
@@ -86,25 +93,27 @@ public class AccountController : ControllerBase
         var account = await _database.GetAccountByUsernameAsync(request.Username);
         if (!requestPasswordHash.SequenceEqual(account.PasswordHash))
         {
-            return new BadRequestResult();
+            return new UnauthorizedResult();
         }
 
-        // Mock session token with just the account ID
+        var token = GenerateJwtToken(account.AccountId.ToString());
+
         return new OkObjectResult(new Session
         {
-            Token = account.AccountId.ToString(),
+            Token = token
         });
     }
 
     /// <summary>
     /// Gets account information.
     /// </summary>
+    [Authorize]
     [HttpGet]
     [Route("info")]
     [Produces("application/json")]
     public async Task<AccountInfo> InfoAsync()
     {
-        int userId = Convert.ToInt32(HttpContext.User.Claims.First(x => x.Type == "userId").Value);
+        int userId = Convert.ToInt32(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
 
         var account = await _database.GetAccountByIdAsync(userId);
 
@@ -112,5 +121,26 @@ public class AccountController : ControllerBase
         {
             Username = account.Username,
         };
+    }
+
+    private string GenerateJwtToken(string userId)
+    {
+        var tokenHandler = new JwtSecurityTokenHandler();
+        var key = Encoding.ASCII.GetBytes(_configuration["Jwt:Key"]);
+
+        var tokenDescriptor = new SecurityTokenDescriptor
+        {
+            Subject = new ClaimsIdentity(new[]
+            {
+                new Claim(ClaimTypes.NameIdentifier, userId.ToString())
+            }),
+            Expires = DateTime.UtcNow.AddHours(1),
+            Issuer = _configuration["Jwt:Issuer"],
+            Audience = _configuration["Jwt:Audience"],
+            SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+        };
+
+        var token = tokenHandler.CreateToken(tokenDescriptor);
+        return tokenHandler.WriteToken(token);
     }
 }
