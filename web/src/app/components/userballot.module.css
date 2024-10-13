@@ -11,3 +11,82 @@
     text-align: left; /* Adjust alignment if needed */
     margin-bottom: 20px;
 }
+
+.driverList {
+    display: flex;
+    justify-content: flex-start;
+    gap: 20px;
+}
+
+.driverCard {
+    display: flex;
+    flex-direction: column;
+    background: #15151E;
+    border-radius: 10px;
+    padding: 10px;
+    color: white;
+    width: 180px;
+    height: 350px;
+    justify-content:flex-end;
+}
+
+.driverInfo {
+    display: flex;
+    flex-direction: column;
+}
+
+.position {
+    font-size: 24px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.driverName {
+    font-size: 24px;
+    text-align: left;
+}
+
+.flag {
+    justify-content: flex-end;
+}
+
+.teamName {
+    font-size: 16px;
+    color: #f5f5f5;
+}
+
+.flexRow {
+    flex-direction: row;
+    justify-content: space-between; /* Ensure driverName is on the left and flag on the right */
+    align-items: center; /* Vertically align the items */
+    width: 100%;
+}
+
+.imageBackground1 {
+    height: 150px;
+    background-color: #2e0000;
+    border-radius: 20px;
+    width: 100%;
+}
+
+.imageBackground2 {
+    height: 125px;
+    background-color: #2e0000;
+    border-radius: 20px;
+    width: 100%;
+}
+
+.imageBackground3 {
+    height: 100px;
+    background-color: #2e0000;
+    border-radius: 20px;
+    width: 100%;
+}
+
+.driverImage {
+    
+}
+
+.flagImage {
+
+}

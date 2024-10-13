@@ -24,7 +24,7 @@ export default function RaceLeague() {
     return (
     <SidebarLayout>
         <LeagueHeader onCreateLeagueClick={handleCreateLeagueClick} />
-        <StyledLine color="yellow" />
+        <StyledLine color="yellow" size="thick"/>
         <div className={styles.container}>
             <UserRaceLeagues />
             <UserBallot />

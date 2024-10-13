@@ -53,7 +53,7 @@ export default function UserRaceLeagues() {
     return (
         <div className={styles.container}>
             <h2 className={styles.heading}>Your Race Leagues</h2>
-            <StyledLine color="red" />
+            <StyledLine color="red" size="thick"/>
             <ul className={styles.leagueList}>
                 {leagues.length > 0 ? (
                   leagues.map((league, index) => (
