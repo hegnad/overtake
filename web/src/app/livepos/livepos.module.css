@@ -1,0 +1,39 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    background: #15151E;
+    padding: 25px;
+    border-radius: 15px;
+}
+
+.modal {
+    position: absolute;
+    top: 50%;
+    left: calc(50% + 200px);
+    transform: translate(-50%, -50%);
+    background-color: #15151E;
+    padding: 1px;
+    border-radius: 10px;
+    z-index: 1000;
+    border: 1px solid white;
+    width: 1200px
+}
+
+.modalContent {
+    padding: 25px;
+}
+
+.closeButton {
+    margin-top: 20px;
+    padding: 10px;
+    background-color: #aa0000;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.driversResults {
+    color: aliceblue;
+}

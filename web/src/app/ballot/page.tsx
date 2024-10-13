@@ -8,6 +8,7 @@ import { CombinedDriver } from "./apiDriver";
 import Image from "next/image";
 import defaultDriverImage from "../../../public/images/defaultdriverimg.png";
 import { getNextRace } from "../utils/api/ergast";
+import { timeNow } from "../utils/api/worldtime";
 
 export default function Top10GridPrediction() {
   const [selectedBox, setSelectedBox] = useState<number | null>(null); // Tracks selected box
@@ -112,8 +113,10 @@ export default function Top10GridPrediction() {
 
         //Real deadline for next race
         let deadline = new Date(nextRaceData.current[1]);
-        const currentDate = Date.now();
-        //const currentDate = new Date();
+
+        //reading current time to avoid time manipulation on the client side
+        const currentDate = await timeNow();
+
         //fake deadline for testing the ballot disable
         //const deadline = new Date(new Date(currentDate).getTime() - 15 * 60000);
         if (new Date(currentDate) >= deadline) setValidTime(false);
