@@ -15,7 +15,7 @@
 .driverList {
     display: flex;
     justify-content: flex-start;
-    gap: 20px;
+    gap: 10px;
 }
 
 .driverCard {
@@ -25,8 +25,8 @@
     border-radius: 10px;
     padding: 10px;
     color: white;
-    width: 180px;
-    height: 350px;
+    width: 200px;
+    height: 300px;
     justify-content:flex-end;
 }
 
@@ -42,12 +42,13 @@
 }
 
 .driverName {
-    font-size: 24px;
+    font-size: 30px;
     text-align: left;
 }
 
 .flag {
-    justify-content: flex-end;
+    margin-left: auto; /* Pushes the flag to the right side */
+    text-align: right; /* Ensure text inside is aligned right */
 }
 
 .teamName {
@@ -63,21 +64,21 @@
 }
 
 .imageBackground1 {
-    height: 150px;
+    height: 175px;
     background-color: #2e0000;
     border-radius: 20px;
     width: 100%;
 }
 
 .imageBackground2 {
-    height: 125px;
+    height: 140px;
     background-color: #2e0000;
     border-radius: 20px;
     width: 100%;
 }
 
 .imageBackground3 {
-    height: 100px;
+    height: 105px;
     background-color: #2e0000;
     border-radius: 20px;
     width: 100%;
