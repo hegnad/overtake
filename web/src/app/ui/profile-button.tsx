@@ -1,7 +1,6 @@
 "use client";
 
-import { useRouter } from 'next/navigation'; // If you're using the App Directory
-// For Pages Directory, use 'next/router'
+import { useRouter } from 'next/navigation';
 import { useContext, useState } from "react";
 import styles from "./profile-button.module.css";
 import { IdentityContext } from "../lib/context/identity";
@@ -9,7 +8,7 @@ import { IdentityContext } from "../lib/context/identity";
 export default function ProfileButton() {
     const identity = useContext(IdentityContext);
     const [showButtons, setShowButtons] = useState(false);
-    const router = useRouter(); // Make sure it's imported from the right path
+    const router = useRouter();
 
     const handleLogout = () => {
         identity.setSessionToken(undefined);

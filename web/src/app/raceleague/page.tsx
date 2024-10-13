@@ -40,11 +40,10 @@ export default function RaceLeague() {
                 ) : showConfirmation ? (
                     <div>
                         <h2> League Created Successfully!</h2>
-                            <button className={styles.closeButton} onClick={handleCloseModal}>
-                                CLOSE
-                            </button>
+                        <button className={styles.closeButton} onClick={handleCloseModal}>
+                            CLOSE
+                        </button>
                     </div>
-
                 ): (
                     <div>
                         <UserRaceLeagues />
