@@ -119,7 +119,7 @@ CREATE TABLE raceResult (
 -- Insert test data for account table
 INSERT INTO account (username, first_name, last_name, email, password_hash)
 VALUES 
-  ('user1', 'John', 'Doe', 'john.doe@example.com', 'hash1'),
+  ('admin', 'Dominic', 'Goncalves', 'dgonc99@gmail.com', '15ee03dd2ee557c4209759937d210613a2aaa6df20d26fda470227ca3c248b86'),
   ('user2', 'Jane', 'Smith', 'jane.smith@example.com', 'hash2'),
   ('user3', 'Bob', 'Brown', 'bob.brown@example.com', 'hash3'),
   ('user4', 'Alice', 'Green', 'alice.green@example.com', 'hash4'),

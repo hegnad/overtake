@@ -1,0 +1,13 @@
+.line {
+    height: 5px; /* Adjust height as necessary */
+    width: 100%; /* Full width by default */
+    margin: 20px 0; /* Add some spacing around the line */
+}
+
+.red {
+    background-color: #AA0000;
+}
+
+.yellow {
+    background-color: #FFAA00;
+}

@@ -1,0 +1,13 @@
+.heading {
+    font-size: 1.7rem;
+    color: white;
+    text-align: left; /* Adjust alignment if needed */
+    margin-bottom: 20px;
+}
+
+.footer {
+    font-size: 1.2rem;
+    color: white;
+    text-align: left; /* Adjust alignment if needed */
+    margin-bottom: 20px;
+}

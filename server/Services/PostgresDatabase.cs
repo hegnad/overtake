@@ -110,7 +110,7 @@ public class PostgresDatabase : IDatabase
         cmd.Parameters.AddWithValue("owner_id", ownerId);
         cmd.Parameters.AddWithValue("name", name);
         cmd.Parameters.AddWithValue("is_public", isPublic);
-        cmd.Parameters.AddWithValue("create_time", new DateTime());
+        cmd.Parameters.AddWithValue("create_time", DateTime.UtcNow);
 
         await using var reader = await cmd.ExecuteReaderAsync();
 
@@ -185,7 +185,7 @@ public class PostgresDatabase : IDatabase
         for (int i = 0; i < leagueIds.Count; i++)
         {
             await using var cmdLeague = _dataSource.CreateCommand(
-                @"SELECT owner_id, name, is_public FROM raceLeague
+                @"SELECT league_id, owner_id, name, is_public FROM raceLeague
                     where league_id=@league_id"
             );
 
@@ -197,9 +197,10 @@ public class PostgresDatabase : IDatabase
             {
                 RaceLeagueInfo leagueInfo = new RaceLeagueInfo
                 {
-                    OwnerId = leagueReader.GetInt32(0),
-                    Name = leagueReader.GetString(1),
-                    IsPublic = leagueReader.GetBoolean(2),
+                    LeagueId = leagueReader.GetInt32(0),
+                    OwnerId = leagueReader.GetInt32(1),
+                    Name = leagueReader.GetString(2),
+                    IsPublic = leagueReader.GetBoolean(3),
                 };
 
                 userLeagues.Add(leagueInfo);
@@ -220,7 +221,7 @@ public class PostgresDatabase : IDatabase
 
         cmd.Parameters.AddWithValue("league_id", leagueId);
         cmd.Parameters.AddWithValue("user_id", accountId);
-        cmd.Parameters.AddWithValue("join_time", new DateTime());
+        cmd.Parameters.AddWithValue("join_time", DateTime.UtcNow);
 
         await using var reader = await cmd.ExecuteReaderAsync();
 
