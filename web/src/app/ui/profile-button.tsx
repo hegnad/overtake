@@ -1,38 +1,59 @@
 "use client";
 
-import { useContext } from "react";
+import { useRouter } from 'next/navigation'; // If you're using the App Directory
+// For Pages Directory, use 'next/router'
+import { useContext, useState } from "react";
 import styles from "./profile-button.module.css";
 import { IdentityContext } from "../lib/context/identity";
-import Link from "next/link";
 
 export default function ProfileButton() {
-  const identity = useContext(IdentityContext);
+    const identity = useContext(IdentityContext);
+    const [showButtons, setShowButtons] = useState(false);
+    const router = useRouter(); // Make sure it's imported from the right path
 
-  return (
-    <>
-      {identity.sessionToken ? (
-        <div className={styles.user}>
-          {identity.accountInfo ? (
-            <span
-              onClick={() => {
-                // Temp feature for demo only
-                // TODO: replace with real logout button
-                identity.setSessionToken(undefined);
-              }}
-            >
-              {identity.accountInfo.username}
-            </span>
-          ) : (
-            <span>Loading...</span>
-          )}
-        </div>
-      ) : (
-        <div className={styles.login}>
-          <Link className={styles.loginLink} href="/login">
-            Signup/Login
-          </Link>
-        </div>
-      )}
-    </>
-  );
+    const handleLogout = () => {
+        identity.setSessionToken(undefined);
+        window.location.href = '/'; // Redirect after logout
+    };
+
+    const handleLoginClick = () => {
+        console.log('Login button clicked!'); // Debugging
+        router.push('/login'); // Programmatic navigation
+    };
+
+    const handleUsernameClick = () => {
+        setShowButtons((prevShowButtons) => !prevShowButtons); // Toggle the buttons
+    };
+
+    return (
+        <>
+            {identity.sessionToken ? (
+                <div className={styles.user}>
+                    {showButtons && (
+                        <div className={styles.buttonList}>
+                            <button className={styles.actionButton}>Profile</button>
+                            <button className={styles.actionButton}>Friends</button>
+                            <button className={styles.actionButton}>Settings</button>
+                            <button onClick={handleLogout} className={styles.actionButton}>
+                                Logout
+                            </button>
+                        </div>
+                    )}
+                    {identity.accountInfo ? (
+                        <button onClick={handleUsernameClick} className={styles.actionButton}>
+                            {identity.accountInfo.username}
+                        </button>
+                    ) : (
+                        <span>Loading...</span>
+                    )}
+                </div>
+            ) : (
+                <div className={styles.login}>
+                    <button className={styles.actionButton} onClick={handleLoginClick}>
+                        Signup/Login
+                    </button>
+                </div>
+            )}
+        </>
+    );
 }
