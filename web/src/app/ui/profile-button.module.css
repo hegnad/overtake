@@ -1,14 +1,43 @@
 .login {
-  margin: 1rem;
-  text-align: center;
+    margin: 1rem;
+    text-align: center;
 }
 
 .loginLink {
-  color: white;
-  text-decoration: none;
+    color: white;
+    text-decoration: none;
 }
 
 .user {
-  margin: 1rem;
-  text-align: center;
+    position: relative; /* Set the user container as the relative position */
+    text-align: center; /* Center the username itself */
+}
+
+.buttonList {
+    position: absolute;
+    bottom: 100%; /* Position the buttons directly above the username */
+    left: 50%; /* Align the left edge of the buttonList to the middle */
+    transform: translateX(-50%); /* Center the buttonList horizontally */
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 10px;
+    border-radius: 5px;
+    justify-content: center;
+}
+
+.actionButton {
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    color: white; /* Default white color */
+    border: none;
+}
+
+    .actionButton:hover {
+        color: #FFAA00; /* Slightly darker than white */
+    }
+
+.login {
+    margin-top: 10px;
 }

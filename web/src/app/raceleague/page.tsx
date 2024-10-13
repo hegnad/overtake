@@ -12,6 +12,7 @@ import StyledLine from "../components/styledline";
 
 export default function RaceLeague() {
     const [showCreateLeague, setShowCreateLeague] = useState(false);
+    const [showConfirmation, setShowConfirmation] = useState(false);
 
     const handleCreateLeagueClick = () => {
         setShowCreateLeague(true);
@@ -19,27 +20,37 @@ export default function RaceLeague() {
 
     const handleCloseModal = () => {
         setShowCreateLeague(false);
+        setShowConfirmation(false);
+    }
+
+    const handleLeagueCreated = () => {
+        setShowCreateLeague(false);
+        setShowConfirmation(true);
     }
 
     return (
     <SidebarLayout>
         <LeagueHeader onCreateLeagueClick={handleCreateLeagueClick} />
-        <StyledLine color="yellow" />
-        <div className={styles.container}>
-            <UserRaceLeagues />
-            <UserBallot />
-        </div>
-        {/* Pop up modal for create race league */}
-        {showCreateLeague && (
-            <div className={styles.modal}>
-                <div className={styles.modalContent}>
-                    <CreateRaceLeague />
-                    <button className={styles.closeButton} onClick={handleCloseModal}>
-                        Close
-                    </button>
-                </div>
+        <StyledLine color="yellow" size="thick"/>
+            <div className={styles.container}>
+                {showCreateLeague? (
+                    <div >
+                        <CreateRaceLeague onLeagueCreated={handleLeagueCreated}/>
+                    </div>
+                ) : showConfirmation ? (
+                    <div>
+                        <h2> League Created Successfully!</h2>
+                        <button className={styles.closeButton} onClick={handleCloseModal}>
+                            CLOSE
+                        </button>
+                    </div>
+                ): (
+                    <div>
+                        <UserRaceLeagues />
+                        <UserBallot />
+                    </div>
+                )}
             </div>
-        )}
     </SidebarLayout>
   );
-}
+} 
