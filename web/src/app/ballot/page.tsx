@@ -17,26 +17,40 @@ export default function Top10GridPrediction() {
   ); // Stores the top 10 driver predictions
   const [availableDrivers, setAvailableDrivers] = useState<CombinedDriver[]>(
     []
-  ); // List of drivers
-  const [actualResults, setActualResults] = useState<string[]>([]); // List of actual top 10 results
+  ); // List of drivers, this is fetched from API
+  const [actualResults, setActualResults] = useState<string[]>([]); // List of actual top 10 results, this is fetched from API
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [submitText, setSubmitText] = useState<string>("SUBMIT BALLOT");
-  const [validTime, setValidTime] = useState<boolean>(true);
+  const [submitText, setSubmitText] = useState<string>("SUBMIT BALLOT"); // Sets the state of our ballot button
+  const [ballotScore, setBallotScore] = useState<number | null>(null); // Track the score of the ballot
+  const [driverPoints, setDriverPoints] = useState<number[]>([]);
 
   const identity = useContext(IdentityContext);
 
+  const [validTime, setValidTime] = useState<boolean>(true);
   const nextRaceData = useRef<(string | Date)[]>([]);
 
   useEffect(() => {
-    // Helper function to remove accents from names
+    // ChatGPT prompt: How do I make a method to remove accents from a string.
     const removeAccents = (str: string) => {
       return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
     };
 
-    // Fetch drivers from the Ergast API
+    // Fetch driver data from APIs.
+    // References Dominic and Sebastian's code to fetch data from Ergast API:
+    /*
+         * try {
+
+                // Fetches names from Ergast
+                const response = await fetch("https://ergast.com/api/f1/current/last/drivers.json");
+                if (!response.ok) {
+                    throw new Error("Failed to fetch drivers");
+                }
+                const ergastData = await response.json();
+        */
     const fetchDrivers = async () => {
       try {
+        // Fetches names from Ergast
         const response = await fetch(
           "https://ergast.com/api/f1/current/last/drivers.json"
         );
@@ -44,6 +58,13 @@ export default function Top10GridPrediction() {
           throw new Error("Failed to fetch drivers");
         }
         const ergastData = await response.json();
+
+        // Fetches driver first and last name from Ergast
+
+        // ChatGPT prompt: How do I only fetch the required properties, familyName and givenName, from my api into firstName and lastName.
+        // result: const ergastDrivers = ergastData.MRData.DriverTable.Drivers.map((driver) => ({
+        // I had to assign a type value to the properties within the API e.g. givenName: string;
+
         const ergastDrivers = ergastData.MRData.DriverTable.Drivers.map(
           (driver: { givenName: string; familyName: string }) => ({
             name: `${driver.givenName} ${driver.familyName}`, // Create the full name for the CombinedDriver
@@ -52,6 +73,7 @@ export default function Top10GridPrediction() {
           })
         );
 
+        // Fetches driver photo and name from OpenF1
         const openF1Response = await fetch(
           "https://api.openf1.org/v1/drivers?session_key=latest"
         );
@@ -67,6 +89,10 @@ export default function Top10GridPrediction() {
         );
 
         // Combine Ergast and OpenF1 data by matching driver names
+
+        // ChatGPT prompt: How do I assign the driver photo from OpenF1 to its corresponding driver using the name data from Ergast.
+        // ChatGPT result: I had to create an interface file, apiDriver.ts, to define the shape of the data we want to store from both APIs.
+
         const combinedDrivers: CombinedDriver[] = ergastDrivers.map(
           (ergastDriver: { firstName: any; lastName: any }) => {
             const ergastFullName = `${ergastDriver.firstName} ${ergastDriver.lastName}`;
@@ -132,30 +158,50 @@ export default function Top10GridPrediction() {
     fetchDrivers();
   }, []);
 
+  // Logs to console the contents of the actual race results whenever this component is mounted.
   useEffect(() => {
-    console.log("actualResults updated:", actualResults);
-  }, [actualResults]);
+    if (gridPredictions.length > 0 && actualResults.length > 0) {
+      const { totalScore, driverPoints } = calculateBallotScore(
+        gridPredictions,
+        actualResults
+      );
+      console.log(`Final Ballot Score inside useEffect: ${totalScore}`);
+      setBallotScore(totalScore);
+      setDriverPoints(driverPoints);
+    } else {
+      console.log(
+        "Waiting for both gridPredictions and actualResults to be ready."
+      );
+    }
+  }, [gridPredictions, actualResults]);
 
+  // Event that triggers when a BALLOT box is selected.
   const handleBoxClick = (index: number) => {
-    setSelectedBox(index); // Highlight the clicked box
+    setSelectedBox(index);
   };
 
+  // Event that triggers when a DRIVER box is selected.
   const handleDriverClick = (driver: string) => {
     if (selectedBox !== null) {
+      // Googled how to create a copy of an array, which is how I found the Spread Syntax.
       const updatedPredictions = [...gridPredictions];
       updatedPredictions[selectedBox] = driver;
 
       // Mark the driver as selected without removing it from the list
       setGridPredictions(updatedPredictions);
-      setSelectedBox(null); // Reset the selected box after the driver is placed
+
+      // Reset the selected box after the driver is placed
+      setSelectedBox(null);
     }
   };
 
+  // Checks if driver has already been selected by user, returns True if selected driver exists in the gridPredictions.
   const isDriverSelected = (driver: string) => {
     return gridPredictions.includes(driver);
   };
 
   // Fetch race results (this function will be called after ballot submission)
+  // References Sebastian's code to fetch the most recent race results from Ergast API: app/lastrace/page.tsx
   const fetchRaceResults = async () => {
     try {
       const raceResultsResponse = await fetch(
@@ -165,6 +211,8 @@ export default function Top10GridPrediction() {
         throw new Error("Failed to fetch race results");
       }
       const raceResultsData = await raceResultsResponse.json();
+
+      // Only retrieve the top 10 final positions.
       const raceResults =
         raceResultsData.MRData.RaceTable.Races[0].Results.slice(0, 10).map(
           (result: { Driver: { givenName: string; familyName: string } }) =>
@@ -173,35 +221,92 @@ export default function Top10GridPrediction() {
 
       setActualResults(raceResults);
       console.log("Race results fetched successfully: ", raceResults);
+
+      const { totalScore, driverPoints } = calculateBallotScore(
+        gridPredictions,
+        actualResults
+      );
+      console.log(`Final Ballot Score inside fetchRaceResults: ${totalScore}`);
+      setBallotScore(totalScore);
+      setDriverPoints(driverPoints);
     } catch (fetchError) {
       console.error("Error fetching race results:", fetchError);
       setActualResults([]); // Fallback to an empty array in case of error
     }
   };
 
+  const calculateBallotScore = (
+    predictions: (string | null)[],
+    results: string[]
+  ) => {
+    let totalScore = 0;
+
+    // Array to store corresponding points for each driver
+    const driverPoints = new Array(results.length).fill(0);
+
+    predictions.forEach((predictedDriver, predictedPosition) => {
+      if (!predictedDriver) return;
+
+      const actualPosition = results.indexOf(predictedDriver);
+
+      // Check for exact matches
+      if (actualPosition === predictedPosition) {
+        // 1st place bonus
+        if (predictedPosition === 0) {
+          totalScore += 25;
+          driverPoints[actualPosition] = 25;
+
+          // 2nd place bonus
+        } else if (predictedPosition === 1) {
+          totalScore += 20;
+          driverPoints[actualPosition] = 20;
+
+          // 3rd place bonus
+        } else if (predictedPosition === 2) {
+          totalScore += 15;
+          driverPoints[actualPosition] = 15;
+        } else {
+          totalScore += 10;
+          driverPoints[actualPosition] = 10;
+        }
+
+        // Check for 1 pos off
+      } else if (Math.abs(actualPosition - predictedPosition) === 1) {
+        totalScore += 5;
+        driverPoints[actualPosition] = 5;
+        // Check for 2 pos off
+      } else if (Math.abs(actualPosition - predictedPosition) === 2) {
+        totalScore += 3;
+        driverPoints[actualPosition] = 3;
+      } else if (actualPosition === -1) {
+        return;
+      }
+    });
+
+    return { totalScore, driverPoints };
+  };
+
+  // Submits Ballot data to corresponding tables in our postgres server.
   const handleSubmit = async () => {
     if (gridPredictions.includes(null)) {
       setSubmitText("INVALID BALLOT, TRY AGAIN");
       return;
     }
 
-    let deadline = new Date(nextRaceData.current[1]);
-
-    const currentDate = new Date();
-    //fake deadline for testing the disabling
-    //const deadline = new Date(new Date(currentDate).getTime() - 15 * 60000);
-
-    console.log(deadline);
-    console.log(currentDate);
-    if (currentDate >= deadline) {
-      setSubmitText("DISABLED");
-      return;
-    }
+    // Calculate and update ballot score
+    const { totalScore, driverPoints } = calculateBallotScore(
+      gridPredictions,
+      actualResults
+    );
+    console.log(`Final Ballot Score inside handleSubmit: ${totalScore}`);
+    setBallotScore(totalScore);
 
     const requestBody = {
       DriverPredictions: gridPredictions,
+      totalScore: totalScore,
     };
 
+    // References Dominic's function to send data to race league tables: app/raceleague/page.tsx
     try {
       const response = await fetch("http://localhost:8080/api/ballot/create", {
         method: "POST",
@@ -229,6 +334,7 @@ export default function Top10GridPrediction() {
     }
   };
 
+  // Colour-coordinates actual results depending on the user's predictions.
   const getBoxColor = (
     predictedDriver: string | null,
     actualPosition: number
@@ -242,12 +348,13 @@ export default function Top10GridPrediction() {
     return "";
   };
 
+  // Reset everything to the initial state
   const handleTryAgain = () => {
-    // Reset everything to the initial state
     setGridPredictions(Array(10).fill(null));
     setActualResults([]);
     setSubmitText("SUBMIT BALLOT");
     setSelectedBox(null);
+    setBallotScore(null);
   };
 
   // Get top three selected drivers
@@ -268,160 +375,170 @@ export default function Top10GridPrediction() {
 
   return (
     <SidebarLayout>
-      <div>
-        {/* Left side: Ballot */}
-        {!validTime ? (
-          <div className={styles.container}>
-            {" "}
-            <p>Unable to submit ballot</p>{" "}
+      {validTime ? (
+        <div className={styles.container}>
+          {/* Left side: Ballot */}
+          <div className={styles.ballot}>
+            {/* Ballot Podium */}
+            <div className={styles.topThreeImages}>
+              {topThreeDrivers.map((driver, index) => {
+                const driverData = availableDrivers.find(
+                  (d) => d.name === driver
+                );
+
+                if (!driverData) return null; // Skip if driver data is not available
+
+                return (
+                  <div
+                    key={index}
+                    className={`${styles.driverImageContainer} ${
+                      index === 0
+                        ? styles.firstImage
+                        : index === 1
+                          ? styles.secondImage
+                          : styles.thirdImage
+                    }`}
+                  >
+                    <Image
+                      src={driverData.headshotUrl}
+                      alt={driverData.name}
+                      width={100}
+                      height={100}
+                      className={styles.podiumImage}
+                      unoptimized
+                    />
+                  </div>
+                );
+              })}
+            </div>
+            <br />
+
+            {/* Ballot List */}
+            {gridPredictions.map((driver, index) => (
+              <div
+                key={index}
+                className={`${styles.ballotBox} ${
+                  selectedBox === index ? styles.selected : ""
+                } ${driver ? styles.filledBox : ""}`}
+                onClick={() => handleBoxClick(index)}
+              >
+                {index + 1}. {driver || "_________________________________"}
+              </div>
+            ))}
+
+            <button
+              onClick={
+                submitText === "TRY AGAIN" ? handleTryAgain : handleSubmit
+              }
+              className={styles.submitButton}
+            >
+              {submitText}
+            </button>
+
+            {/* Display Ballot Score */}
+            {ballotScore !== null && (
+              <div className={styles.scoreDisplay}>
+                <p>Your Ballot Score: {ballotScore} points</p>
+              </div>
+            )}
           </div>
-        ) : (
-          <div className={styles.container}>
-            <div className={styles.ballot}>
-              {/* Ballot Podium */}
-              <div className={styles.topThreeImages}>
-                {topThreeDrivers.map((driver, index) => {
+
+          {/* Right side: Actual or predicted results */}
+
+          <div className={styles.driverList}>
+            <div className={styles.driverListContainer}>
+              {actualResults.length === 0 ? (
+                <ul
+                  className={styles.driverGrid}
+                  style={{ listStyleType: "none", padding: 0 }}
+                >
+                  {availableDrivers.map((driver, index) => (
+                    <li
+                      key={index}
+                      className={
+                        isDriverSelected(driver.name) ? styles.crossedOut : ""
+                      }
+                      onClick={() => handleDriverClick(driver.name)}
+                    >
+                      <div className={styles.driverNameAndImage}>
+                        <Image
+                          src={driver.headshotUrl}
+                          alt={driver.name}
+                          width={100}
+                          height={100}
+                          className={styles.driverImage}
+                          unoptimized
+                        />
+                        {driver.name}
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                actualResults.map((driver, index) => {
+                  const actualPos = index;
+                  const predictedPos = gridPredictions.indexOf(driver);
+
+                  const posDifference = predictedPos - actualPos;
+
+                  let positionChangeText = "";
+
+                  if (predictedPos === -1) {
+                    positionChangeText = ""; // Driver not in user's predictions
+                  } else {
+                    const posDifference = predictedPos - actualPos;
+                    if (posDifference > 0) {
+                      positionChangeText = ` (\u2191 ${posDifference})`; // Moved up
+                    } else if (posDifference < 0) {
+                      positionChangeText = ` (\u2193 ${Math.abs(posDifference)})`; // Moved down
+                    }
+                  }
+
+                  const boxColor = getBoxColor(driver, index);
+
                   const driverData = availableDrivers.find(
                     (d) => d.name === driver
                   );
-
-                  if (!driverData) return null; // Skip if driver data is not available
+                  const driverImageUrl = driverData
+                    ? driverData.headshotUrl
+                    : "";
 
                   return (
                     <div
                       key={index}
-                      className={`${styles.driverImageContainer} ${
-                        index === 0
-                          ? styles.firstImage
-                          : index === 1
-                            ? styles.secondImage
-                            : styles.thirdImage
-                      }`}
+                      className={`${styles.actualResultsBox} ${boxColor}`}
                     >
-                      <Image
-                        src={driverData.headshotUrl}
-                        alt={driverData.name}
-                        width={100}
-                        height={100}
-                        className={styles.podiumImage}
-                        unoptimized
-                      />
+                      <div className={styles.driverNameAndImage}>
+                        <Image
+                          src={driverImageUrl}
+                          alt={driver}
+                          width={30}
+                          height={30}
+                          className={styles.driverImage}
+                          unoptimized
+                        />
+                        {index + 1}. {driver} {positionChangeText}
+                        <span className={styles.driverPoints}>
+                          {driverPoints[index] !== undefined
+                            ? `  +${driverPoints[index]}pts`
+                            : ""}
+                        </span>
+                      </div>
                     </div>
                   );
-                })}
-              </div>
-              <br />
-
-              {/* Ballot List */}
-              {gridPredictions.map((driver, index) => (
-                <div
-                  key={index}
-                  className={`${styles.ballotBox} ${
-                    selectedBox === index ? styles.selected : ""
-                  } ${driver ? styles.filledBox : ""}`}
-                  onClick={() => handleBoxClick(index)}
-                >
-                  {index + 1}. {driver || "_________________________________"}
-                </div>
-              ))}
-
-              <button
-                onClick={
-                  submitText === "TRY AGAIN" ? handleTryAgain : handleSubmit
-                }
-                className={styles.submitButton}
-              >
-                {submitText}
-              </button>
-            </div>
-
-            {/* Right side: Actual or predicted results */}
-
-            <div className={styles.driverList}>
-              <div className={styles.driverListContainer}>
-                {actualResults.length === 0 ? (
-                  <ul
-                    className={styles.driverGrid}
-                    style={{ listStyleType: "none", padding: 0 }}
-                  >
-                    {availableDrivers.map((driver, index) => (
-                      <li
-                        key={index}
-                        className={
-                          isDriverSelected(driver.name) ? styles.crossedOut : ""
-                        }
-                        onClick={() => handleDriverClick(driver.name)}
-                      >
-                        <div className={styles.driverNameAndImage}>
-                          <Image
-                            src={driver.headshotUrl}
-                            alt={driver.name}
-                            width={100}
-                            height={100}
-                            className={styles.driverImage}
-                            unoptimized
-                          />
-                          {driver.name}
-                        </div>
-                      </li>
-                    ))}
-                  </ul>
-                ) : (
-                  actualResults.map((driver, index) => {
-                    const actualPos = index;
-                    const predictedPos = gridPredictions.indexOf(driver);
-
-                    const posDifference = predictedPos - actualPos;
-
-                    let positionChangeText = "";
-
-                    if (predictedPos === -1) {
-                      positionChangeText = ""; // Driver not in user's predictions
-                    } else {
-                      const posDifference = predictedPos - actualPos;
-                      if (posDifference > 0) {
-                        positionChangeText = ` (\u2191 ${posDifference})`; // Moved up
-                      } else if (posDifference < 0) {
-                        positionChangeText = ` (\u2193 ${Math.abs(
-                          posDifference
-                        )})`; // Moved down
-                      }
-                    }
-
-                    const boxColor = getBoxColor(driver, index);
-
-                    const driverData = availableDrivers.find(
-                      (d) => d.name === driver
-                    );
-                    const driverImageUrl = driverData
-                      ? driverData.headshotUrl
-                      : "";
-
-                    return (
-                      <div
-                        key={index}
-                        className={`${styles.actualResultsBox} ${boxColor}`}
-                      >
-                        <div className={styles.driverNameAndImage}>
-                          <Image
-                            src={driverImageUrl}
-                            alt={driver}
-                            width={30}
-                            height={30}
-                            className={styles.driverImage}
-                            unoptimized
-                          />
-                          {index + 1}. {driver} {positionChangeText}
-                        </div>
-                      </div>
-                    );
-                  })
-                )}
-              </div>
+                })
+              )}
             </div>
           </div>
-        )}
-      </div>
+        </div>
+      ) : (
+        <div className={styles.ballot}>
+          <h2 className={styles.heading}>Ballot Closed</h2>
+          <p className={styles.footer}>
+            The ballot is now closed. Please try again next time.
+          </p>
+        </div>
+      )}
     </SidebarLayout>
   );
 }
