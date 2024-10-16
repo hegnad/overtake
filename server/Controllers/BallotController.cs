@@ -35,10 +35,17 @@ public class BallotController : ControllerBase
             return new BadRequestResult();
         }
 
+        // Validate leagueId
+        if (!request.LeagueId.HasValue)
+        {
+            return new BadRequestObjectResult("LeagueId is required");
+        }
+
         // Get current user ID
         int userId = Convert.ToInt32(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
 
-        int leagueId = 1;
+        int leagueId = request.LeagueId.Value;
+
         int raceId = 1;
 
         // Create a list of DriverPrediction objects
@@ -60,7 +67,7 @@ public class BallotController : ControllerBase
     [HttpGet]
     [Route("populate")]
     [Produces("application/json")]
-    public async Task<ActionResult<BallotContent[]>> PopulateAync()
+    public async Task<ActionResult<BallotContent[]>> PopulateAsync()
     {
         int userId = Convert.ToInt32(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
         int? ballotId = await _database.GetBallotByUserIdAsync(userId);

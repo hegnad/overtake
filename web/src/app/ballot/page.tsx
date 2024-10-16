@@ -9,6 +9,7 @@ import Image from "next/image";
 import defaultDriverImage from '../../../public/images/defaultdriverimg.png';
 
 export default function Top10GridPrediction() {
+    const identity = useContext(IdentityContext);
     const [selectedBox, setSelectedBox] = useState<number | null>(null); // Tracks selected box
     const [gridPredictions, setGridPredictions] = useState<(string | null)[]>(Array(10).fill(null)); // Stores the top 10 driver predictions
     const [availableDrivers, setAvailableDrivers] = useState<CombinedDriver[]>([]); // List of drivers, this is fetched from API
@@ -18,8 +19,15 @@ export default function Top10GridPrediction() {
     const [submitText, setSubmitText] = useState<string>("SUBMIT BALLOT"); // Sets the state of our ballot button
     const [ballotScore, setBallotScore] = useState<number | null>(null); // Track the score of the ballot
     const [driverPoints, setDriverPoints] = useState<number[]>([]);
+    const [leagues, setLeagues] = useState<RaceLeagueInfo[]>([]);
+    const [selectedLeagueId, setSelectedLeagueId] = useState("");
 
-    const identity = useContext(IdentityContext);
+    interface RaceLeagueInfo {
+        leagueId: number;
+        ownerId: number;
+        name: string;
+        isPublic: boolean;
+    }
 
     useEffect(() => {
 
@@ -110,11 +118,36 @@ export default function Top10GridPrediction() {
                 setError(err.message);
                 setLoading(false);
             }
+
         };
 
         fetchDrivers();
 
     }, []);
+
+    useEffect(() => {
+        const fetchLeagues = async () => {
+            const response = await fetch("http://localhost:8080/api/league/populate", {
+                method: "GET",
+                headers: {
+                    Authorization: `Bearer ${identity.sessionToken}`,
+                    "Content-Type": "application/json",
+                },
+            });
+
+            if (response.status === 200) {
+                const data = await response.json();
+
+                setLeagues(data);
+            } else {
+                console.error(`non-successful status code: ${response.status}`)
+            }
+        };
+
+        if (identity.sessionToken) {
+            fetchLeagues();
+        }
+    }, [identity.sessionToken]);
 
     // Logs to console the contents of the actual race results whenever this component is mounted.
     useEffect(() => {
@@ -154,6 +187,7 @@ export default function Top10GridPrediction() {
     // Fetch race results (this function will be called after ballot submission)
     // References Sebastian's code to fetch the most recent race results from Ergast API: app/lastrace/page.tsx
     const fetchRaceResults = async () => {
+
         try {
             const raceResultsResponse = await fetch("https://ergast.com/api/f1/current/last/results.json");
             if (!raceResultsResponse.ok) {
@@ -169,12 +203,14 @@ export default function Top10GridPrediction() {
             console.log("Race results fetched successfully: ", raceResults);
 
             // Return the race results array for further processing
+            setActualResults(raceResults);
             return raceResults;
 
         } catch (fetchError) {
             console.error("Error fetching race results:", fetchError);
             return []; // Return an empty array in case of error
         }
+
     };
 
 
@@ -240,6 +276,11 @@ export default function Top10GridPrediction() {
             return;
         }
 
+        if (!selectedLeagueId) {
+            setSubmitText("MUST SELECT A LEAGUE, TRY AGAIN");
+            return;
+        }
+
         try {
             // Step 1: Fetch the actual race results before scoring
             const raceResults = await fetchRaceResults();
@@ -252,7 +293,8 @@ export default function Top10GridPrediction() {
             // Step 3: Prepare the request body with the correct score and predictions
             const requestBody = {
                 DriverPredictions: gridPredictions,
-                totalScore: totalScore,  // Include the correct score here
+                totalScore: totalScore,
+                leagueId: selectedLeagueId,
             };
 
             // Step 4: Submit the ballot to the backend
@@ -312,6 +354,22 @@ export default function Top10GridPrediction() {
                 {/* Left side: Ballot */}
 
                 <div className={styles.ballot}>
+
+                    <form onSubmit={handleSubmit} className={styles.leagueList}>
+                        <h2>Select League</h2>
+                        <select
+                            id="leagueSelect"
+                            value={selectedLeagueId}
+                            onChange={(e) => setSelectedLeagueId(e.target.value)}
+                        >
+                            <option value="">-- Select League --</option>
+                            {leagues.map((league) => (
+                                <option key={league.leagueId} value={league.leagueId}>
+                                    {league.name}
+                                </option>
+                            ))}
+                        </select>
+                    </form>
 
                     {/* Ballot Podium */}
                     <div className={styles.topThreeImages}>

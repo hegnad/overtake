@@ -12,6 +12,14 @@
     color: white;
 }
 
+.leagueList {
+    color: black;
+}
+    
+    .leagueList h2 {
+        color: white;
+    }
+
 .ballotBox {
     padding: 10px;
     margin-bottom: 10px;
