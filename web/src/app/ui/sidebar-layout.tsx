@@ -48,9 +48,6 @@ export default function SidebarLayout({ children }: SidebarLayoutProps) {
                           <Link href="/lastrace" className={styles.navItem}>
                               LAST RACE
                           </Link>
-                          <Link href="/ballot" className={styles.navItem}>
-                              BALLOT
-                          </Link>
                       </>
                   )}
               </nav>

@@ -53,17 +53,20 @@ export default function UserRaceLeagues() {
     return (
         <div className={styles.container}>
             <h2 className={styles.heading}>Your Race Leagues</h2>
-            <StyledLine color="red" />
+            <StyledLine color="red" size="thick"/>
             <ul className={styles.leagueList}>
                 {leagues.length > 0 ? (
                   leagues.map((league, index) => (
                       <li key={league.leagueId} className={styles.leagueItem}>
                           <button className={styles.leagueButton} onClick={() => handleClick(league.leagueId) }>
                           <div className={styles.iconContainer}>
-                              <img src="/images/logo.svg" alt="flags" className={styles.icon} />
+                                <div className={styles.iconBackground}>
+                                      <img src="/images/logo.svg" alt="flags" className={styles.icon} />
+                                </div>
                           </div>
                           <div className={styles.leagueInfo}>
                               <h3>{league.name}</h3>
+                                  <h2>x Members</h2>
                               </div>
                           </button>
                       </li>
