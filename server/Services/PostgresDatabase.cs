@@ -360,6 +360,32 @@ public class PostgresDatabase : IDatabase
         return null;
     }
 
+    public async Task<int?> GetBallotByUserIdAndLeagueIdAsync(int accountId, int leagueId)
+    {
+
+        await using var cmd = _dataSource.CreateCommand(
+            @"SELECT ballot_id FROM ballot
+                WHERE user_id=@user_id
+                AND league_id = @league_id
+                AND settle_time IS NULL
+                ORDER BY create_time DESC
+                LIMIT 1"
+        );
+
+        cmd.Parameters.AddWithValue("user_id", accountId);
+        cmd.Parameters.AddWithValue("league_id", leagueId);
+
+        await using var reader = await cmd.ExecuteReaderAsync();
+
+        if (await reader.ReadAsync())
+        {
+            return reader.GetInt32(0);
+        }
+
+        return null;
+
+    }
+
     public async Task<BallotContent[]> GetBallotContentAsync(int ballotId)
     {
         var ballotContents = new List<BallotContent>();

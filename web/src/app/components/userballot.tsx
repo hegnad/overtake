@@ -8,11 +8,13 @@ import styles from "./userballot.module.css";
 export default function UserBallot() {
     const identity = useContext(IdentityContext);
     const [ballots, setBallots] = useState<{ position: number; driverId: string }[]>([]);
+    const [leagues, setLeagues] = useState<{ leagueId: string; name: string }[]>([]);
+    const [selectedLeagueId, setSelectedLeagueId] = useState<string | null>(null);
     const router = useRouter();
 
     useEffect(() => {
-        const fetchBallot = async () => {
-            const response = await fetch("http://localhost:8080/api/ballot/populate", {
+        const fetchLeagues = async () => {
+            const response = await fetch("http://localhost:8080/api/league/populate", {
                 method: "GET",
                 headers: {
                     Authorization: `Bearer ${identity.sessionToken}`,
@@ -22,16 +24,44 @@ export default function UserBallot() {
 
             if (response.status === 200) {
                 const data = await response.json();
-                setBallots(data);
-            } else if (response.status === 404) {
-                setBallots([]);
+                setLeagues(data);
             }
         };
 
+        // Fetch leagues only once when the component mounts
         if (identity.sessionToken) {
-            fetchBallot();
+            fetchLeagues();
         }
     }, [identity.sessionToken]);
+
+    useEffect(() => {
+        const fetchBallot = async () => {
+            if (selectedLeagueId) {
+                const response = await fetch(`http://localhost:8080/api/ballot/populate?leagueId=${selectedLeagueId}`, {
+                    method: "GET",
+                    headers: {
+                        Authorization: `Bearer ${identity.sessionToken}`,
+                        "Content-Type": "application/json",
+                    },
+                });
+
+                console.log(`Fetching ballot for league ID: ${selectedLeagueId}, Response Status: ${response.status}`);
+
+                if (response.status === 200) {
+                    const data = await response.json();
+                    setBallots(data);
+                } else if (response.status === 404) {
+                    setBallots([]);
+                }
+            }
+        };
+
+        fetchBallot();
+    }, [selectedLeagueId, identity.sessionToken]);
+
+    const handleLeagueChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+        setSelectedLeagueId(event.target.value);
+    };
 
     const handleClick = () => {
         router.push('./ballot');
@@ -50,6 +80,18 @@ export default function UserBallot() {
         <div>
             <h2 className={styles.heading}>Your Ballot</h2>
             <StyledLine color="red" size="thick" />
+
+            {/* Dropdown for selecting league */}
+            <label htmlFor="leagueSelect">Select League:</label>
+            <select id="leagueSelect" onChange={handleLeagueChange} value={selectedLeagueId || ''}>
+                <option value="">Select a league</option>
+                {leagues.map(league => (
+                    <option key={league.leagueId} value={league.leagueId}>
+                        {league.name}
+                    </option>
+                ))}
+            </select>
+
             <button onClick={handleClick}>
                 <ul className={styles.driverList}>
                     {driver2 ? (
