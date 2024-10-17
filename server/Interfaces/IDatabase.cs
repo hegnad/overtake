@@ -29,6 +29,8 @@ public interface IDatabase
 
     Task<int?> GetBallotByUserIdAsync(int accountId);
 
+    Task<int?> GetBallotByUserIdAndLeagueIdAsync(int accountId, int leagueId);
+
     Task<BallotContent[]> GetBallotContentAsync(int ballotId);
 
     Task<int> InsertBallotAsync(int userId, int leagueId, int raceId, List<DriverPrediction> driverPredictions, int? totalScore);

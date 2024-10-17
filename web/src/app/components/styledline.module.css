@@ -1,7 +1,5 @@
 .line {
-    height: 5px; /* Adjust height as necessary */
     width: 100%; /* Full width by default */
-    margin: 20px 0; /* Add some spacing around the line */
 }
 
 .red {
@@ -10,4 +8,22 @@
 
 .yellow {
     background-color: #FFAA00;
+}
+
+.silver {
+    background-color: #CCCCCC; /* Metallic gray for silver */
+}
+
+.bronze {
+    background-color: #944700; /* Reddish-brown for bronze */
+}
+
+.thick {
+    height: 5px;
+    margin: 20px 0;
+}
+
+.thin {
+    height: 3px;
+    margin: 3px 0;
 }

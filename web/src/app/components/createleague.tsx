@@ -4,25 +4,14 @@ import { IdentityContext } from "../lib/context/identity";
 import { useState, useContext } from "react";
 import styles from "./createleague.module.css"
 
-export default function CreateRaceLeague() {
+interface CreateRaceLeagueProps {
+    onLeagueCreated: () => void;
+}
+
+export default function CreateRaceLeague({ onLeagueCreated }: CreateRaceLeagueProps) {
     const identity = useContext(IdentityContext);
     const [name, setName] = useState<string>("");
     const [isPublic, setIsPublic] = useState<boolean>(false);
-
-    /*
-    **ChatGPT generated parameter**
-    
-    Parameter was originally 'e: mouse event', however this was causing an error with the form's 'onSubmit' event handler.
-    Parameter has now been updated at the assistance of ChatGPT.
-
-    Prompt:
-
-    "the following is a page in my system that allows users to create race leagues. The 'handleSubmit' method
-    is currently causing errors with the form's 'onSubmit' event handler. Please review the code, and explain
-    the cause of the error, as well as how to fix it:
-    
-    [copy/paste of code from lines 1-87]"
-    */
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -43,7 +32,7 @@ export default function CreateRaceLeague() {
           // TODO: handle error on UI instead of backend
           console.error(`non-successful status code: ${response.status}`);
         } else {
-          // TODO: ???
+            onLeagueCreated();
         }
       };
 

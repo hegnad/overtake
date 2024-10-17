@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect, useContext, useRef } from "react";
 import SidebarLayout from "../ui/sidebar-layout";
 import styles from "./ballot.module.css";
 import { IdentityContext } from "../lib/context/identity";
@@ -9,6 +9,7 @@ import Image from "next/image";
 import defaultDriverImage from '../../../public/images/defaultdriverimg.png';
 
 export default function Top10GridPrediction() {
+    const identity = useContext(IdentityContext);
     const [selectedBox, setSelectedBox] = useState<number | null>(null); // Tracks selected box
     const [gridPredictions, setGridPredictions] = useState<(string | null)[]>(Array(10).fill(null)); // Stores the top 10 driver predictions
     const [availableDrivers, setAvailableDrivers] = useState<CombinedDriver[]>([]); // List of drivers, this is fetched from API
@@ -18,8 +19,17 @@ export default function Top10GridPrediction() {
     const [submitText, setSubmitText] = useState<string>("SUBMIT BALLOT"); // Sets the state of our ballot button
     const [ballotScore, setBallotScore] = useState<number | null>(null); // Track the score of the ballot
     const [driverPoints, setDriverPoints] = useState<number[]>([]);
+    const [leagues, setLeagues] = useState<RaceLeagueInfo[]>([]);
+    const [selectedLeagueId, setSelectedLeagueId] = useState("");
+    const [validTime, setValidTime] = useState<boolean>(true);
+    const nextRaceData = useRef<(string | Date)[]>([]);
 
-    const identity = useContext(IdentityContext);
+    interface RaceLeagueInfo {
+        leagueId: number;
+        ownerId: number;
+        name: string;
+        isPublic: boolean;
+    }
 
     useEffect(() => {
 
@@ -110,23 +120,46 @@ export default function Top10GridPrediction() {
                 setError(err.message);
                 setLoading(false);
             }
+
         };
 
         fetchDrivers();
 
     }, []);
 
+    useEffect(() => {
+        const fetchLeagues = async () => {
+            const response = await fetch("http://localhost:8080/api/league/populate", {
+                method: "GET",
+                headers: {
+                    Authorization: `Bearer ${identity.sessionToken}`,
+                    "Content-Type": "application/json",
+                },
+            });
+
+            if (response.status === 200) {
+                const data = await response.json();
+
+                setLeagues(data);
+            } else {
+                console.error(`non-successful status code: ${response.status}`)
+            }
+        };
+
+        if (identity.sessionToken) {
+            fetchLeagues();
+        }
+    }, [identity.sessionToken]);
+
     // Logs to console the contents of the actual race results whenever this component is mounted.
     useEffect(() => {
-        if (gridPredictions.length > 0 && actualResults.length > 0) {
+        if (gridPredictions.every(driver => driver !== null) && actualResults.length > 0) {
             const { totalScore, driverPoints } = calculateBallotScore(gridPredictions, actualResults);
-            console.log(`Final Ballot Score inside useEffect: ${totalScore}`);
             setBallotScore(totalScore);
             setDriverPoints(driverPoints);
-        } else {
-            console.log("Waiting for both gridPredictions and actualResults to be ready.");
         }
     }, [gridPredictions, actualResults]);
+
 
     // Event that triggers when a BALLOT box is selected.
     const handleBoxClick = (index: number) => {
@@ -156,6 +189,7 @@ export default function Top10GridPrediction() {
     // Fetch race results (this function will be called after ballot submission)
     // References Sebastian's code to fetch the most recent race results from Ergast API: app/lastrace/page.tsx
     const fetchRaceResults = async () => {
+
         try {
             const raceResultsResponse = await fetch("https://ergast.com/api/f1/current/last/results.json");
             if (!raceResultsResponse.ok) {
@@ -165,24 +199,22 @@ export default function Top10GridPrediction() {
 
             // Only retrieve the top 10 final positions.
             const raceResults = raceResultsData.MRData.RaceTable.Races[0].Results.slice(0, 10).map(
-                (result: { Driver: { givenName: string; familyName: string } }) => (
-                    `${result.Driver.givenName} ${result.Driver.familyName}`
-                )
+                (result: { Driver: { givenName: any; familyName: any; }; }) => `${result.Driver.givenName} ${result.Driver.familyName}`
             );
 
-            setActualResults(raceResults);
             console.log("Race results fetched successfully: ", raceResults);
 
-            const { totalScore, driverPoints } = calculateBallotScore(gridPredictions, actualResults);
-            console.log(`Final Ballot Score inside fetchRaceResults: ${totalScore}`);
-            setBallotScore(totalScore);
-            setDriverPoints(driverPoints);
+            // Return the race results array for further processing
+            setActualResults(raceResults);
+            return raceResults;
 
         } catch (fetchError) {
             console.error("Error fetching race results:", fetchError);
-            setActualResults([]); // Fallback to an empty array in case of error
+            return []; // Return an empty array in case of error
         }
+
     };
+
 
     const calculateBallotScore = (predictions: (string | null)[], results: string[]) => {
 
@@ -240,26 +272,47 @@ export default function Top10GridPrediction() {
 
     // Submits Ballot data to corresponding tables in our postgres server.
     const handleSubmit = async () => {
-
+        // Ensure the ballot is completely filled
         if (gridPredictions.includes(null)) {
             setSubmitText("INVALID BALLOT, TRY AGAIN");
             return;
         }
 
-        
-        // Calculate and update ballot score
-        const { totalScore, driverPoints } = calculateBallotScore(gridPredictions, actualResults);
-        console.log(`Final Ballot Score inside handleSubmit: ${totalScore}`);
-        setBallotScore(totalScore);
-        
+        if (!selectedLeagueId) {
+            setSubmitText("MUST SELECT A LEAGUE, TRY AGAIN");
+            return;
+        }
 
-        const requestBody = {
-            DriverPredictions: gridPredictions,
-            totalScore: totalScore,
-        };
+        let deadline = new Date(nextRaceData.current[1]);
 
-        // References Dominic's function to send data to race league tables: app/raceleague/page.tsx
+        const currentDate = new Date();
+        //fake deadline for testing the disabling
+        //const deadline = new Date(new Date(currentDate).getTime() - 15 * 60000);
+
+        console.log(deadline);
+        console.log(currentDate);
+        if (currentDate >= deadline) {
+            setSubmitText("DISABLED");
+            return;
+        }
+
         try {
+            // Step 1: Fetch the actual race results before scoring
+            const raceResults = await fetchRaceResults();
+
+            // Step 2: Calculate the ballot score based on race results
+            const { totalScore, driverPoints } = calculateBallotScore(gridPredictions, raceResults);  // Use raceResults instead of actualResults
+            console.log(`Final Ballot Score inside handleSubmit: ${totalScore}`);
+            setBallotScore(totalScore); // Updates the UI with the new score, if necessary
+
+            // Step 3: Prepare the request body with the correct score and predictions
+            const requestBody = {
+                DriverPredictions: gridPredictions,
+                totalScore: totalScore,
+                leagueId: selectedLeagueId,
+            };
+
+            // Step 4: Submit the ballot to the backend
             const response = await fetch("http://localhost:8080/api/ballot/create", {
                 method: "POST",
                 headers: {
@@ -276,17 +329,14 @@ export default function Top10GridPrediction() {
             }
 
             console.log("Ballot submitted successfully.");
-            setSubmitText("TRY AGAIN");
-
-            // Fetch race results after successful ballot submission
-            await fetchRaceResults();
+            setSubmitText("BALLOT SUBMITTED SUCCESSFULLY");
 
         } catch (err) {
             console.error("Error submitting ballot:", err);
             setSubmitText("ERROR, TRY AGAIN");
         }
-
     };
+
 
     // Colour-coordinates actual results depending on the user's predictions.
     const getBoxColor = (predictedDriver: string | null, actualPosition: number) => {
@@ -320,55 +370,81 @@ export default function Top10GridPrediction() {
 
                 <div className={styles.ballot}>
 
-                    {/* Ballot Podium */}
-                    <div className={styles.topThreeImages}>
+                    <div>
 
-                        {topThreeDrivers.map((driver, index) => {
+                        {!validTime ? (
+                            <div className={styles.container}>
+                                <p>Unable to submit ballot</p>
+                            </div>
+                        ) : (
+                            <>
+                                {/* League Selection Form */}
+                                <form onSubmit={handleSubmit} className={styles.leagueList}>
+                                    <h2>Select League</h2>
+                                    <select
+                                        id="leagueSelect"
+                                        value={selectedLeagueId}
+                                        onChange={(e) => setSelectedLeagueId(e.target.value)}
+                                    >
+                                        <option value="">-- Select League --</option>
+                                        {leagues.map((league) => (
+                                            <option key={league.leagueId} value={league.leagueId}>
+                                                {league.name}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </form>
 
-                            const driverData = availableDrivers.find(d => d.name === driver);
+                                {/* Ballot Podium */}
+                                <div className={styles.topThreeImages}>
+                                    {topThreeDrivers.map((driver, index) => {
+                                        const driverData = availableDrivers.find((d) => d.name === driver);
+                                        if (!driverData) return null; // Skip if driver data is not available
 
-                            if (!driverData) return null; // Skip if driver data is not available
-
-                            return (
-                                <div
-                                    key={index}
-                                    className={`${styles.driverImageContainer} ${index === 0 ? styles.firstImage : index === 1 ? styles.secondImage : styles.thirdImage}`}
-                                >
-                                    <Image
-                                        src={driverData.headshotUrl}
-                                        alt={driverData.name}
-                                        width={100}
-                                        height={100}
-                                        className={styles.podiumImage}
-                                        unoptimized
-                                    />
+                                        return (
+                                            <div
+                                                key={index}
+                                                className={`${styles.driverImageContainer} ${index === 0 ? styles.firstImage : index === 1 ? styles.secondImage : styles.thirdImage}`}
+                                            >
+                                                <Image
+                                                    src={driverData.headshotUrl}
+                                                    alt={driverData.name}
+                                                    width={100}
+                                                    height={100}
+                                                    className={styles.podiumImage}
+                                                    unoptimized
+                                                />
+                                            </div>
+                                        );
+                                    })}
                                 </div>
-                            );
-                        })}
+                                <br />
+
+                                {/* Ballot List */}
+                                {gridPredictions.map((driver, index) => (
+                                    <div
+                                        key={index}
+                                        className={`${styles.ballotBox} ${selectedBox === index ? styles.selected : ""} ${driver ? styles.filledBox : ""}`}
+                                        onClick={() => handleBoxClick(index)}
+                                    >
+                                        {index + 1}. {driver || "_________________________________"}
+                                    </div>
+                                ))}
+
+                                <button onClick={submitText === "TRY AGAIN" ? handleTryAgain : handleSubmit} className={styles.submitButton}>
+                                    {submitText}
+                                </button>
+
+                                {/* Display Ballot Score */}
+                                {ballotScore !== null && (
+                                    <div className={styles.scoreDisplay}>
+                                        <p>Your Ballot Score: {ballotScore} points</p>
+                                    </div>
+                                )}
+                            </>
+                        )}
+
                     </div>
-                    <br />
-
-                    {/* Ballot List */}
-                    {gridPredictions.map((driver, index) => (
-                        <div
-                            key={index}
-                            className={`${styles.ballotBox} ${selectedBox === index ? styles.selected : ""} ${driver ? styles.filledBox : ""}`}
-                            onClick={() => handleBoxClick(index)}
-                        >
-                            {index + 1}. {driver || "_________________________________"}
-                        </div>
-                    ))}
-
-                    <button onClick={submitText === "TRY AGAIN" ? handleTryAgain : handleSubmit} className={styles.submitButton}>
-                        {submitText}
-                    </button>
-
-                    {/* Display Ballot Score */}
-                    {ballotScore !== null && (
-                        <div className={styles.scoreDisplay}>
-                            <p>Your Ballot Score: {ballotScore} points</p>
-                        </div>
-                    )}
 
                 </div>
 
