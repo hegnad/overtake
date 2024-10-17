@@ -4,7 +4,8 @@
 import SidebarLayout from "../ui/sidebar-layout";
 import Positions from "../components/positions";
 import { useEffect, useState } from "react";
-import styles from "../home.module.css";
+import styles from "./livepos.module.css";
+import { timeNow } from "../utils/api/worldtime";
 
 export default function LivePos() {
   interface Events {
@@ -19,6 +20,7 @@ export default function LivePos() {
 
   const [events, setEvents] = useState<Events>();
   const [liveFlag, setLiveFlag] = useState<string>("");
+  const [liveEvent, setLiveEvent] = useState<boolean>(false);
 
   const apiurl = "https://api.openf1.org/v1/race_control?session_key=latest";
 
@@ -27,8 +29,8 @@ export default function LivePos() {
 
   useEffect(() => {
     //const timeNow = new Date(new Date().getTime() - 50400000);
-    const timeNow = new Date(new Date().getTime() - 5000);
-    console.log(new Date(timeNow));
+    const timeNowc = new Date(new Date().getTime() - 5000);
+    console.log(new Date(timeNowc));
     const fetchData = async () => {
       //const data = await fetch(`${apiurl}&date>${timeNow.toISOString()}`);
       const data = await fetch(apiurl);
@@ -40,6 +42,17 @@ export default function LivePos() {
       let flagEvents = json.filter((event: any) => event.flag !== null);
       setEvents(json);
       setLiveFlag(flagEvents[0].flag);
+
+      const currentTime = await timeNow();
+      console.log(currentTime);
+      const lastTime = new Date(flagEvents[0].date);
+      console.log(lastTime);
+
+      if (currentTime.getTime() > lastTime.getTime() + 720000) {
+        setLiveEvent(false);
+      } else {
+        setLiveEvent(true);
+      }
     };
 
     fetchData(); // Initial fetch
@@ -50,12 +63,23 @@ export default function LivePos() {
 
   return (
     <SidebarLayout>
-      <div className={styles.driversResults}>
-        <h1>Live Positions</h1>
-        <h2>Live Flag: {liveFlag}</h2>
-      </div>
       <div>
-        <Positions />
+        {liveEvent ? (
+          <div>
+            <div className={styles.driversResults}>
+              <h1>Live Positions</h1>
+              <h2>Live Flag: {liveFlag}</h2>
+              <h2>Live Event: {liveEvent == true ? "Yes" : "No"}</h2>
+            </div>
+            <div>
+              <Positions />
+            </div>
+          </div>
+        ) : (
+          <div className={styles.container}>
+            <h1>No Live event running</h1>
+          </div>
+        )}
       </div>
     </SidebarLayout>
   );
