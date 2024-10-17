@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect, useContext, useRef } from "react";
 import SidebarLayout from "../ui/sidebar-layout";
 import styles from "./ballot.module.css";
 import { IdentityContext } from "../lib/context/identity";
@@ -21,6 +21,8 @@ export default function Top10GridPrediction() {
     const [driverPoints, setDriverPoints] = useState<number[]>([]);
     const [leagues, setLeagues] = useState<RaceLeagueInfo[]>([]);
     const [selectedLeagueId, setSelectedLeagueId] = useState("");
+    const [validTime, setValidTime] = useState<boolean>(true);
+    const nextRaceData = useRef<(string | Date)[]>([]);
 
     interface RaceLeagueInfo {
         leagueId: number;
@@ -281,6 +283,19 @@ export default function Top10GridPrediction() {
             return;
         }
 
+        let deadline = new Date(nextRaceData.current[1]);
+
+        const currentDate = new Date();
+        //fake deadline for testing the disabling
+        //const deadline = new Date(new Date(currentDate).getTime() - 15 * 60000);
+
+        console.log(deadline);
+        console.log(currentDate);
+        if (currentDate >= deadline) {
+            setSubmitText("DISABLED");
+            return;
+        }
+
         try {
             // Step 1: Fetch the actual race results before scoring
             const raceResults = await fetchRaceResults();
@@ -355,71 +370,81 @@ export default function Top10GridPrediction() {
 
                 <div className={styles.ballot}>
 
-                    <form onSubmit={handleSubmit} className={styles.leagueList}>
-                        <h2>Select League</h2>
-                        <select
-                            id="leagueSelect"
-                            value={selectedLeagueId}
-                            onChange={(e) => setSelectedLeagueId(e.target.value)}
-                        >
-                            <option value="">-- Select League --</option>
-                            {leagues.map((league) => (
-                                <option key={league.leagueId} value={league.leagueId}>
-                                    {league.name}
-                                </option>
-                            ))}
-                        </select>
-                    </form>
+                    <div>
 
-                    {/* Ballot Podium */}
-                    <div className={styles.topThreeImages}>
+                        {!validTime ? (
+                            <div className={styles.container}>
+                                <p>Unable to submit ballot</p>
+                            </div>
+                        ) : (
+                            <>
+                                {/* League Selection Form */}
+                                <form onSubmit={handleSubmit} className={styles.leagueList}>
+                                    <h2>Select League</h2>
+                                    <select
+                                        id="leagueSelect"
+                                        value={selectedLeagueId}
+                                        onChange={(e) => setSelectedLeagueId(e.target.value)}
+                                    >
+                                        <option value="">-- Select League --</option>
+                                        {leagues.map((league) => (
+                                            <option key={league.leagueId} value={league.leagueId}>
+                                                {league.name}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </form>
 
-                        {topThreeDrivers.map((driver, index) => {
+                                {/* Ballot Podium */}
+                                <div className={styles.topThreeImages}>
+                                    {topThreeDrivers.map((driver, index) => {
+                                        const driverData = availableDrivers.find((d) => d.name === driver);
+                                        if (!driverData) return null; // Skip if driver data is not available
 
-                            const driverData = availableDrivers.find(d => d.name === driver);
-
-                            if (!driverData) return null; // Skip if driver data is not available
-
-                            return (
-                                <div
-                                    key={index}
-                                    className={`${styles.driverImageContainer} ${index === 0 ? styles.firstImage : index === 1 ? styles.secondImage : styles.thirdImage}`}
-                                >
-                                    <Image
-                                        src={driverData.headshotUrl}
-                                        alt={driverData.name}
-                                        width={100}
-                                        height={100}
-                                        className={styles.podiumImage}
-                                        unoptimized
-                                    />
+                                        return (
+                                            <div
+                                                key={index}
+                                                className={`${styles.driverImageContainer} ${index === 0 ? styles.firstImage : index === 1 ? styles.secondImage : styles.thirdImage}`}
+                                            >
+                                                <Image
+                                                    src={driverData.headshotUrl}
+                                                    alt={driverData.name}
+                                                    width={100}
+                                                    height={100}
+                                                    className={styles.podiumImage}
+                                                    unoptimized
+                                                />
+                                            </div>
+                                        );
+                                    })}
                                 </div>
-                            );
-                        })}
+                                <br />
+
+                                {/* Ballot List */}
+                                {gridPredictions.map((driver, index) => (
+                                    <div
+                                        key={index}
+                                        className={`${styles.ballotBox} ${selectedBox === index ? styles.selected : ""} ${driver ? styles.filledBox : ""}`}
+                                        onClick={() => handleBoxClick(index)}
+                                    >
+                                        {index + 1}. {driver || "_________________________________"}
+                                    </div>
+                                ))}
+
+                                <button onClick={submitText === "TRY AGAIN" ? handleTryAgain : handleSubmit} className={styles.submitButton}>
+                                    {submitText}
+                                </button>
+
+                                {/* Display Ballot Score */}
+                                {ballotScore !== null && (
+                                    <div className={styles.scoreDisplay}>
+                                        <p>Your Ballot Score: {ballotScore} points</p>
+                                    </div>
+                                )}
+                            </>
+                        )}
+
                     </div>
-                    <br />
-
-                    {/* Ballot List */}
-                    {gridPredictions.map((driver, index) => (
-                        <div
-                            key={index}
-                            className={`${styles.ballotBox} ${selectedBox === index ? styles.selected : ""} ${driver ? styles.filledBox : ""}`}
-                            onClick={() => handleBoxClick(index)}
-                        >
-                            {index + 1}. {driver || "_________________________________"}
-                        </div>
-                    ))}
-
-                    <button onClick={submitText === "TRY AGAIN" ? handleTryAgain : handleSubmit} className={styles.submitButton}>
-                        {submitText}
-                    </button>
-
-                    {/* Display Ballot Score */}
-                    {ballotScore !== null && (
-                        <div className={styles.scoreDisplay}>
-                            <p>Your Ballot Score: {ballotScore} points</p>
-                        </div>
-                    )}
 
                 </div>
 
