@@ -41,24 +41,10 @@ export default function UserRaceLeagues() {
     };
 
     // Fetch driver headshots from our server
-    const fetchDriverHeadshots = async () => {
-      const response2 = await fetch(
-        "http://localhost:8080/api/driver/headshot/33",
-        {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${identity.sessionToken}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      const data2 = await response2.json();
-      console.log(data2);
-    };
+   
 
     if (identity.sessionToken) {
       fetchLeagues();
-      fetchDriverHeadshots();
     }
   }, [identity.sessionToken]);
 

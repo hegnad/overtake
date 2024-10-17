@@ -88,7 +88,7 @@ CREATE TABLE driver (
 	nationality VARCHAR(50) NOT NULL,
 	height NUMERIC(5, 2) NOT NULL,
 	team_id INT REFERENCES team(team_id) ON DELETE SET NULL,
-    headshot_path VARCHAR(255) NOT NULL, -- Path to the image file in the repository
+	headshot_path VARCHAR(255) NOT NULL, -- Path to the image file in the repository
 	car_image_path VARCHAR(255) NOT NULL -- Path to the image file in the repository
 );
 
@@ -211,11 +211,12 @@ VALUES
 -- Insert test data for driver table
 INSERT INTO driver (driver_number, first_name, last_name, age, nationality, height, team_id, headshot_path, car_image_path)
 VALUES 
-  (33, 'Max', 'Verstappen', 26, 'Netherlands', 1.81, 3, './assets/driver_headshot/verstappen.png', './assets/cars/rbr.png'),
+  (1, 'Max', 'Verstappen', 26, 'Netherlands', 1.81, 3, './assets/driver_headshot/verstappen.png', './assets/cars/rbr.png'),
   (44, 'Lewis', 'Hamilton', 37, 'UK', 1.74, 2, './assets/driver_headshot/hamilton.png', './assets/cars/mercedes.png'),
   (77, 'Valtteri', 'Bottas', 32, 'Finland', 1.73, 2, './assets/driver_headshot/bottas.png', './assets/cars/kick_sauber.png'),
-  (3, 'Daniel', 'Ricciardo', 32, 'Australia', 1.78, 4, './assets/driver_headshot/ricciardo.png', './assets/cars/rb.png'),
-  (14, 'Fernando', 'Alonso', 40, 'Spain', 1.71, 4, './assets/driver_headshot/alonso.png', './assets/cars/aston_martin.png');
+  (4, 'Lando', 'Norris', 24, 'UK', 1.77, 4, './assets/driver_headshot/norris.png', './assets/cars/McLaren.png'),
+  (14, 'Fernando', 'Alonso', 40, 'Spain', 1.71, 4, './assets/driver_headshot/alonso.png', './assets/cars/aston_martin.png'),
+  (16, 'Charles', 'Leclerc', 24, 'Monaco', 1.80, 1, './assets/driver_headshot/leclerc.png', './assets/cars/ferrari.png');
 
 
 -- Insert test data for ballotContent table
