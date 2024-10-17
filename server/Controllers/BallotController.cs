@@ -67,10 +67,10 @@ public class BallotController : ControllerBase
     [HttpGet]
     [Route("populate")]
     [Produces("application/json")]
-    public async Task<ActionResult<BallotContent[]>> PopulateAsync()
+    public async Task<ActionResult<BallotContent[]>> PopulateAsync(int leagueId)
     {
         int userId = Convert.ToInt32(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
-        int? ballotId = await _database.GetBallotByUserIdAsync(userId);
+        int? ballotId = await _database.GetBallotByUserIdAndLeagueIdAsync(userId, leagueId);
 
         if (ballotId == null)
         {
