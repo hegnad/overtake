@@ -35,7 +35,10 @@ public interface IDatabase
 
     Task<int> InsertBallotAsync(int userId, int leagueId, int raceId, List<DriverPrediction> driverPredictions, int? totalScore);
 
+    Task<RaceLeagueInfo[]> GetPublicLeagues();
+
     Task<Driver[]> PopulateDriversAsync();
 
     Task<Driver> GetDriverMetadataByNumberAsync(int driverNumber);
+
 }
