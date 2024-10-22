@@ -441,6 +441,8 @@ public class PostgresDatabase : IDatabase
 
         return publicLeagues.ToArray();
 
+    }
+
     // Retrieve driver metadata by driver number
     public async Task<Driver> GetDriverMetadataByNumberAsync(int driverNumber)
     {
