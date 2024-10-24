@@ -40,7 +40,7 @@ export default function Home() {
                 </div>
                 <div className={styles.driverPhoto}>
                   <img
-                    src="/assets/driver_headshot/bottas.png"
+                    src="/assets/driver_headshot/hamilton.png"
                     style={{
                       display: "block",
                     }}

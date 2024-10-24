@@ -1,0 +1,64 @@
+.driverCard {
+    width: 260px; /* Adjust the width as needed */
+    padding: 10px;
+    border: 3px solid #ccc;
+    border-radius: 8px;
+    text-align: left;
+    background: #15151E;
+    transition: transform 0.2s ease;
+}
+
+    .driverCard:hover {
+        transform: translateY(-5px);
+    }
+
+.driverNames {
+    text-align: left;
+    color: white;
+    text-transform: uppercase;
+}
+
+    .driverNames h3 {
+        
+    }
+
+    .driverNames h4 {
+        font-size: 22px;
+        font-weight: bold;
+    }
+
+.driverImageContainer {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 10px;
+    margin-top: 10px;
+    background: #0A0A0F;
+    border-radius: 15px;
+}
+
+.driverNumAndFlag {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 10px;
+    border-bottom: 3px solid #AA0000;
+}
+
+.numContainer {
+    background: white;
+    width: 45px;
+    height: 32px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 5px;
+}
+
+    .numContainer h2 {
+        font-size: 32px;
+        color: #AA0000;
+    }
+
+.flag {
+    border-radius: 5px;
+}
