@@ -113,6 +113,7 @@ export default function LastRace() {
                       name: string | undefined;
                     };
                     Time: { time: any };
+                    status: string;
                   }) => (
                     <tr key={result.Driver.driverId}>
                       <td>{result.position}</td>
@@ -120,7 +121,7 @@ export default function LastRace() {
                         {result.Driver.givenName} {result.Driver.familyName}
                       </td>
                       <td>{result.Constructor.name}</td>
-                      <td>{result.Time?.time || "+1 Lap"}</td>
+                      <td>{result.Time?.time || result.status || "+1 Lap"}</td>
                     </tr>
                   )
                 )}
