@@ -6,6 +6,7 @@ import styles from "./formulalearn.module.css";
 import { getDrivers, getConstructors, getCircuits } from "../utils/api/ergast";
 import { Driver, Constructor, Circuit } from "./formulaLearnTypes";
 import DriverCard from "../components/driverCard";
+import ConstructorCard from "../components/constructorCard";
 
 export default function FormulaLearn() {
 
@@ -133,7 +134,7 @@ export default function FormulaLearn() {
 
             {/* Drivers Display */}
             <div className={styles.drivers}>
-                <div className={styles.driverHeader}>
+                <div className={styles.header}>
                     <h1>DRIVERS</h1>
                 </div>
 
@@ -180,36 +181,41 @@ export default function FormulaLearn() {
                 )}
             </div>
 
-            {/* Constructors Display */}
-            <div className={styles.constructors}>
-                <h2>Constructors</h2>
-                {loadingConstructors ? (
-                    <p>Loading constructors...</p>
-                ) : (
-                    <ul>
-                        {constructors.map((constructor) => (
-                            <li key={constructor.constructorId}>
-                                {constructor.name} ({constructor.nationality})
-                            </li>
-                        ))}
-                    </ul>
-                )}
-            </div>
+            <div className={styles.constructorsAndCircuitsContainer}>
 
-            {/* Circuits Display */}
-            <div className={styles.circuits}>
-                <h2>Circuits</h2>
-                {loadingCircuits ? (
-                    <p>Loading circuits...</p>
-                ) : (
-                    <ul>
-                        {circuits.map((circuit) => (
-                            <li key={circuit.circuitId}>
-                                {circuit.circuitName} ({circuit.location.country})
-                            </li>
+                {/* Constructors Display */}
+                <div className={styles.constructors}>
+                    <div className={styles.header}>
+                        <h1>CONSTRUCTORS</h1>
+                    </div>
+                    <div className={styles.constructorGrid}>
+                        {constructors.map((constructor) => (
+                            <ConstructorCard
+                                key={constructor.constructorId}
+                                constructorId={constructor.constructorId}
+                                name={constructor.name}
+                                nationality={constructor.nationality}
+                            />
                         ))}
-                    </ul>
-                )}
+                    </div>
+                </div>
+
+                {/* Circuits Display */}
+                <div className={styles.circuits}>
+                    <h2>Circuits</h2>
+                    {loadingCircuits ? (
+                        <p>Loading circuits...</p>
+                    ) : (
+                        <ul>
+                            {circuits.map((circuit) => (
+                                <li key={circuit.circuitId}>
+                                    {circuit.circuitName} ({circuit.location.country})
+                                </li>
+                            ))}
+                        </ul>
+                    )}
+                </div>
+
             </div>
 
         </SidebarLayout>

@@ -1,0 +1,33 @@
+.constructorCard {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+    border-radius: 15px;
+    background: #0A0A0F;
+    width: 350px;
+    height: 80px;
+    transition: transform 0.2s ease;
+}
+
+    .constructorCard:hover {
+        transform: translateY(-5px);
+    }
+
+.teamLogoContainer,
+.carImageContainer {
+    margin: 10px;
+}
+
+.teamLogo,
+.carImage {
+    object-fit: contain;
+    border-radius: 5px;
+}
+
+.imagesContainer {
+    display: flex;
+    justify-content: space-between; /* Ensures there is space between the images */
+    align-items: center;
+}

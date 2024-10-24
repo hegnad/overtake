@@ -4,11 +4,11 @@
     border-radius: 15px;
 }
 
-.driverHeader {
+.header {
     margin-bottom: 15px;
 }
 
-    .driverHeader h1 {
+    .header h1 {
         color: white;
         font-size: 40px;
         display: inline-block;
@@ -49,13 +49,28 @@
         transform: scale(1.05);
     }
 
-.constructors {
+.constructorsAndCircuitsContainer {
+    display: flex;
+}
 
+.constructors {
+    margin-top: 10px;
+    padding: 20px;
+    background: #15151E;
+    border-radius: 15px;
 }
 
     .constructors h2 {
         color: white;
     }
+
+.constructorGrid {
+    margin: 10px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-gap: 10px;
+    justify-items: center;
+}
 
 .circuits {
 
