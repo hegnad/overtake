@@ -130,10 +130,10 @@ VALUES
 -- Insert test data for friendInvite table
 INSERT INTO friendInvite (initiator_id, invitee_id, message, request_time, status)
 VALUES 
-  (1, 2, 'Let’s be friends!', NOW(), 0),
+  (1, 2, 'Letï¿½s be friends!', NOW(), 0),
   (2, 3, 'Game on!', NOW(), 1),
   (3, 4, 'Join my team?', NOW(), 0),
-  (4, 5, 'Let’s race!', NOW(), 1),
+  (4, 5, 'Letï¿½s race!', NOW(), 1),
   (5, 1, 'Need a teammate!', NOW(), 2);
 
 -- Insert test data for directMessage table
@@ -177,7 +177,7 @@ INSERT INTO track (name, location, distance, turns)
 VALUES 
   ('Monza', 'Italy', 5.79, 11),
   ('Silverstone', 'UK', 5.89, 18),
-  ('Nürburgring', 'Germany', 5.15, 16),
+  ('Nï¿½rburgring', 'Germany', 5.15, 16),
   ('Suzuka', 'Japan', 5.81, 18),
   ('Spa-Francorchamps', 'Belgium', 7.00, 20);
 
@@ -212,12 +212,25 @@ VALUES
 INSERT INTO driver (driver_number, first_name, last_name, age, nationality, height, team_id, headshot_path, car_image_path)
 VALUES 
   (1, 'Max', 'Verstappen', 26, 'Netherlands', 1.81, 3, './assets/driver_headshot/verstappen.png', './assets/cars/rbr.png'),
+  (11, 'Sergio', 'Perez', 31, 'Mexico', 1.73, 3, './assets/driver_headshot/perez.png', './assets/cars/rbr.png'),
   (44, 'Lewis', 'Hamilton', 37, 'UK', 1.74, 2, './assets/driver_headshot/hamilton.png', './assets/cars/mercedes.png'),
+  (63, 'George', 'Russell', 24, 'UK', 1.85, 2, './assets/driver_headshot/russell.png', './assets/cars/mercedes.png'),
   (77, 'Valtteri', 'Bottas', 32, 'Finland', 1.73, 2, './assets/driver_headshot/bottas.png', './assets/cars/kick_sauber.png'),
-  (4, 'Lando', 'Norris', 24, 'UK', 1.77, 4, './assets/driver_headshot/norris.png', './assets/cars/McLaren.png'),
+  (24, 'Guanyu', 'Zhou', 22, 'China', 1.80, 5, './assets/driver_headshot/zhou.png', './assets/cars/kick_sauber.png'),
+  (4, 'Lando', 'Norris', 24, 'UK', 1.77, 4, './assets/driver_headshot/norris.png', './assets/cars/mcLaren.png'),
+  (81, 'Oscar', 'Piastri', 20, 'Australia', 1.80, 4, './assets/driver_headshot/piastri.png', './assets/cars/mcLaren.png'),
   (14, 'Fernando', 'Alonso', 40, 'Spain', 1.71, 4, './assets/driver_headshot/alonso.png', './assets/cars/aston_martin.png'),
-  (16, 'Charles', 'Leclerc', 24, 'Monaco', 1.80, 1, './assets/driver_headshot/leclerc.png', './assets/cars/ferrari.png');
-
+  (18, 'Lance', 'Stroll', 23, 'Canada', 1.85, 4, './assets/driver_headshot/stroll.png', './assets/cars/aston_martin.png'),
+  (55, 'Carlos', 'Sainz', 27, 'Spain', 1.75, 1, './assets/driver_headshot/sainz.png', './assets/cars/ferrari.png'),
+  (16, 'Charles', 'Leclerc', 24, 'Monaco', 1.80, 1, './assets/driver_headshot/leclerc.png', './assets/cars/ferrari.png'),
+  (10, 'Pierre', 'Gasly', 25, 'France', 1.74, 5, './assets/driver_headshot/gasly.png', './assets/cars/alpine.png'),
+  (31, 'Esteban', 'Ocon', 25, 'France', 1.86, 5, './assets/driver_headshot/ocon.png', './assets/cars/alpine.png'),
+  (27, 'Nico', 'Hulkenberg', 34, 'Germany', 1.84, 5, './assets/driver_headshot/hulkenberg.png', './assets/cars/haas.png'),
+  (20, 'Kevin', 'Magnussen', 29, 'Denmark', 1.74, 5, './assets/driver_headshot/magnussen.png', './assets/cars/haas.png'),
+  (22, 'Yuki', 'Tsunoda', 21, 'Japan', 1.59, 5, './assets/driver_headshot/tsunoda.png', './assets/cars/rb.png'),
+  (30, 'Liam', 'Lawson', 19, 'New Zealand', 1.75, 5, './assets/driver_headshot/lawson.png', './assets/cars/rb.png'),
+  (23, 'Alex', 'Albon', 25, 'Thailand', 1.86, 5, './assets/driver_headshot/albon.png', './assets/cars/williams.png'),
+  (43, 'Franco', 'Colapinto', 18, 'Argentina', 1.75, 5, './assets/driver_headshot/colapinto.png', './assets/cars/williams.png');
 
 -- Insert test data for ballotContent table
 INSERT INTO ballotContent (ballot_id, position, driver_name)

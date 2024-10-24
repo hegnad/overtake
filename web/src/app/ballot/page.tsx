@@ -145,13 +145,13 @@ export default function Top10GridPrediction() {
         }
 
         //Real deadline for next race
-        //let deadline = new Date(nextRaceData.current[1]);
+        let deadline = new Date(nextRaceData.current[1]);
 
         //reading current time to avoid time manipulation on the client side
         const currentDate = await timeNow();
 
         //fake deadline for testing the ballot disable
-        const deadline = new Date(new Date(currentDate).getTime() - 15 * 60000);
+        //const deadline = new Date(new Date(currentDate).getTime() - 15 * 60000);
         if (new Date(currentDate) >= deadline) setValidTime(false);
 
         setAvailableDrivers(combinedDrivers);
