@@ -89,14 +89,5 @@ public class LeagueController : ControllerBase
 
         return new OkObjectResult(membership);
     }
-
-    [HttpGet]
-    [Route("populateDetails")]
-    [Produces("application/json")]
-    public async Task<ActionResult<LeagueDetails>> PopulateLeagueDetailsAsync([FromQuery] int leagueId)
-    {
-        var leagueDetails = await _database.GetLeagueDetailsAsync(leagueId);
-        return new OkObjectResult(leagueDetails);
-    }
-
+    
 }
