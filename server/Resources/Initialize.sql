@@ -186,6 +186,7 @@ VALUES
   (5, 2, NOW(), 0);
 
 -- Insert test data for track table
+
 INSERT INTO track (round_number, name, location, distance, turns, layout_image_path)
 VALUES 
   (16, 'Monza', 'Italy', 5.79, 11,'./assets/track_layout/monza.png'),
@@ -212,6 +213,7 @@ VALUES
   (6, 'Miami', 'USA', 5.41, 19, './assets/track_layout/miami.png'),
   (23, 'Losail', 'Quatar', 5.38, 16, './assets/track_layout/losail.png'),
   (10, 'Barcelona', 'Spain', 4.65, 16, './assets/track_layout/barcelona.png');
+
 
 -- Insert test data for race table
 INSERT INTO race (round_number, start_time)

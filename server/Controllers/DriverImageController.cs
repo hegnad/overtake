@@ -75,5 +75,4 @@ public class DriverImageController : ControllerBase
         return new OkObjectResult(trackData.ImagePath);
     }
 
-
 }
