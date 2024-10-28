@@ -509,4 +509,32 @@ public class PostgresDatabase : IDatabase
 
         return drivers.ToArray();
     }
+
+    public async Task<LeagueDetails> GetLeagueDetailsAsync(int leagueId)
+    {
+        var memberNames = new List<string>();
+
+        await using var cmd = _dataSource.CreateCommand(
+            @"SELECT a.username
+              FROM account a
+              JOIN raceLeagueMembership rlm
+              ON a.account_id = rlm.user_id
+              WHERE rlm.league_id = @league_id"
+        );
+
+        cmd.Parameters.AddWithValue("league_id", leagueId);
+
+        await using var reader = await cmd.ExecuteReaderAsync();
+        while (await reader.ReadAsync())
+        {
+            memberNames.Add(reader.GetString(0)); // Add each username to the list
+        }
+
+        return new LeagueDetails
+        {
+            LeagueId = leagueId,
+            MemberNames = memberNames.ToArray() // Convert list to array
+        };
+    }
+
 }

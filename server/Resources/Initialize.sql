@@ -125,7 +125,13 @@ VALUES
   ('user2', 'Jane', 'Smith', 'jane.smith@example.com', 'hash2'),
   ('user3', 'Bob', 'Brown', 'bob.brown@example.com', 'hash3'),
   ('user4', 'Alice', 'Green', 'alice.green@example.com', 'hash4'),
-  ('user5', 'Charlie', 'Black', 'charlie.black@example.com', 'hash5');
+  ('user5', 'Charlie', 'Black', 'charlie.black@example.com', 'hash5'),
+  ('user6', 'David', 'White', 'david.white@example.com', 'hash6'),
+  ('user7', 'Emily', 'Gray', 'emily.gray@example.com', 'hash7'),
+  ('user8', 'Frank', 'Yellow', 'frank.yellow@example.com', 'hash8'),
+  ('user9', 'Grace', 'Blue', 'grace.blue@example.com', 'hash9'),
+  ('user10', 'Hannah', 'Purple', 'hannah.purple@example.com', 'hash10');
+
 
 -- Insert test data for friendInvite table
 INSERT INTO friendInvite (initiator_id, invitee_id, message, request_time, status)
@@ -159,9 +165,14 @@ INSERT INTO raceLeagueMembership (league_id, user_id, join_time)
 VALUES 
   (1, 1, NOW()),
   (1, 2, NOW()),
-  (2, 3, NOW()),
-  (3, 4, NOW()),
-  (4, 5, NOW());
+  (1, 3, NOW()),
+  (1, 4, NOW()),
+  (1, 5, NOW()),
+  (1, 6, NOW()),
+  (1, 7, NOW()),
+  (1, 8, NOW()),
+  (1, 9, NOW()),
+  (1, 10, NOW());
 
 -- Insert test data for leagueInvite table
 INSERT INTO leagueInvite (league_id, invitee_id, request_time, status)
@@ -191,13 +202,68 @@ VALUES
   (5, NOW() + INTERVAL '5 days');
 
 -- Insert test data for ballot table
-INSERT INTO ballot (league_id, race_id, user_id, create_time)
+INSERT INTO ballot (league_id, race_id, user_id, create_time, settle_time, score)
 VALUES 
-  (1, 1, 1, NOW()),
-  (2, 2, 2, NOW()),
-  (3, 3, 3, NOW()),
-  (4, 4, 4, NOW()),
-  (5, 5, 5, NOW());
+  (1, 1, 1, NOW(), NOW(), 11),
+  (1, 2, 1, NOW(), NOW(), 25),
+  (1, 3, 1, NOW(), NOW(), 8),
+  (1, 4, 1, NOW(), NOW(), 18),
+  (1, 5, 1, NOW(), NOW(), 24),
+
+  (1, 1, 2, NOW(), NOW(), 36),
+  (1, 2, 2, NOW(), NOW(), 44),
+  (1, 3, 2, NOW(), NOW(), 19),
+  (1, 4, 2, NOW(), NOW(), 22),
+  (1, 5, 2, NOW(), NOW(), 10),
+
+  (1, 1, 3, NOW(), NOW(), 47),
+  (1, 2, 3, NOW(), NOW(), 15),
+  (1, 3, 3, NOW(), NOW(), 33),
+  (1, 4, 3, NOW(), NOW(), 6),
+  (1, 5, 3, NOW(), NOW(), 30),
+
+  (1, 1, 4, NOW(), NOW(), 29),
+  (1, 2, 4, NOW(), NOW(), 14),
+  (1, 3, 4, NOW(), NOW(), 45),
+  (1, 4, 4, NOW(), NOW(), 20),
+  (1, 5, 4, NOW(), NOW(), 50),
+
+  (1, 1, 5, NOW(), NOW(), 23),
+  (1, 2, 5, NOW(), NOW(), 13),
+  (1, 3, 5, NOW(), NOW(), 12),
+  (1, 4, 5, NOW(), NOW(), 7),
+  (1, 5, 5, NOW(), NOW(), 9),
+
+  (1, 1, 6, NOW(), NOW(), 17),
+  (1, 2, 6, NOW(), NOW(), 46),
+  (1, 3, 6, NOW(), NOW(), 2),
+  (1, 4, 6, NOW(), NOW(), 27),
+  (1, 5, 6, NOW(), NOW(), 32),
+
+  (1, 1, 7, NOW(), NOW(), 16),
+  (1, 2, 7, NOW(), NOW(), 26),
+  (1, 3, 7, NOW(), NOW(), 5),
+  (1, 4, 7, NOW(), NOW(), 38),
+  (1, 5, 7, NOW(), NOW(), 31),
+
+  (1, 1, 8, NOW(), NOW(), 42),
+  (1, 2, 8, NOW(), NOW(), 1),
+  (1, 3, 8, NOW(), NOW(), 40),
+  (1, 4, 8, NOW(), NOW(), 28),
+  (1, 5, 8, NOW(), NOW(), 48),
+
+  (1, 1, 9, NOW(), NOW(), 21),
+  (1, 2, 9, NOW(), NOW(), 35),
+  (1, 3, 9, NOW(), NOW(), 41),
+  (1, 4, 9, NOW(), NOW(), 4),
+  (1, 5, 9, NOW(), NOW(), 43),
+
+  (1, 1, 10, NOW(), NOW(), 3),
+  (1, 2, 10, NOW(), NOW(), 37),
+  (1, 3, 10, NOW(), NOW(), 34),
+  (1, 4, 10, NOW(), NOW(), 39),
+  (1, 5, 10, NOW(), NOW(), 49);
+
 
 -- Insert test data for team table
 INSERT INTO team (name, nationality, create_time)
@@ -249,4 +315,3 @@ VALUES
   (3, 3, 3),
   (4, 4, 4),
   (5, 5, 5);
-
