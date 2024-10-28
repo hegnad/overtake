@@ -3,14 +3,14 @@
 import { IdentityContext } from "../lib/context/identity";
 import { useEffect, useState, useContext } from 'react';
 
-interface LeagueInfo {
-    leagueId: string;
-    memberNames: string[];
+interface Member {
+    username: string;
+    totalScore: number;
 }
 
 export default function LeagueDetailsComponent() {
     const [leagueId, setLeagueId] = useState<string | null>(null);
-    const [leagueInfo, setLeagueInfo] = useState<LeagueInfo | null>(null);
+    const [members, setMembers] = useState<Member[] | null>(null);
     const identity = useContext(IdentityContext);
 
     useEffect(() => {
@@ -21,7 +21,7 @@ export default function LeagueDetailsComponent() {
         if (storedLeagueId) {
             setLeagueId(storedLeagueId);
 
-            // Fetch League Details
+            // Fetch League Details (members)
             const fetchLeagueDetails = async () => {
                 try {
                     const response = await fetch(`http://localhost:8080/api/league/populateDetails?leagueId=${encodeURIComponent(storedLeagueId)}`, {
@@ -33,9 +33,9 @@ export default function LeagueDetailsComponent() {
                     });
 
                     if (response.status === 200) {
-                        const data: LeagueInfo = await response.json(); // Cast the response to LeagueInfo type
-                        console.log("Fetched league details: ", data);
-                        setLeagueInfo(data);
+                        const data: Member[] = await response.json(); // Cast the response directly to an array of Member
+                        console.log("Fetched members: ", data);
+                        setMembers(data);
                     } else {
                         console.error(`Non-successful status code: ${response.status}`);
                     }
@@ -60,9 +60,11 @@ export default function LeagueDetailsComponent() {
             <p>League ID: {leagueId}</p>
             <h2>Members</h2>
             <ul>
-                {leagueInfo && leagueInfo.memberNames && leagueInfo.memberNames.length > 0 ? (
-                    leagueInfo.memberNames.map((name: string, index: number) => (
-                        <li key={index}>{name}</li>
+                {members && members.length > 0 ? (
+                    members.map((member: Member, index: number) => (
+                        <li key={index}>
+                            {member.username ? member.username : "Unknown"} - Total Score: {member.totalScore !== undefined ? member.totalScore : "N/A"}
+                        </li>
                     ))
                 ) : (
                     <li>No Members Found</li>

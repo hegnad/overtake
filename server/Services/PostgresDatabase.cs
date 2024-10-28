@@ -510,16 +510,19 @@ public class PostgresDatabase : IDatabase
         return drivers.ToArray();
     }
 
-    public async Task<LeagueDetails> GetLeagueDetailsAsync(int leagueId)
+    public async Task<Member[]> GetLeagueDetailsAsync(int leagueId)
     {
-        var memberNames = new List<string>();
+        var members = new List<Member>();
 
         await using var cmd = _dataSource.CreateCommand(
-            @"SELECT a.username
-              FROM account a
-              JOIN raceLeagueMembership rlm
-              ON a.account_id = rlm.user_id
-              WHERE rlm.league_id = @league_id"
+            @"SELECT a.username, COALESCE(SUM(b.score), 0) AS total_score
+          FROM account a
+          JOIN raceLeagueMembership rlm
+          ON a.account_id = rlm.user_id
+          LEFT JOIN ballot b
+          ON rlm.user_id = b.user_id AND rlm.league_id = b.league_id
+          WHERE rlm.league_id = @league_id
+          GROUP BY a.username"
         );
 
         cmd.Parameters.AddWithValue("league_id", leagueId);
@@ -527,14 +530,17 @@ public class PostgresDatabase : IDatabase
         await using var reader = await cmd.ExecuteReaderAsync();
         while (await reader.ReadAsync())
         {
-            memberNames.Add(reader.GetString(0)); // Add each username to the list
+            var member = new Member
+            {
+                Username = reader.GetString(0), // Get the username
+                TotalScore = reader.GetInt32(1)  // Get the total score
+            };
+
+            members.Add(member); // Add each member object to the list
         }
 
-        return new LeagueDetails
-        {
-            LeagueId = leagueId,
-            MemberNames = memberNames.ToArray() // Convert list to array
-        };
+        return members.ToArray(); // Return an array of Member objects
     }
+
 
 }
