@@ -1,0 +1,82 @@
+.drivers {
+    padding: 20px;
+    background: #15151E;
+    border-radius: 15px;
+}
+
+.header {
+    margin-bottom: 15px;
+}
+
+    .header h1 {
+        color: white;
+        font-size: 40px;
+        display: inline-block;
+        border-bottom: 3px solid #AA0000;
+    }
+
+.driverGrid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 6px;
+}
+
+.driverGridContainer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.navButton {
+    width: 30px;
+    height: 350px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #0A0A0F;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 15px;
+    font-size: 20px;
+    margin: 10px;
+    transition: transform 0.3s ease, background-color 0.3s ease;
+}
+
+    .navButton:hover {
+        background-color: #FF8A00;
+        transform: scale(1.05);
+    }
+
+.constructorsAndCircuitsContainer {
+    display: flex;
+}
+
+.constructors {
+    margin-top: 10px;
+    padding: 20px;
+    background: #15151E;
+    border-radius: 15px;
+}
+
+    .constructors h2 {
+        color: white;
+    }
+
+.constructorGrid {
+    margin: 10px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-gap: 10px;
+    justify-items: center;
+}
+
+.circuits {
+
+}
+
+    .circuits h2 {
+        color: white;
+    }
+
