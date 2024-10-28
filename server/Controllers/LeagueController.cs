@@ -93,10 +93,10 @@ public class LeagueController : ControllerBase
     [HttpGet]
     [Route("populateDetails")]
     [Produces("application/json")]
-    public async Task<ActionResult<LeagueDetails>> PopulateLeagueDetailsAsync([FromQuery] int leagueId)
+    public async Task<ActionResult<Member[]>> PopulateLeagueDetailsAsync([FromQuery] int leagueId)
     {
-        var leagueDetails = await _database.GetLeagueDetailsAsync(leagueId);
-        return new OkObjectResult(leagueDetails);
+        var members = await _database.GetLeagueDetailsAsync(leagueId);
+        return new OkObjectResult(members);
     }
 
 }
