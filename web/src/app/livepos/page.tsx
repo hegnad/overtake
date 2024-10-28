@@ -28,6 +28,7 @@ export default function LivePos() {
   console.log(liveFlag);
 
   useEffect(() => {
+    // setLiveEvent(true);
     //const timeNow = new Date(new Date().getTime() - 50400000);
     const timeNowc = new Date(new Date().getTime() - 5000);
     console.log(new Date(timeNowc));
@@ -48,7 +49,7 @@ export default function LivePos() {
       const lastTime = new Date(flagEvents[0].date);
       console.log(lastTime);
 
-      if (currentTime.getTime() > lastTime.getTime() + 720000) {
+      if (currentTime.getTime() > lastTime.getTime() + 7200000) {
         setLiveEvent(false);
       } else {
         setLiveEvent(true);
@@ -65,8 +66,8 @@ export default function LivePos() {
     <SidebarLayout>
       <div>
         {liveEvent ? (
-          <div>
-            <div className={styles.driversResults}>
+          <div className={styles.container}>
+            <div>
               <h1>Live Positions</h1>
               <h2>Live Flag: {liveFlag}</h2>
               <h2>Live Event: {liveEvent == true ? "Yes" : "No"}</h2>
