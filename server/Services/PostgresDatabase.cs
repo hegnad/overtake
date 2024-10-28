@@ -447,7 +447,7 @@ public class PostgresDatabase : IDatabase
     public async Task<Driver> GetDriverMetadataByNumberAsync(int driverNumber)
     {
         await using var cmd = _dataSource.CreateCommand(
-            @"SELECT driver_id, driver_number, first_name, last_name, age, nationality, height, team_id, headshot_path, car_image_path
+            @"SELECT driver_id, driver_number, first_name, last_name, age, nationality, height, team_id, headshot_path, car_image_path, team_image_path
           FROM driver
           WHERE driver_number=@driver_number"
         );
@@ -469,7 +469,8 @@ public class PostgresDatabase : IDatabase
                 Height = reader.GetFloat(6),
                 TeamId = reader.GetInt32(7),
                 HeadshotPath = reader.GetString(8),
-                CarImagePath = reader.GetString(9)
+                CarImagePath = reader.GetString(9),
+                TeamImagePath = reader.GetString(10)
             };
         }
 
@@ -482,7 +483,7 @@ public class PostgresDatabase : IDatabase
         var drivers = new List<Driver>();
 
         await using var cmd = _dataSource.CreateCommand(
-            @"SELECT driver_number, first_name, last_name, age, nationality, height, team_id, headshot_path, car_image_path
+            @"SELECT driver_number, first_name, last_name, age, nationality, height, team_id, headshot_path, car_image_path, team_image_path
               FROM driver"
         );
 
@@ -500,7 +501,8 @@ public class PostgresDatabase : IDatabase
                 Height = reader.GetFloat(6),
                 TeamId = reader.GetInt32(7),
                 HeadshotPath = reader.GetString(8),
-                CarImagePath = reader.GetString(9)
+                CarImagePath = reader.GetString(9),
+                TeamImagePath = reader.GetString(10)
 
             };
 
