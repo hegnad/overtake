@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import styles from "../home.module.css";
+import styles from "./positions.module.css";
 import { getDrivers, getIntervals, getLapNumber } from "../utils/api/openF1";
 import extractOldestRecords from "../utils/dataManipulation";
 
@@ -58,39 +58,37 @@ export default function Positions() {
     <div className={styles.driversResults}>
       <h1>Live Pos</h1>
       {postitions.length === 0 && <p>Loading...</p>}
-      <h3>Lap: {lapNumber}</h3>
-      <table className="table-fixed border-separate border-spacing-1 border border-slate-500 border-spacing-2 p-5">
-        <thead>
-          <tr className="border border-slate-600">
-            <th className="border border-slate-700 w-16">Position</th>
-            <th className="border border-slate-700 w-16">Number</th>
-            <th className="border border-slate-700 w-40">Driver Name</th>
-            <th className="border border-slate-700 w-36">Team Name</th>
-            <th className="border border-slate-700 w-24">Interval</th>
-            <th className="border border-slate-700 w-24">Gap to Leader</th>
-            {/* <th>Time</th> */}
-          </tr>
-        </thead>
-        <tbody>
-          {postitions.map((item, index) => (
-            <tr key={index}>
-              <td className="border border-slate-700 px-2">{item.position}</td>
-              <td className="border border-slate-700 px-2">
-                <a href={item.driverUrl}>{item.driver_number}</a>
-              </td>
-              <td className="border border-slate-700 px-2">{item.full_name}</td>
-              <td className="border border-slate-700 px-2">{item.team_name}</td>
-              <td className="border border-slate-700 px-2 text-right">
-                {item.interval}
-              </td>
-              <td className="border border-slate-700 px-2 text-right">
-                {item.gap_to_leader}
-              </td>
-              {/* <td>{item.date.toLocaleTimeString()}</td> */}
+      <h2>Lap: {lapNumber}</h2>
+      <div className={styles.raceresults}>
+        <table>
+          <thead>
+            <tr>
+              <th>Position</th>
+              <th>Number</th>
+              <th>Driver Name</th>
+              <th>Team Name</th>
+              <th>Interval</th>
+              <th>Gap to Leader</th>
+              {/* <th>Time</th> */}
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {postitions.map((item, index) => (
+              <tr key={index}>
+                <td>{item.position}</td>
+                <td>
+                  <a href={item.driverUrl}>{item.driver_number}</a>
+                </td>
+                <td>{item.full_name}</td>
+                <td>{item.team_name}</td>
+                <td>{item.interval}</td>
+                <td>{item.gap_to_leader}</td>
+                {/* <td>{item.date.toLocaleTimeString()}</td> */}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }
