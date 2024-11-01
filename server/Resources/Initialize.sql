@@ -214,7 +214,6 @@ VALUES
   (23, 'Losail', 'Quatar', 5.38, 16, './assets/track_layout/losail.png'),
   (10, 'Barcelona', 'Spain', 4.65, 16, './assets/track_layout/barcelona.png');
 
-
 -- Insert test data for race table
 INSERT INTO race (round_number, start_time)
 VALUES 

@@ -512,19 +512,20 @@ public class PostgresDatabase : IDatabase
         return drivers.ToArray();
     }
 
+
     public async Task<Member[]> GetLeagueDetailsAsync(int leagueId)
     {
         var members = new List<Member>();
 
         await using var cmd = _dataSource.CreateCommand(
             @"SELECT a.username, COALESCE(SUM(b.score), 0) AS total_score
-          FROM account a
-          JOIN raceLeagueMembership rlm
-          ON a.account_id = rlm.user_id
-          LEFT JOIN ballot b
-          ON rlm.user_id = b.user_id AND rlm.league_id = b.league_id
-          WHERE rlm.league_id = @league_id
-          GROUP BY a.username"
+            FROM account a
+            JOIN raceLeagueMembership rlm
+            ON a.account_id = rlm.user_id
+            LEFT JOIN ballot b
+            ON rlm.user_id = b.user_id AND rlm.league_id = b.league_id
+            WHERE rlm.league_id = @league_id
+            GROUP BY a.username"
         );
 
         cmd.Parameters.AddWithValue("league_id", leagueId);
@@ -548,8 +549,8 @@ public class PostgresDatabase : IDatabase
     {
         await using var cmd = _dataSource.CreateCommand(
             @"SELECT round_number, name, location, distance, turns, layout_image_path
-              FROM track
-              WHERE round_number=@round_number"
+                FROM track
+                WHERE round_number=@round_number"
         );
 
         cmd.Parameters.AddWithValue("round_number", roundNumber);
