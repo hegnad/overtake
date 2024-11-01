@@ -19,14 +19,14 @@ export default function OpenF1() {
       }
     };
 
-    fetchData(); 
+    fetchData();
 
     // Created by ChatGPT
     //Context prompt is active
     // Prompt: Set the following useEffect to execute every determined interval
     const intervalId = setInterval(fetchData, 15000); // Fetch every 15 seconds
 
-    return () => clearInterval(intervalId); 
+    return () => clearInterval(intervalId);
   }, []);
 
   return (
@@ -63,4 +63,17 @@ export async function getLapNumber(driver) {
   console.log(`lap number`);
   console.log(data[0].lap_number);
   return data[0].lap_number;
+}
+
+export async function getLatestSessionName() {
+  const apiUrl = "https://api.openf1.org/v1/sessions?session_key=latest";
+
+  try {
+    const response = await fetch(apiUrl);
+    const data = await response.json();
+    return data[0].session_name;
+  } catch (error) {
+    console.error("Error fetching session name: ", error);
+    return null;
+  }
 }
