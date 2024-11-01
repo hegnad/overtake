@@ -43,4 +43,6 @@ public interface IDatabase
 
     Task<Track> GetTrackDataByRoundAsync(int roundNumber);
 
+    Task<Member[]> GetLeagueDetailsAsync(int leagueId);
+
 }
