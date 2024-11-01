@@ -1,0 +1,31 @@
+.driverGrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    padding: 20px;
+}
+
+.driverBox {
+    padding: 10px;
+    border-radius: 15px;
+    text-align: center;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+    background-color: #0A0A0F;
+    color: white;
+}
+
+    .driverBox:hover {
+        transform: scale(1.05);
+        background-color: #e0e0e0;
+    }
+
+    .driverBox p {
+        margin: 5px 0;
+    }
+
+.crossedOut {
+    text-decoration: line-through;
+    color: #888;
+    pointer-events: none; /* Disable clicking on selected drivers */
+}

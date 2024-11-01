@@ -1,18 +1,17 @@
 {
   "ExpandedNodes": [
     "",
-    "\\server",
-    "\\server\\Controllers",
-    "\\server\\Entities",
-    "\\server\\Interfaces",
-    "\\server\\Models",
-    "\\server\\Models\\Requests",
     "\\web",
+    "\\web\\public",
+    "\\web\\public\\assets",
+    "\\web\\public\\assets\\teamlogos",
+    "\\web\\public\\images",
     "\\web\\src",
     "\\web\\src\\app",
-    "\\web\\src\\app\\lib",
-    "\\web\\src\\app\\lib\\context"
+    "\\web\\src\\app\\ballot",
+    "\\web\\src\\app\\components",
+    "\\web\\src\\app\\formulalearn"
   ],
-  "SelectedNode": "\\server\\Services\\PostgresDatabase.cs",
+  "SelectedNode": "\\web\\src\\app\\formulalearn\\page.tsx",
   "PreviewInSolutionExplorer": false
 }

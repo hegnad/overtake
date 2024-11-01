@@ -46,7 +46,7 @@ public class BallotController : ControllerBase
 
         int leagueId = request.LeagueId.Value;
 
-        int raceId = 1;
+        int raceId = request.RaceId.Value;
 
         // Create a list of DriverPrediction objects
         var driverPredictions = request.DriverPredictions.Select((name, index) => new DriverPrediction

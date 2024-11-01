@@ -1,0 +1,40 @@
+.ballotList {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 10px;
+}
+
+.ballotBox {
+    padding: 10px;
+    color: white;
+    background-color: #0A0A0F;
+    margin-bottom: 10px;
+    border-radius: 15px;
+    cursor: pointer;
+    text-align: center;
+    transition: transform 0.3s ease, background-color 0.3s ease;
+}
+
+    .ballotBox.selected {
+        background-color: #42425E;
+        transform: scale(1.05);
+    }
+
+    .ballotBox:hover {
+        background-color: #42425E;
+        transform: scale(1.05);
+    }
+
+    .position:hover {
+        background-color: #f0f0f0;
+    }
+
+.selected {
+    background-color: #ffeb3b; /* Highlight color for selected box */
+    border: 2px solid #ff9800;
+}
+
+.filledBox {
+    background-color: #1A0000;
+}
