@@ -42,4 +42,7 @@ public interface IDatabase
     Task<Driver> GetDriverMetadataByNumberAsync(int driverNumber);
 
     Task<Member[]> GetLeagueDetailsAsync(int leagueId);
+
+    Task<Track> GetTrackDataByRoundAsync(int roundNumber);
+
 }

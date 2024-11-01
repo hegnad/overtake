@@ -49,7 +49,7 @@ CREATE TABLE leagueInvite (
 );
 
 CREATE TABLE track (
-	track_id SERIAL PRIMARY KEY,
+	round_number SERIAL PRIMARY KEY,
 	name VARCHAR(50) NOT NULL,
 	location VARCHAR(100) NOT NULL,
 	distance NUMERIC(10, 2) NOT NULL,
@@ -59,7 +59,7 @@ CREATE TABLE track (
 
 CREATE TABLE race (
 	race_id SERIAL PRIMARY KEY,
-	track_id INT REFERENCES track(track_id) ON DELETE CASCADE NOT NULL,
+	round_number INT REFERENCES track(round_number) ON DELETE CASCADE NOT NULL,
 	start_time TIMESTAMP NOT NULL
 );
 
@@ -186,35 +186,35 @@ VALUES
   (5, 2, NOW(), 0);
 
 -- Insert test data for track table
-INSERT INTO track (name, location, distance, turns, layout_image_path)
+INSERT INTO track (round_number, name, location, distance, turns, layout_image_path)
 VALUES 
-  ('Monza', 'Italy', 5.79, 11,'./assets/track_layout/monza.png'),
-  ('Silverstone', 'UK', 5.89, 18, './assets/track_layout/silverstone.png'),
-  ('Interlagos', 'Brazil', 4.31, 15, './assets/track_layout/interlagos.png'),
-  ('Suzuka', 'Japan', 5.81, 18, './assets/track_layout/suzuka.png'),
-  ('Spa-Francorchamps', 'Belgium', 7.00, 19, './assets/track_layout/spa.png'),
-  ('Abu Dhabi', 'UAE', 5.55, 21, './assets/track_layout/abu_dhabi.png'),
-  ('Melbourne', 'Australia', 5.30, 16, './assets/track_layout/melbourne.png'),
-  ('Monaco', 'Monaco', 3.34, 19, './assets/track_layout/monaco.png'),
-  ('Baku', 'Azerbaijan', 6.00, 20, './assets/track_layout/baku.png'),
-  ('Cota', 'USA', 5.51, 20, './assets/track_layout/cota.png'),
-  ('Red Bull Ring', 'Austria', 4.32, 10, './assets/track_layout/austria.png'),
-  ('Hungaroring', 'Hungary', 4.38, 14, './assets/track_layout/hungaroring.png'),
-  ('Bahrain', 'Bahrain', 5.41, 15, './assets/track_layout/bahrain.png'),
-  ('Imola', 'Italy', 4.93, 19, './assets/track_layout/imola.png'),
-  ('Montreal', 'Canada', 4.36, 14, './assets/track_layout/montreal.png'),
-  ('Shanghai', 'China', 5.45, 16, './assets/track_layout/shanghai.png'),
-  ('Singapore', 'Singapore', 5.07, 23, './assets/track_layout/singapore.png'),
-  ('Zandvoort', 'Netherlands', 4.26, 14, './assets/track_layout/zandvoort.png'),
-  ('Jeddah', 'Saudi Arabia', 6.17, 27, './assets/track_layout/jeddah.png'),
-  ('Las Vegas', 'USA', 6.19, 20, './assets/track_layout/las_vegas.png'),
-  ('Mexico City', 'Mexico', 4.30, 17, './assets/track_layout/mexico_city.png'),
-  ('Miami', 'USA', 5.41, 19, './assets/track_layout/miami.png'),
-  ('Losail', 'Quatar', 5.38, 16, './assets/track_layout/losail.png'),
-  ('Barcelona', 'Spain', 4.65, 16, './assets/track_layout/barcelona.png');
+  (16, 'Monza', 'Italy', 5.79, 11,'./assets/track_layout/monza.png'),
+  (12, 'Silverstone', 'UK', 5.89, 18, './assets/track_layout/silverstone.png'),
+  (21, 'Interlagos', 'Brazil', 4.31, 15, './assets/track_layout/interlagos.png'),
+  (4, 'Suzuka', 'Japan', 5.81, 18, './assets/track_layout/suzuka.png'),
+  (14, 'Spa-Francorchamps', 'Belgium', 7.00, 19, './assets/track_layout/spa.png'),
+  (24, 'Abu Dhabi', 'UAE', 5.55, 21, './assets/track_layout/abu_dhabi.png'),
+  (3, 'Melbourne', 'Australia', 5.30, 16, './assets/track_layout/melbourne.png'),
+  (8, 'Monaco', 'Monaco', 3.34, 19, './assets/track_layout/monaco.png'),
+  (17, 'Baku', 'Azerbaijan', 6.00, 20, './assets/track_layout/baku.png'),
+  (19, 'Cota', 'USA', 5.51, 20, './assets/track_layout/cota.png'),
+  (11, 'Red Bull Ring', 'Austria', 4.32, 10, './assets/track_layout/austria.png'),
+  (13, 'Hungaroring', 'Hungary', 4.38, 14, './assets/track_layout/hungaroring.png'),
+  (1, 'Bahrain', 'Bahrain', 5.41, 15, './assets/track_layout/bahrain.png'),
+  (7, 'Imola', 'Italy', 4.93, 19, './assets/track_layout/imola.png'),
+  (9, 'Montreal', 'Canada', 4.36, 14, './assets/track_layout/montreal.png'),
+  (5, 'Shanghai', 'China', 5.45, 16, './assets/track_layout/shanghai.png'),
+  (18, 'Singapore', 'Singapore', 5.07, 23, './assets/track_layout/singapore.png'),
+  (15, 'Zandvoort', 'Netherlands', 4.26, 14, './assets/track_layout/zandvoort.png'),
+  (2, 'Jeddah', 'Saudi Arabia', 6.17, 27, './assets/track_layout/jeddah.png'),
+  (22, 'Las Vegas', 'USA', 6.19, 20, './assets/track_layout/las_vegas.png'),
+  (20, 'Mexico City', 'Mexico', 4.30, 17, './assets/track_layout/mexico_city.png'),
+  (6, 'Miami', 'USA', 5.41, 19, './assets/track_layout/miami.png'),
+  (23, 'Losail', 'Quatar', 5.38, 16, './assets/track_layout/losail.png'),
+  (10, 'Barcelona', 'Spain', 4.65, 16, './assets/track_layout/barcelona.png');
 
 -- Insert test data for race table
-INSERT INTO race (track_id, start_time)
+INSERT INTO race (round_number, start_time)
 VALUES 
   (1, NOW() + INTERVAL '1 day'),
   (2, NOW() + INTERVAL '2 days'),

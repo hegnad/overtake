@@ -544,5 +544,31 @@ public class PostgresDatabase : IDatabase
         return members.ToArray(); // Return an array of Member objects
     }
 
+    public async Task<Track> GetTrackDataByRoundAsync(int roundNumber)
+    {
+        await using var cmd = _dataSource.CreateCommand(
+            @"SELECT round_number, name, location, distance, turns, layout_image_path
+              FROM track
+              WHERE round_number=@round_number"
+        );
 
+        cmd.Parameters.AddWithValue("round_number", roundNumber);
+
+        await using var reader = await cmd.ExecuteReaderAsync();
+
+        if (await reader.ReadAsync())
+        {
+            return new Track
+            {
+                RoundNumber = reader.GetInt32(0),
+                Name = reader.GetString(1),
+                Location = reader.GetString(2),
+                Distance = reader.GetDouble(3),
+                Turns = reader.GetInt32(4),
+                ImagePath = reader.GetString(5)
+            };
+        }
+
+        return null;
+    }
 }
