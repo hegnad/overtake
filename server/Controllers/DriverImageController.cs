@@ -59,5 +59,21 @@ public class DriverImageController : ControllerBase
         return new OkObjectResult(driverMetadata);
     }
 
+    [HttpGet]
+    [Route("track/{roundNumber}")]
+    [Produces("application/json")]
+    public async Task<ActionResult<Track>> GetTrackDataByRoundAsync(int roundNumber)
+    {
+        // Get the list of drivers for the given round
+        var trackData = await _database.GetTrackDataByRoundAsync(roundNumber);
+
+        if (trackData == null)
+        {
+            return NotFound();
+        }
+
+        return new OkObjectResult(trackData.ImagePath);
+    }
+
 
 }

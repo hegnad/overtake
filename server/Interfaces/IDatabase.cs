@@ -41,4 +41,6 @@ public interface IDatabase
 
     Task<Driver> GetDriverMetadataByNumberAsync(int driverNumber);
 
+    Task<Track> GetTrackDataByRoundAsync(int roundNumber);
+
 }
