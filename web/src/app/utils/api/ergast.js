@@ -11,6 +11,7 @@ export async function getNextRace() {
     const circuitName = raceInfo.Circuit.circuitName;
     const raceDate = raceInfo.date;
     const raceTime = raceInfo.time;
+    const roundNumber = raceInfo.round;
     const raceTimeDate = new Date(`${raceDate}T${raceTime}`);
     const circuitLocation = raceInfo.Circuit.Location.country;
     let gpName = raceName;
@@ -29,6 +30,7 @@ export async function getNextRace() {
       circuitLocation,
       raceTimeDate,
       gpName,
+      roundNumber,
     };
   } catch (error) {
     console.error("Error fetching race data: ", error);
@@ -79,101 +81,85 @@ export async function getSeasonRounds(season) {
 }
 
 export async function getDrivers() {
+  const apiUrl = "https://ergast.com/api/f1/current/last/drivers.json";
 
-    const apiUrl = "https://ergast.com/api/f1/current/last/drivers.json";
-
-    try {
-
-        const response = await fetch(apiUrl);
-        if (!response.ok) {
-            throw new Error("Failed to fetch drivers");
-        }
-
-        const data = await response.json();
-        const ergastDrivers = data.MRData.DriverTable.Drivers.map((driver) => ({
-            driverId: driver.driverId,
-            permanentNumber: driver.permanentNumber,
-            code: driver.code,
-            givenName: driver.givenName,
-            familyName: driver.familyName,
-            fullName: `${driver.givenName} ${driver.familyName}`,
-            dateOfBirth: driver.dateOfBirth,
-            nationality: driver.nationality,
-            url: driver.url
-        }));
-
-        return ergastDrivers;
-
-    } catch (error) {
-
-        console.error("Error fetching drivers data: ", error);
-        return null;
-
+  try {
+    const response = await fetch(apiUrl);
+    if (!response.ok) {
+      throw new Error("Failed to fetch drivers");
     }
 
+    const data = await response.json();
+    const ergastDrivers = data.MRData.DriverTable.Drivers.map((driver) => ({
+      driverId: driver.driverId,
+      permanentNumber: driver.permanentNumber,
+      code: driver.code,
+      givenName: driver.givenName,
+      familyName: driver.familyName,
+      fullName: `${driver.givenName} ${driver.familyName}`,
+      dateOfBirth: driver.dateOfBirth,
+      nationality: driver.nationality,
+      url: driver.url,
+    }));
+
+    return ergastDrivers;
+  } catch (error) {
+    console.error("Error fetching drivers data: ", error);
+    return null;
+  }
 }
 
 export async function getConstructors() {
+  const apiUrl = "https://ergast.com/api/f1/current/constructors.json";
 
-    const apiUrl = "https://ergast.com/api/f1/current/constructors.json";
-
-    try {
-
-        const response = await fetch(apiUrl);
-        if (!response.ok) {
-            throw new Error("Failed to fetch constructors");
-        }
-
-        const data = await response.json();
-        const ergastConstructors = data.MRData.ConstructorTable.Constructors.map((constructor) => ({
-            constructorId: constructor.constructorId,
-            url: constructor.url,
-            name: constructor.name,
-            nationality: constructor.nationality
-        }));
-
-        return ergastConstructors;
-
-    } catch (error) {
-
-        console.error("Error fetching constructors data: ", error);
-        return null;
-
+  try {
+    const response = await fetch(apiUrl);
+    if (!response.ok) {
+      throw new Error("Failed to fetch constructors");
     }
 
+    const data = await response.json();
+    const ergastConstructors = data.MRData.ConstructorTable.Constructors.map(
+      (constructor) => ({
+        constructorId: constructor.constructorId,
+        url: constructor.url,
+        name: constructor.name,
+        nationality: constructor.nationality,
+      })
+    );
+
+    return ergastConstructors;
+  } catch (error) {
+    console.error("Error fetching constructors data: ", error);
+    return null;
+  }
 }
 
 export async function getCircuits() {
+  const apiUrl = "https://ergast.com/api/f1/current.json";
 
-    const apiUrl = "https://ergast.com/api/f1/current.json";
-
-    try {
-
-        const response = await fetch(apiUrl);
-        if (!response.ok) {
-            throw new Error("Failed to fetch circuits");
-        }
-
-        const data = await response.json();
-        const ergastCircuits = data.MRData.RaceTable.Races.map((race) => ({
-            circuitId: race.Circuit.circuitId,
-            url: race.Circuit.url,
-            circuitName: race.Circuit.circuitName,
-            location: {
-                lat: race.Circuit.Location.lat,
-                long: race.Circuit.Location.long,
-                locality: race.Circuit.Location.locality,
-                country: race.Circuit.Location.country,
-            },
-        }));
-
-        return ergastCircuits;
-
-    } catch (error) {
-
-        console.error("Error fetching circuits data: ", error);
-        return null;
-
+  try {
+    const response = await fetch(apiUrl);
+    if (!response.ok) {
+      throw new Error("Failed to fetch circuits");
     }
 
+    const data = await response.json();
+    const ergastCircuits = data.MRData.RaceTable.Races.map((race) => ({
+      circuitId: race.Circuit.circuitId,
+      url: race.Circuit.url,
+      circuitName: race.Circuit.circuitName,
+      location: {
+        lat: race.Circuit.Location.lat,
+        long: race.Circuit.Location.long,
+        locality: race.Circuit.Location.locality,
+        country: race.Circuit.Location.country,
+      },
+    }));
+
+    return ergastCircuits;
+  } catch (error) {
+    console.error("Error fetching circuits data: ", error);
+    return null;
+  }
 }
