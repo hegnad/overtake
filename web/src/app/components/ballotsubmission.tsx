@@ -7,9 +7,14 @@ import { IdentityContext } from "../lib/context/identity";
 interface BallotSubmissionProps {
     gridPredictions: (string | null)[];
     selectedLeagueId: number | null;
+    onSubmissionSuccess: () => void;
 }
 
-export default function BallotSubmission({ gridPredictions, selectedLeagueId }: BallotSubmissionProps) {
+export default function BallotSubmission({
+    gridPredictions,
+    selectedLeagueId,
+    onSubmissionSuccess,
+}: BallotSubmissionProps) {
 
     const identity = useContext(IdentityContext);
 
@@ -27,6 +32,13 @@ export default function BallotSubmission({ gridPredictions, selectedLeagueId }: 
             setButtonText("PLEASE COMPLETE BALLOT");
             return;
         }
+
+        if (!selectedLeagueId) {
+            setButtonText("MUST SELECT A LEAGUE");
+            return;
+        }
+
+        setButtonText("SUBMIT BALLOT");
 
         try {
             const requestBody = {
@@ -46,16 +58,25 @@ export default function BallotSubmission({ gridPredictions, selectedLeagueId }: 
 
             if (response.ok) {
                 setButtonText("BALLOT SUBMITTED!");
+                onSubmissionSuccess();
+                console.log("Ballot Submmitted Successfully: ", requestBody);
             } else {
                 console.error("Failed to submit ballot:", response.status);
                 setButtonText("SUBMISSION FAILED");
             }
+
         } catch (error) {
             console.error("Error submitting ballot:", error);
             setButtonText("ERROR, TRY AGAIN");
         }
 
     };
+
+    useEffect(() => {
+        if (selectedLeagueId) {
+            setButtonText("SUBMIT BALLOT");
+        }
+    }, [selectedLeagueId]);
 
     return (
 

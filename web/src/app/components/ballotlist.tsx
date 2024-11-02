@@ -6,9 +6,15 @@ interface BallotListProps {
     onDriverSelect: (position: number) => void;
     gridPredictions: (string | null)[];
     selectedBox: number | null;
+    submissionSuccess: boolean;
 }
 
-export default function BallotList({ onDriverSelect, gridPredictions, selectedBox }: BallotListProps) {
+export default function BallotList({
+    onDriverSelect,
+    gridPredictions,
+    selectedBox,
+    submissionSuccess,
+}: BallotListProps) {
 
     const handlePositionClick = (index: number) => {
         onDriverSelect(index);
@@ -20,7 +26,7 @@ export default function BallotList({ onDriverSelect, gridPredictions, selectedBo
             {Array.from({ length: 10 }, (_, index) => (
                 <div
                     key={index}
-                    className={`${styles.ballotBox} ${selectedBox === index ? styles.selected : ""} ${gridPredictions[index] ? styles.filledBox : ""}`}
+                    className={`${styles.ballotBox} ${selectedBox === index ? styles.selected : ""} ${gridPredictions[index] ? styles.filledBox : ""} ${submissionSuccess ? styles.submissionSuccess : ""}`}
                     onClick={() => handlePositionClick(index)}
                 >
                     {index + 1}. {gridPredictions[index] || "_________________________________"}

@@ -1,17 +1,16 @@
 {
   "ExpandedNodes": [
     "",
+    "\\server",
+    "\\server\\Controllers",
+    "\\server\\Models",
+    "\\server\\Models\\Requests",
     "\\web",
-    "\\web\\public",
-    "\\web\\public\\assets",
-    "\\web\\public\\assets\\teamlogos",
-    "\\web\\public\\images",
     "\\web\\src",
     "\\web\\src\\app",
-    "\\web\\src\\app\\ballot",
-    "\\web\\src\\app\\components",
-    "\\web\\src\\app\\formulalearn"
+    "\\web\\src\\app\\utils",
+    "\\web\\src\\app\\utils\\api"
   ],
-  "SelectedNode": "\\web\\src\\app\\formulalearn\\page.tsx",
+  "SelectedNode": "\\server\\Resources\\Initialize.sql",
   "PreviewInSolutionExplorer": false
 }

@@ -1,20 +1,22 @@
 .submissionContainer {
     display: flex;
     justify-content: center;
-    margin-top: 20px;
+    padding: 20px;
 }
 
 .submitButton {
     padding: 10px 20px;
-    background-color: #007bff;
+    background-color: #AA0000;
     color: white;
+    width: 66%;
     border: none;
     border-radius: 5px;
     cursor: pointer;
     font-size: 16px;
-    transition: background-color 0.3s;
+    transition: background-color 0.3s, transform 0.3s ease;
 }
 
     .submitButton:hover {
-        background-color: #0056b3;
+        background-color: #781214;
+        transform: scale(1.05);
     }

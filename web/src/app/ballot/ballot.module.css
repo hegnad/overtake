@@ -1,19 +1,19 @@
 .pageContainer {
     display: flex;
     gap: 20px;
-    background-color: #15151E;
-    border-radius: 15px;
 }
 
 .leftColumn {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
     flex: 1;
+    max-width: 33%;
+    background-color: #15151E;
+    border-radius: 15px;
+    padding: 10px;
 }
 
 .rightColumn {
-    flex: 1;
-    display: flex;
-    justify-content: center;
+    flex: 2;
+    max-width: 66%;
+    background-color: #15151E;
+    border-radius: 15px;
 }

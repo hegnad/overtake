@@ -6,10 +6,11 @@
 }
 
 .ballotBox {
-    padding: 10px;
+    padding: 15px;
     color: white;
     background-color: #0A0A0F;
     margin-bottom: 10px;
+    margin-left: 10px;
     border-radius: 15px;
     cursor: pointer;
     text-align: center;
@@ -32,9 +33,14 @@
 
 .selected {
     background-color: #ffeb3b; /* Highlight color for selected box */
-    border: 2px solid #ff9800;
+    border: 1px solid #ff9800;
 }
 
 .filledBox {
     background-color: #1A0000;
+}
+
+.submissionSuccess {
+    background-color: #4CAF50; /* Green border or your choice of success color */
+    transition: background-color 1s ease;
 }

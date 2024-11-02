@@ -1,0 +1,80 @@
+.podiumDisplay {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    gap: 15px;
+    padding: 20px;
+}
+
+.driverContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+    .driverContainer p {
+        color: white;
+        text-transform: uppercase;
+        font-size: 1.7rem;
+        line-height: 1;
+        margin-top: 5px;
+    }
+
+.podiumImage {
+    background-color: #1A0000;
+    border-radius: 15px;
+}
+
+.podiumLine {
+    width: 100%;
+    height: 4px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+.podiumNameAndFlag {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.podiumFlag, .placeholderFlag {
+    border-radius: 15px;
+    display: inline-flex;
+    width: 40px;
+    height: 40px;
+    background-color: #333; /* Placeholder color */
+}
+
+/* Styling for podium colors */
+.firstPlace .podiumLine {
+    background-color: #FF8A00;
+}
+
+.secondPlace .podiumLine {
+    background-color: #CCCCCC;
+}
+
+.thirdPlace .podiumLine {
+    background-color: #944700;
+}
+
+/* Placeholder styling */
+.placeholderImage {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+}
+
+.firstPlace {
+    order: 2;
+}
+
+.secondPlace {
+    order: 1;
+}
+
+.thirdPlace {
+    order: 3;
+}

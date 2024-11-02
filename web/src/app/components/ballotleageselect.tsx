@@ -59,7 +59,7 @@ export default function BallotLeagueSelect({ onLeagueSelect }: LeagueSelectionPr
             {error ? (
                 <p>{error}</p>
             ) : (
-                <select onChange={handleLeagueChange} defaultValue="">
+                    <select className={styles.leagueDropdown} onChange={handleLeagueChange} defaultValue="">
                     <option value="" disabled>
                         -- Select a League --
                     </option>

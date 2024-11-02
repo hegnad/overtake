@@ -1,31 +1,68 @@
 .driverGrid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
+    display: flex;
+    flex-wrap: wrap;
     gap: 10px;
     padding: 20px;
 }
 
 .driverBox {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     padding: 10px;
-    border-radius: 15px;
-    text-align: center;
-    cursor: pointer;
-    transition: transform 0.2s ease;
     background-color: #0A0A0F;
-    color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    box-sizing: border-box;
+    transition: background-color 0.3s ease, transform 0.3s ease;
 }
 
     .driverBox:hover {
+        background-color: #42425E;
         transform: scale(1.05);
-        background-color: #e0e0e0;
     }
 
     .driverBox p {
-        margin: 5px 0;
+        flex: 1;
+        margin: 0;
+        padding: 10px;
+        font-size: 1.2rem;
+        color: white;
+        text-align: left;
+    }
+
+.driverImage {
+    border-radius: 50px;
+    background-color: black;
+    transition: background-color 0.3s ease;
+}
+
+    .driverImage:hover {
+        background-color: #0A0A0F;
     }
 
 .crossedOut {
-    text-decoration: line-through;
-    color: #888;
-    pointer-events: none; /* Disable clicking on selected drivers */
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Responsive Width Adjustments */
+
+@media (min-width: 600px) {
+    .driverBox {
+        width: calc(50% - 10px); /* 2 columns on larger screens */
+    }
+}
+
+@media (min-width: 900px) {
+    .driverBox {
+        width: calc(33.33% - 10px); /* 3 columns on larger screens */
+    }
+}
+
+@media (min-width: 1200px) {
+    .driverBox {
+        width: calc(25% - 10px); /* 4 columns on larger screens */
+    }
 }
