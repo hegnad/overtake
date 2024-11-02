@@ -39,12 +39,17 @@
     width: 100%;
 }
 
-.podiumFlag, .placeholderFlag {
+.podiumFlag {
     border-radius: 15px;
     display: inline-flex;
+}
+
+.placeholderFlag {
+    border-radius: 15px;
+    display: inline-flex;
+    background-color: #333;
     width: 40px;
     height: 40px;
-    background-color: #333; /* Placeholder color */
 }
 
 /* Styling for podium colors */

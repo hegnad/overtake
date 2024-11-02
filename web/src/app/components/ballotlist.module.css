@@ -9,12 +9,13 @@
     padding: 15px;
     color: white;
     background-color: #0A0A0F;
-    margin-bottom: 10px;
-    margin-left: 10px;
+    margin-bottom: 5px;
+    margin-left: 5px;
     border-radius: 15px;
     cursor: pointer;
     text-align: center;
     transition: transform 0.3s ease, background-color 0.3s ease;
+    font-size: 1.2rem;
 }
 
     .ballotBox.selected {
@@ -37,7 +38,7 @@
 }
 
 .filledBox {
-    background-color: #1A0000;
+    background-color: #AA0000;
 }
 
 .submissionSuccess {

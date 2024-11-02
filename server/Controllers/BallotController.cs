@@ -86,7 +86,48 @@ public class BallotController : ControllerBase
 
         return new OkObjectResult(ballot);
     }
+
+    [HttpPut]
+    [Route("update")]
+    [Produces("application/json")]
+    public async Task<ActionResult> UpdateAsync([FromBody] CreateBallotRequest request)
+    {
+        // Validate request
+        if (request.DriverPredictions == null || request.DriverPredictions.Count != 10)
+        {
+            return BadRequest("All 10 driver positions must be provided.");
+        }
+
+        // Validate leagueId
+        if (!request.LeagueId.HasValue)
+        {
+            return BadRequest("LeagueId is required.");
+        }
+
+        // Get current user ID
+        int userId = Convert.ToInt32(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+
+        int leagueId = request.LeagueId.Value;
+
+        int raceId = 1; // Replace with actual race ID retrieval logic
+
+        // Create a list of DriverPrediction objects
+        var driverPredictions = request.DriverPredictions.Select((name, index) => new DriverPrediction
+        {
+            DriverName = name,
+            Position = index + 1
+        }).ToList();
+
+        // Call the database update method
+        bool updateSuccess = await _database.UpdateBallotAsync(userId, leagueId, raceId, driverPredictions);
+
+        if (!updateSuccess)
+        {
+            return NotFound("No ballot found to update.");
+        }
+
+        return Ok("Ballot updated successfully.");
+    }
+
+
 }
-
-
-

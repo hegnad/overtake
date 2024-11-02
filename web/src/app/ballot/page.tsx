@@ -94,6 +94,10 @@ export default function Top10GridPrediction() {
         setSelectedLeagueId(leagueId);
     };
 
+    const handleLoadExistingBallot = (existingBallot: (string | null)[]) => {
+        setGridPredictions(existingBallot);
+    };
+
     return (
 
         <SidebarLayout>
@@ -114,6 +118,7 @@ export default function Top10GridPrediction() {
                         gridPredictions={gridPredictions}
                         selectedLeagueId={selectedLeagueId}
                         onSubmissionSuccess={handleSubmissionSuccess}
+                        onLoadExistingBallot={handleLoadExistingBallot}
                     />
                 </div>
 

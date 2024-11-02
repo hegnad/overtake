@@ -29,7 +29,7 @@ export default function BallotList({
                     className={`${styles.ballotBox} ${selectedBox === index ? styles.selected : ""} ${gridPredictions[index] ? styles.filledBox : ""} ${submissionSuccess ? styles.submissionSuccess : ""}`}
                     onClick={() => handlePositionClick(index)}
                 >
-                    {index + 1}. {gridPredictions[index] || "_________________________________"}
+                    {index + 1}. {gridPredictions[index] || "___________________________"}
                 </div>
             ))}
         </div>

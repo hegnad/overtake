@@ -52,6 +52,7 @@ export default function PodiumDisplay({ drivers, gridPredictions }: PodiumDispla
                                         className={styles.podiumFlag}
                                     />
                                 </div>
+                                <div className={styles.podiumLine}></div>
                             </>
                         ) : (
                             <>
@@ -67,7 +68,8 @@ export default function PodiumDisplay({ drivers, gridPredictions }: PodiumDispla
                                 <div className={styles.podiumNameAndFlag}>
                                     <p>{shortLastName}</p>
                                     <div className={styles.placeholderFlag}></div>
-                                </div>
+                                    </div>
+                                <div className={styles.podiumLine}></div>
                             </>
                         )}
                     </div>

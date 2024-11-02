@@ -8,26 +8,62 @@ interface BallotSubmissionProps {
     gridPredictions: (string | null)[];
     selectedLeagueId: number | null;
     onSubmissionSuccess: () => void;
+    onLoadExistingBallot: (existingBallot: (string | null)[]) => void;
 }
 
 export default function BallotSubmission({
     gridPredictions,
     selectedLeagueId,
     onSubmissionSuccess,
+    onLoadExistingBallot,
 }: BallotSubmissionProps) {
 
     const identity = useContext(IdentityContext);
-
     const [buttonText, setButtonText] = useState("SUBMIT BALLOT");
+    const [isEditing, setIsEditing] = useState(false);
+    const [hovering, setHovering] = useState(false);
+
+    // Check for existing ballot on league change
+    useEffect(() => {
+
+        const checkExistingBallot = async () => {
+            if (!selectedLeagueId) return;
+
+            try {
+                const response = await fetch(`http://localhost:8080/api/ballot/populate?leagueId=${selectedLeagueId}`, {
+                    method: "GET",
+                    headers: {
+                        Authorization: `Bearer ${identity.sessionToken}`,
+                    },
+                });
+
+                if (response.ok) {
+                    const ballotData = await response.json();
+                    const ballotPredictions = ballotData.map((item: { driverId: string }) => item.driverId);
+                    onLoadExistingBallot(ballotPredictions); // Send data to parent component
+                    setIsEditing(true); // Set editing mode if a ballot exists
+                } else {
+                    setIsEditing(false);
+                    onLoadExistingBallot(Array(10).fill(null)); // Reset if no ballot
+                }
+
+            } catch (error) {
+                console.error("Error checking for existing ballot:", error);
+            }
+        };
+
+        checkExistingBallot();
+
+    }, [selectedLeagueId, identity.sessionToken, onLoadExistingBallot]);
 
     useEffect(() => {
+
         const isComplete = gridPredictions.every(position => position !== null);
         setButtonText(isComplete ? "SUBMIT BALLOT" : "PLEASE COMPLETE BALLOT");
+
     }, [gridPredictions]);
 
     const handleSubmit = async () => {
-
-        // Check if all positions are filled before allowing submission
         if (gridPredictions.includes(null)) {
             setButtonText("PLEASE COMPLETE BALLOT");
             return;
@@ -38,17 +74,20 @@ export default function BallotSubmission({
             return;
         }
 
-        setButtonText("SUBMIT BALLOT");
+        setButtonText("SUBMITTING...");
+
+        const requestBody = {
+            DriverPredictions: gridPredictions,
+            totalScore: null,
+            leagueId: selectedLeagueId,
+        };
+
+        const endpoint = isEditing ? "update" : "create";
+        const url = `http://localhost:8080/api/ballot/${endpoint}`;
 
         try {
-            const requestBody = {
-                DriverPredictions: gridPredictions,
-                totalScore: null,
-                leagueId: selectedLeagueId,
-            };
-
-            const response = await fetch("http://localhost:8080/api/ballot/create", {
-                method: "POST",
+            const response = await fetch(url, {
+                method: isEditing ? "PUT" : "POST",
                 headers: {
                     Authorization: `Bearer ${identity.sessionToken}`,
                     "Content-Type": "application/json",
@@ -59,31 +98,41 @@ export default function BallotSubmission({
             if (response.ok) {
                 setButtonText("BALLOT SUBMITTED!");
                 onSubmissionSuccess();
-                console.log("Ballot Submmitted Successfully: ", requestBody);
+                setIsEditing(true);
             } else {
-                console.error("Failed to submit ballot:", response.status);
+                console.error(`Failed to ${isEditing ? "update" : "create"} ballot:`, response.status);
                 setButtonText("SUBMISSION FAILED");
             }
 
         } catch (error) {
-            console.error("Error submitting ballot:", error);
+            console.error(`Error ${isEditing ? "updating" : "creating"} ballot:`, error);
             setButtonText("ERROR, TRY AGAIN");
         }
-
     };
 
     useEffect(() => {
+
         if (selectedLeagueId) {
             setButtonText("SUBMIT BALLOT");
         }
+
     }, [selectedLeagueId]);
+
+
 
     return (
 
         <div className={styles.submissionContainer}>
-            <button onClick={handleSubmit} className={styles.submitButton}>
-                {buttonText}
+
+            <button
+                onClick={handleSubmit}
+                onMouseEnter={() => isEditing && buttonText === "BALLOT SUBMITTED!" && setHovering(true)}
+                onMouseLeave={() => setHovering(false)}
+                className={styles.submitButton}
+            >
+                {hovering ? "EDIT BALLOT" : buttonText}
             </button>
+
         </div>
 
     );

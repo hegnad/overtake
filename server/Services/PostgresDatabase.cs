@@ -337,6 +337,54 @@ public class PostgresDatabase : IDatabase
         return ballotId; // Return the newly generated ballot ID
     }
 
+    public async Task<bool> UpdateBallotAsync(int userId, int leagueId, int raceId, List<DriverPrediction> driverPredictions)
+    {
+        // Step 1: Retrieve the ballot ID based on user, league, and race
+        int ballotId;
+        using (var cmd = _dataSource.CreateCommand(
+            @"SELECT ballot_id FROM ballot WHERE user_id = @user_id AND league_id = @league_id AND race_id = @race_id"
+        ))
+        {
+            cmd.Parameters.AddWithValue("user_id", userId);
+            cmd.Parameters.AddWithValue("league_id", leagueId);
+            cmd.Parameters.AddWithValue("race_id", raceId);
+
+            await using var reader = await cmd.ExecuteReaderAsync();
+            if (!await reader.ReadAsync())
+            {
+                // Ballot does not exist; return false to indicate no update was performed
+                return false;
+            }
+            ballotId = reader.GetInt32(0);
+        }
+
+        // Step 3: Delete existing entries in ballotContent for this ballot
+        using (var cmdDeleteContent = _dataSource.CreateCommand(
+            @"DELETE FROM ballotContent WHERE ballot_id = @ballot_id"
+        ))
+        {
+            cmdDeleteContent.Parameters.AddWithValue("ballot_id", ballotId);
+            await cmdDeleteContent.ExecuteNonQueryAsync();
+        }
+
+        // Step 4: Insert updated driver predictions into ballotContent
+        foreach (var prediction in driverPredictions)
+        {
+            using var cmdContent = _dataSource.CreateCommand(
+                @"INSERT INTO ballotContent (ballot_id, position, driver_name)
+                VALUES (@ballot_id, @position, @driver_name)"
+            );
+
+            cmdContent.Parameters.AddWithValue("ballot_id", ballotId);
+            cmdContent.Parameters.AddWithValue("position", prediction.Position);
+            cmdContent.Parameters.AddWithValue("driver_name", prediction.DriverName);
+
+            await cmdContent.ExecuteNonQueryAsync();
+        }
+
+        return true; // Return true to indicate the ballot was successfully updated
+    }
+
 
     public async Task<int?> GetBallotByUserIdAsync(int accountId)
     {

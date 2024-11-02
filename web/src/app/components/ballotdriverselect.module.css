@@ -47,6 +47,10 @@
     cursor: not-allowed;
 }
 
+    .crossedOut:hover {
+        transform: none;
+    }
+
 /* Responsive Width Adjustments */
 
 @media (min-width: 600px) {
