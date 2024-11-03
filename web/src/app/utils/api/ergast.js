@@ -61,6 +61,31 @@ export async function getRaceResults(season, round) {
   }
 }
 
+export async function getPrevRace() {
+
+    const apiUrl = "https://ergast.com/api/f1/current/last/results.json";
+
+    try {
+        const response = await fetch(apiUrl);
+        if (!response.ok) {
+            throw new Error("Failed to fetch race results");
+        }
+
+        const data = await response.json();
+        const raceResults = data.MRData.RaceTable.Races[0].Results.slice(0, 10).map(
+            (result) => `${result.Driver.givenName} ${result.Driver.familyName}`
+        );
+
+        console.log("Fetched previous race results:", raceResults);
+        return raceResults;
+
+    } catch (error) {
+        console.error("Error fetching previous race results:", error);
+        return [];
+    }
+
+}
+
 export async function getSeasonRounds(season) {
   const apiUrl = `https://ergast.com/api/f1/${season}.json`;
 

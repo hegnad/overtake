@@ -2,15 +2,15 @@
   "ExpandedNodes": [
     "",
     "\\server",
-    "\\server\\Controllers",
+    "\\server\\Interfaces",
     "\\server\\Models",
     "\\server\\Models\\Requests",
+    "\\server\\Properties",
     "\\web",
     "\\web\\src",
     "\\web\\src\\app",
-    "\\web\\src\\app\\utils",
-    "\\web\\src\\app\\utils\\api"
+    "\\web\\src\\app\\ballot"
   ],
-  "SelectedNode": "\\server\\Resources\\Initialize.sql",
+  "SelectedNode": "\\server\\Interfaces\\IDatabase.cs",
   "PreviewInSolutionExplorer": false
 }

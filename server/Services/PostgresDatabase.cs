@@ -358,7 +358,7 @@ public class PostgresDatabase : IDatabase
             ballotId = reader.GetInt32(0);
         }
 
-        // Step 3: Delete existing entries in ballotContent for this ballot
+        // Step 2: Delete existing entries in ballotContent for this ballot
         using (var cmdDeleteContent = _dataSource.CreateCommand(
             @"DELETE FROM ballotContent WHERE ballot_id = @ballot_id"
         ))
@@ -367,7 +367,7 @@ public class PostgresDatabase : IDatabase
             await cmdDeleteContent.ExecuteNonQueryAsync();
         }
 
-        // Step 4: Insert updated driver predictions into ballotContent
+        // Step 3: Insert updated driver predictions into ballotContent
         foreach (var prediction in driverPredictions)
         {
             using var cmdContent = _dataSource.CreateCommand(
@@ -458,6 +458,44 @@ public class PostgresDatabase : IDatabase
         }
 
         return ballotContents.ToArray();
+    }
+
+    public async Task<bool> UpdateBallotScoreAsync(int userId, int leagueId, int raceId, int score)
+    {
+
+        int ballotId;
+
+        // Step 1: Retrieve the ballot ID based on user, league, and race
+        using (var cmd = _dataSource.CreateCommand(
+            @"SELECT ballot_id FROM ballot 
+          WHERE user_id = @user_id AND league_id = @league_id AND race_id = @race_id"
+        ))
+        {
+            cmd.Parameters.AddWithValue("user_id", userId);
+            cmd.Parameters.AddWithValue("league_id", leagueId);
+            cmd.Parameters.AddWithValue("race_id", raceId);
+
+            await using var reader = await cmd.ExecuteReaderAsync();
+            if (!await reader.ReadAsync())
+            {
+                // Ballot does not exist; return false to indicate no update was performed
+                return false;
+            }
+            ballotId = reader.GetInt32(0);
+        }
+
+        // Step 2: Update the score in the ballot table for the retrieved ballotId
+        using (var cmdUpdateScore = _dataSource.CreateCommand(
+            @"UPDATE ballot SET score = @score WHERE ballot_id = @ballot_id"
+        ))
+        {
+            cmdUpdateScore.Parameters.AddWithValue("score", score);
+            cmdUpdateScore.Parameters.AddWithValue("ballot_id", ballotId);
+
+            int rowsAffected = await cmdUpdateScore.ExecuteNonQueryAsync();
+            return rowsAffected > 0; // Return true if the score was updated successfully
+        }
+
     }
 
     public async Task<RaceLeagueInfo[]> GetPublicLeagues()

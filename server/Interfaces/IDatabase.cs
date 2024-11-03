@@ -37,6 +37,8 @@ public interface IDatabase
 
     Task<bool> UpdateBallotAsync(int userId, int leagueId, int raceId, List<DriverPrediction> driverPredictions);
 
+    Task<bool> UpdateBallotScoreAsync(int userId, int leagueId, int raceId, int score);
+
     Task<RaceLeagueInfo[]> GetPublicLeagues();
 
     Task<Driver[]> PopulateDriversAsync();

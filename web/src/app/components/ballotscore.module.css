@@ -1,0 +1,29 @@
+.scoreButtonContainer {
+    display: flex;
+    justify-content: center;
+    padding-bottom: 10px;
+}
+
+.scoreButton {
+    padding: 10px 20px;
+    background-color: #FF8A00;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    width: 60%;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+    .scoreButton:disabled,
+    .disabled {
+        background-color: #ccc;
+        cursor: not-allowed;
+        opacity: 0.6;
+    }
+
+    .scoreButton:hover:not(:disabled) {
+        background-color: #4CAF50;
+        transform: scale(1.05)
+    }

@@ -12,6 +12,8 @@ import BallotList from "../components/ballotlist";
 import BallotLeagueSelect from "../components/ballotleageselect";
 import BallotSubmission from "../components/ballotsubmission";
 import PodiumDisplay from "../components/ballotpodiumdisplay";
+import BallotScore from "../components/ballotscore";
+import BallotActualResults from "../components/ballotactualresults";
 
 
 export default function Top10GridPrediction() {
@@ -21,9 +23,15 @@ export default function Top10GridPrediction() {
     const [selectedLeagueId, setSelectedLeagueId] = useState<number | null>(null);
 
     const [selectedBox, setSelectedBox] = useState<number | null>(null);
-    const [submissionSuccess, setSubmissionSuccess] = useState(false);
+    const [isEditing, setIsEditing] = useState(false);
+
+    const [showScoreButton, setShowScoreButton] = useState(false);
+    const [showActualResults, setShowActualResults] = useState(false);
+    const [totalScore, setTotalScore] = useState<number | null>(null);
+
     const [gridPredictions, setGridPredictions] = useState<(string | null)[]>(Array(10).fill(null));
 
+    const [submissionSuccess, setSubmissionSuccess] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [loadingDrivers, setLoadingDrivers] = useState(true);
 
@@ -77,13 +85,8 @@ export default function Top10GridPrediction() {
 
     const handleSubmissionSuccess = () => {
         setSubmissionSuccess(true);
+        setShowScoreButton(true);
         setTimeout(() => setSubmissionSuccess(false), 2000);
-    };
-
-    const isDriverSelected = (driverId: string) => {
-        const driver = drivers.find(d => d.driverId === driverId);
-        const driverFullName = driver ? `${driver.givenName} ${driver.familyName}` : "";
-        return gridPredictions.includes(driverFullName);
     };
 
     const handlePositionSelect = (position: number) => {
@@ -96,6 +99,19 @@ export default function Top10GridPrediction() {
 
     const handleLoadExistingBallot = (existingBallot: (string | null)[]) => {
         setGridPredictions(existingBallot);
+        setIsEditing(true);
+    };
+
+    const handleScoreCalculated = (score: number) => {
+        setTotalScore(score);
+    };
+
+    const handleScoreButtonClick = () => {
+        setShowActualResults(true);
+    };
+
+    const handleToggleResultsView = () => {
+        setShowActualResults(!showActualResults);
     };
 
     return (
@@ -107,6 +123,7 @@ export default function Top10GridPrediction() {
                 {/* Left Column: League Select and Ballot List */}
 
                 <div className={styles.leftColumn}>
+
                     <BallotLeagueSelect onLeagueSelect={handleLeagueSelect} />
                     <BallotList
                         onDriverSelect={handlePositionSelect}
@@ -120,16 +137,46 @@ export default function Top10GridPrediction() {
                         onSubmissionSuccess={handleSubmissionSuccess}
                         onLoadExistingBallot={handleLoadExistingBallot}
                     />
+                    {showScoreButton && (
+                        <BallotScore
+                            gridPredictions={gridPredictions}
+                            onScoreCalculated={handleScoreCalculated}
+                            isEditing={isEditing}
+                            onScoreButtonClick={handleScoreButtonClick}
+                            selectedLeagueId={selectedLeagueId}
+                        />
+                    )}
+                    {showActualResults && (
+                        <button onClick={handleToggleResultsView} className={styles.toggleButton}>
+                            Back to Driver List
+                        </button>
+                    )}
+
                 </div>
 
                 {/* Right Column: Driver Select */}
 
                 <div className={styles.rightColumn}>
-                    <PodiumDisplay
-                        drivers={drivers}
-                        gridPredictions={gridPredictions}
-                    />
-                    {loadingDrivers ? (
+
+                    {!showActualResults && (
+                        <PodiumDisplay
+                            drivers={drivers}
+                            gridPredictions={gridPredictions}
+                        />
+                    )}
+                    {showActualResults ? (
+                        <>
+                            <BallotActualResults
+                                gridPredictions={gridPredictions}
+                                drivers={drivers}
+                            />
+                            {totalScore !== null && (
+                                <div className={styles.scoreDisplay}>
+                                    <h4>Your Score: {totalScore}</h4>
+                                </div>
+                            )}
+                        </>
+                    ) : loadingDrivers ? (
                         <p>Loading drivers...</p>
                     ) : error ? (
                         <p>{error}</p>
@@ -140,6 +187,7 @@ export default function Top10GridPrediction() {
                             gridPredictions={gridPredictions}
                         />
                     )}
+
                 </div>
 
             </div>
