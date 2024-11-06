@@ -12,4 +12,5 @@ public class Driver
     public required int TeamId { get; set; }
     public required string HeadshotPath { get; set; }
     public required string CarImagePath { get; set; }
+    public required string TeamImagePath { get; set; }
 }

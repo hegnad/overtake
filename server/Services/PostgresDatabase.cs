@@ -447,7 +447,7 @@ public class PostgresDatabase : IDatabase
     public async Task<Driver> GetDriverMetadataByNumberAsync(int driverNumber)
     {
         await using var cmd = _dataSource.CreateCommand(
-            @"SELECT driver_id, driver_number, first_name, last_name, age, nationality, height, team_id, headshot_path, car_image_path
+            @"SELECT driver_id, driver_number, first_name, last_name, age, nationality, height, team_id, headshot_path, car_image_path, team_image_path
           FROM driver
           WHERE driver_number=@driver_number"
         );
@@ -469,7 +469,8 @@ public class PostgresDatabase : IDatabase
                 Height = reader.GetFloat(6),
                 TeamId = reader.GetInt32(7),
                 HeadshotPath = reader.GetString(8),
-                CarImagePath = reader.GetString(9)
+                CarImagePath = reader.GetString(9),
+                TeamImagePath = reader.GetString(10)
             };
         }
 
@@ -482,7 +483,7 @@ public class PostgresDatabase : IDatabase
         var drivers = new List<Driver>();
 
         await using var cmd = _dataSource.CreateCommand(
-            @"SELECT driver_number, first_name, last_name, age, nationality, height, team_id, headshot_path, car_image_path
+            @"SELECT driver_number, first_name, last_name, age, nationality, height, team_id, headshot_path, car_image_path, team_image_path
               FROM driver"
         );
 
@@ -500,7 +501,8 @@ public class PostgresDatabase : IDatabase
                 Height = reader.GetFloat(6),
                 TeamId = reader.GetInt32(7),
                 HeadshotPath = reader.GetString(8),
-                CarImagePath = reader.GetString(9)
+                CarImagePath = reader.GetString(9),
+                TeamImagePath = reader.GetString(10)
 
             };
 
@@ -508,6 +510,35 @@ public class PostgresDatabase : IDatabase
         }
 
         return drivers.ToArray();
+    }
+
+
+    public async Task<Track> GetTrackDataByRoundAsync(int roundNumber)
+    {
+        await using var cmd = _dataSource.CreateCommand(
+            @"SELECT round_number, name, location, distance, turns, layout_image_path
+              FROM track
+              WHERE round_number=@round_number"
+        );
+
+        cmd.Parameters.AddWithValue("round_number", roundNumber);
+
+        await using var reader = await cmd.ExecuteReaderAsync();
+
+        if (await reader.ReadAsync())
+        {
+            return new Track
+            {
+                RoundNumber = reader.GetInt32(0),
+                Name = reader.GetString(1),
+                Location = reader.GetString(2),
+                Distance = reader.GetDouble(3),
+                Turns = reader.GetInt32(4),
+                ImagePath = reader.GetString(5)
+            };
+        }
+
+        return null;
     }
 
     public async Task<Member[]> GetLeagueDetailsAsync(int leagueId)
@@ -541,6 +572,5 @@ public class PostgresDatabase : IDatabase
 
         return members.ToArray(); // Return an array of Member objects
     }
-
 
 }
