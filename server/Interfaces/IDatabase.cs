@@ -46,6 +46,8 @@ public interface IDatabase
 
     Task<Driver> GetDriverMetadataByNumberAsync(int driverNumber);
 
+    Task<Track> GetTrackDataByRoundAsync(int roundNumber);
+
     Task<Member[]> GetLeagueDetailsAsync(int leagueId);
 
     Task<int> InsertFriendRequest(int initiatorId, FriendRequest request);
@@ -57,4 +59,6 @@ public interface IDatabase
     Task<UserInfo[]> PopulateUsers();
 
     Task UpdateFriendInviteStatus(int inviteId, int status);
+
+    Task<RaceLeagueInfo> JoinLeagueAsyncByInvite(string invite, int user_id);
 }

@@ -2,12 +2,19 @@
 
 import { useState, useEffect, useRef } from "react";
 import styles from "./positions.module.css";
-import { getDrivers, getIntervals, getLapNumber } from "../utils/api/openF1";
+import {
+  getDrivers,
+  getIntervals,
+  getLapNumber,
+  getLatestSessionName,
+} from "../utils/api/openF1";
 import extractOldestRecords from "../utils/dataManipulation";
+import { get } from "http";
 
 export default function Positions() {
   const [postitions, setPositions] = useState([]);
   const [lapNumber, setLapNumber] = useState("Loading...");
+  const sesssionName = useRef("Loading...");
   //useRef determined to be used in consultation with a friend, since useState caused conflicts and reRenders
   //only run on initial render, does not re render on change, stores info in between renders
   const drivers = useRef([]);
@@ -24,6 +31,7 @@ export default function Positions() {
         const data = await response.json();
         const latestPosData = extractOldestRecords(data);
         latestPosData.sort((a, b) => a.position - b.position);
+        sesssionName.current = getLatestSessionName();
 
         latestPosData.forEach((pos) => {
           const driver = drivers.current.find(
@@ -52,13 +60,14 @@ export default function Positions() {
     const intervalId = setInterval(fetchData, 15000); // Fetch every 15 seconds
 
     return () => clearInterval(intervalId); // Cleanup on unmount
-  }, [apiUrl]);
+  }, []);
 
   return (
     <div className={styles.driversResults}>
       <h1>Live Pos</h1>
       {postitions.length === 0 && <p>Loading...</p>}
       <h2>Lap: {lapNumber}</h2>
+      <h2>Session: {sesssionName.current}</h2>
       <div className={styles.raceresults}>
         <table>
           <thead>

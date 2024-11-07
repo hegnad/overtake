@@ -6,7 +6,7 @@ using Overtake.Models.Requests;
 using Overtake.Entities;
 
 
-[Route("api/driver")]
+[Route("api/images")]
 [ApiController]
 public class DriverImageController : ControllerBase
 {
@@ -29,7 +29,7 @@ public class DriverImageController : ControllerBase
     }
 
     [HttpGet]
-    [Route("headshot/{driverNumber}")]
+    [Route("driver/headshot/{driverNumber}")]
     [Produces("application/json")]
     public async Task<ActionResult<string>> GetDriverHeadshotAsync(int driverNumber)
     {
@@ -43,4 +43,36 @@ public class DriverImageController : ControllerBase
         // Return the relative path to the driver's headshot
         return new OkObjectResult(driverMetadata.HeadshotPath);
     }
+
+    [HttpGet]
+    [Route("all/{driverNumber}")]
+    [Produces("application/json")]
+    public async Task<ActionResult<Driver>> GetDriverMetadataByNumberAsync(int driverNumber)
+    {
+        var driverMetadata = await _database.GetDriverMetadataByNumberAsync(driverNumber);
+
+        if (driverMetadata == null)
+        {
+            return NotFound();
+        }
+
+        return new OkObjectResult(driverMetadata);
+    }
+
+    [HttpGet]
+    [Route("track/{roundNumber}")]
+    [Produces("application/json")]
+    public async Task<ActionResult<Track>> GetTrackDataByRoundAsync(int roundNumber)
+    {
+        // Get the list of drivers for the given round
+        var trackData = await _database.GetTrackDataByRoundAsync(roundNumber);
+
+        if (trackData == null)
+        {
+            return NotFound();
+        }
+
+        return new OkObjectResult(trackData.ImagePath);
+    }
+
 }

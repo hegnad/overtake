@@ -47,7 +47,7 @@ public class LeagueController : ControllerBase
 
         int membership = await _database.InsertLeagueMembershipAsync(newLeagueId, account.AccountId);
 
-        return new OkObjectResult(new RaceLeagueInfo {LeagueId = newLeagueId, OwnerId = account.AccountId, Name = request.Name, IsPublic = request.IsPublic });
+        return new OkObjectResult(new RaceLeagueInfo {LeagueId = newLeagueId, OwnerId = account.AccountId, Name = request.Name, IsPublic = request.IsPublic});
 
     }
 
@@ -97,6 +97,21 @@ public class LeagueController : ControllerBase
     {
         var members = await _database.GetLeagueDetailsAsync(leagueId);
         return new OkObjectResult(members);
+    }
+
+    [HttpPost]
+    [Route("join/{invite}")]
+    [Produces("application/json")]
+    public async Task<ActionResult<RaceLeagueInfo>> JoinLeagueInvite(string invite)
+    {
+        int userId = Convert.ToInt32(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+
+        var account = await _database.GetAccountByIdAsync(userId);
+            
+        var joinLeague = await _database.JoinLeagueAsyncByInvite(invite, account.AccountId);
+
+        return new OkObjectResult(joinLeague);
+
     }
 
 }

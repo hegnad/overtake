@@ -103,8 +103,8 @@ public class PostgresDatabase : IDatabase
     public async Task<int> InsertLeagueAsync(int ownerId, string name, bool isPublic)
     {
         await using var cmd = _dataSource.CreateCommand(
-            @"INSERT INTO raceLeague (owner_id, name, is_public, create_time)
-                VALUES (@owner_id, @name, @is_public, @create_time)
+            @"INSERT INTO raceLeague (owner_id, name, is_public, create_time, invite_code)
+                VALUES (@owner_id, @name, @is_public, @create_time, @invite_code)
                 RETURNING league_id"
         );
 
@@ -112,6 +112,7 @@ public class PostgresDatabase : IDatabase
         cmd.Parameters.AddWithValue("name", name);
         cmd.Parameters.AddWithValue("is_public", isPublic);
         cmd.Parameters.AddWithValue("create_time", DateTime.UtcNow);
+        cmd.Parameters.AddWithValue("invite_code", GenerateInviteCode());
 
         await using var reader = await cmd.ExecuteReaderAsync();
 
@@ -124,7 +125,7 @@ public class PostgresDatabase : IDatabase
     public async Task<RaceLeague> GetLeagueByIdAsync(int leagueId)
     {
         await using var cmd = _dataSource.CreateCommand(
-            @"SELECT owner_id, name, is_public, create_time FROM raceLeague
+            @"SELECT owner_id, name, is_public, create_time, invite_code FROM raceLeague
                 WHERE league_id=@league_id"
         );
 
@@ -141,13 +142,14 @@ public class PostgresDatabase : IDatabase
             Name = reader.GetString(1),
             IsPublic = reader.GetBoolean(2),
             CreateTime = reader.GetDateTime(3),
+            InviteCode = reader.GetString(4),
         };
     }
 
     public async Task<RaceLeague> GetLeagueByNameAsync(string name)
     {
         await using var cmd = _dataSource.CreateCommand(
-            @"SELECT league_id, owner_id, is_public, create_time FROM raceLeague
+            @"SELECT league_id, owner_id, is_public, create_time, invite_code FROM raceLeague
                 WHERE name=@name"
         );
 
@@ -162,6 +164,7 @@ public class PostgresDatabase : IDatabase
             Name = name,
             IsPublic = reader.GetBoolean(2),
             CreateTime = reader.GetDateTime(3),
+            InviteCode = reader.GetString(4),
         };
     }
 
@@ -534,9 +537,9 @@ public class PostgresDatabase : IDatabase
     public async Task<Driver> GetDriverMetadataByNumberAsync(int driverNumber)
     {
         await using var cmd = _dataSource.CreateCommand(
-            @"SELECT driver_id, driver_number, first_name, last_name, age, nationality, height, team_id, headshot_path, car_image_path
-              FROM driver
-              WHERE driver_number=@driver_number"
+            @"SELECT driver_id, driver_number, first_name, last_name, age, nationality, height, team_id, headshot_path, car_image_path, team_image_path
+          FROM driver
+          WHERE driver_number=@driver_number"
         );
 
         cmd.Parameters.AddWithValue("driver_number", driverNumber);
@@ -556,7 +559,8 @@ public class PostgresDatabase : IDatabase
                 Height = reader.GetFloat(6),
                 TeamId = reader.GetInt32(7),
                 HeadshotPath = reader.GetString(8),
-                CarImagePath = reader.GetString(9)
+                CarImagePath = reader.GetString(9),
+                TeamImagePath = reader.GetString(10)
             };
         }
 
@@ -569,7 +573,7 @@ public class PostgresDatabase : IDatabase
         var drivers = new List<Driver>();
 
         await using var cmd = _dataSource.CreateCommand(
-            @"SELECT driver_number, first_name, last_name, age, nationality, height, team_id, headshot_path, car_image_path
+            @"SELECT driver_number, first_name, last_name, age, nationality, height, team_id, headshot_path, car_image_path, team_image_path
               FROM driver"
         );
 
@@ -587,7 +591,8 @@ public class PostgresDatabase : IDatabase
                 Height = reader.GetFloat(6),
                 TeamId = reader.GetInt32(7),
                 HeadshotPath = reader.GetString(8),
-                CarImagePath = reader.GetString(9)
+                CarImagePath = reader.GetString(9),
+                TeamImagePath = reader.GetString(10)
 
             };
 
@@ -597,19 +602,48 @@ public class PostgresDatabase : IDatabase
         return drivers.ToArray();
     }
 
+
+    public async Task<Track> GetTrackDataByRoundAsync(int roundNumber)
+    {
+        await using var cmd = _dataSource.CreateCommand(
+            @"SELECT round_number, name, location, distance, turns, layout_image_path
+                FROM track
+                WHERE round_number=@round_number"
+        );
+
+        cmd.Parameters.AddWithValue("round_number", roundNumber);
+
+        await using var reader = await cmd.ExecuteReaderAsync();
+
+        if (await reader.ReadAsync())
+        {
+            return new Track
+            {
+                RoundNumber = reader.GetInt32(0),
+                Name = reader.GetString(1),
+                Location = reader.GetString(2),
+                Distance = reader.GetDouble(3),
+                Turns = reader.GetInt32(4),
+                ImagePath = reader.GetString(5)
+            };
+        }
+
+        return null;
+    }
+
     public async Task<Member[]> GetLeagueDetailsAsync(int leagueId)
     {
         var members = new List<Member>();
 
         await using var cmd = _dataSource.CreateCommand(
             @"SELECT a.username, COALESCE(SUM(b.score), 0) AS total_score
-              FROM account a
-              JOIN raceLeagueMembership rlm
-              ON a.account_id = rlm.user_id
-              LEFT JOIN ballot b
-              ON rlm.user_id = b.user_id AND rlm.league_id = b.league_id
-              WHERE rlm.league_id = @league_id
-              GROUP BY a.username"
+          FROM account a
+          JOIN raceLeagueMembership rlm
+          ON a.account_id = rlm.user_id
+          LEFT JOIN ballot b
+          ON rlm.user_id = b.user_id AND rlm.league_id = b.league_id
+          WHERE rlm.league_id = @league_id
+          GROUP BY a.username"
         );
 
         cmd.Parameters.AddWithValue("league_id", leagueId);
@@ -629,6 +663,51 @@ public class PostgresDatabase : IDatabase
         return members.ToArray(); // Return an array of Member objects
     }
 
+    public async Task<RaceLeagueInfo> JoinLeagueAsyncByInvite(string invite, int user_id)
+    {
+        await using var cmd = _dataSource.CreateCommand(
+            @"SELECT league_id FROM raceleague
+                WHERE invite_code=@invite"
+        );
+
+        cmd.Parameters.AddWithValue("invite", invite);
+
+        await using var reader = await cmd.ExecuteReaderAsync();
+
+        if (await reader.ReadAsync())
+        {
+            int leagueId = reader.GetInt32(0);
+
+            await using var cmdJoin = _dataSource.CreateCommand(
+                @"INSERT INTO raceLeagueMembership (league_id, user_id, join_time)
+                    VALUES (@league_id, @user_id, @join_time)"
+            );
+
+            cmdJoin.Parameters.AddWithValue("league_id", leagueId);
+            cmdJoin.Parameters.AddWithValue("user_id", user_id);
+            cmdJoin.Parameters.AddWithValue("join_time", DateTime.UtcNow);
+
+            await cmdJoin.ExecuteNonQueryAsync();
+
+            return new RaceLeagueInfo
+            {
+                LeagueId = leagueId,
+                OwnerId = user_id,
+                Name = "Test",
+                IsPublic = true
+            };
+        }
+
+        return null;
+    }
+
+    public static string GenerateInviteCode(int length = 10)
+    {
+        const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        var random = new Random();
+        return new string(Enumerable.Repeat(chars, length)
+            .Select(s => s[random.Next(s.Length)]).ToArray());
+    }
     public async Task<int> InsertFriendRequest(int initiatorId, FriendRequest request)
     {
         await using var cmd = _dataSource.CreateCommand(
