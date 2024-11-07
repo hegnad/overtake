@@ -1,5 +1,6 @@
 using Overtake.Entities;
 using Overtake.Models;
+using Overtake.Models.Requests;
 
 namespace Overtake.Interfaces;
 
@@ -46,4 +47,14 @@ public interface IDatabase
     Task<Driver> GetDriverMetadataByNumberAsync(int driverNumber);
 
     Task<Member[]> GetLeagueDetailsAsync(int leagueId);
+
+    Task<int> InsertFriendRequest(int initiatorId, FriendRequest request);
+
+    Task<FriendInfo[]> GetFriends(int userId);
+
+    Task<FriendRequestInfo[]> GetFriendRequests(int userId);
+
+    Task<UserInfo[]> PopulateUsers();
+
+    Task UpdateFriendInviteStatus(int inviteId, int status);
 }

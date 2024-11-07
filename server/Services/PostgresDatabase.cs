@@ -2,6 +2,7 @@ using Npgsql;
 using Overtake.Entities;
 using Overtake.Interfaces;
 using Overtake.Models;
+using Overtake.Models.Requests;
 
 namespace Overtake.Services;
 
@@ -534,8 +535,8 @@ public class PostgresDatabase : IDatabase
     {
         await using var cmd = _dataSource.CreateCommand(
             @"SELECT driver_id, driver_number, first_name, last_name, age, nationality, height, team_id, headshot_path, car_image_path
-          FROM driver
-          WHERE driver_number=@driver_number"
+              FROM driver
+              WHERE driver_number=@driver_number"
         );
 
         cmd.Parameters.AddWithValue("driver_number", driverNumber);
@@ -602,13 +603,13 @@ public class PostgresDatabase : IDatabase
 
         await using var cmd = _dataSource.CreateCommand(
             @"SELECT a.username, COALESCE(SUM(b.score), 0) AS total_score
-          FROM account a
-          JOIN raceLeagueMembership rlm
-          ON a.account_id = rlm.user_id
-          LEFT JOIN ballot b
-          ON rlm.user_id = b.user_id AND rlm.league_id = b.league_id
-          WHERE rlm.league_id = @league_id
-          GROUP BY a.username"
+              FROM account a
+              JOIN raceLeagueMembership rlm
+              ON a.account_id = rlm.user_id
+              LEFT JOIN ballot b
+              ON rlm.user_id = b.user_id AND rlm.league_id = b.league_id
+              WHERE rlm.league_id = @league_id
+              GROUP BY a.username"
         );
 
         cmd.Parameters.AddWithValue("league_id", leagueId);
@@ -628,5 +629,143 @@ public class PostgresDatabase : IDatabase
         return members.ToArray(); // Return an array of Member objects
     }
 
+    public async Task<int> InsertFriendRequest(int initiatorId, FriendRequest request)
+    {
+        await using var cmd = _dataSource.CreateCommand(
+            @"INSERT INTO friendInvite (initiator_id, invitee_id, message, request_time, status)
+                VALUES (@initiator_id, @invitee_id, @message, @request_time, @status)
+                RETURNING invite_id"
+        );
 
+        cmd.Parameters.AddWithValue("initiator_id", initiatorId);
+        cmd.Parameters.AddWithValue("invitee_id", request.InviteeId);
+        cmd.Parameters.AddWithValue("message", request.Message);
+        cmd.Parameters.AddWithValue("request_time", DateTime.UtcNow);
+        cmd.Parameters.AddWithValue("status", 0);
+
+        await using var reader = await cmd.ExecuteReaderAsync();
+
+        await reader.ReadAsync();
+        int newRequestId = reader.GetInt32(0);
+
+        return newRequestId;
+    }
+
+    public async Task<FriendInfo[]> GetFriends(int userId)
+    {
+        await using var cmd = _dataSource.CreateCommand(
+            @"SELECT 
+                CASE 
+                    WHEN initiator_id = @user_id THEN invitee_id
+                    ELSE initiator_id
+                END AS friend_id,
+                a.username
+            FROM friendInvite f
+            JOIN account a ON a.account_id = 
+                CASE 
+                    WHEN f.initiator_id = @user_id THEN f.invitee_id
+                    ELSE f.initiator_id
+                END
+            WHERE (f.initiator_id = @user_id OR f.invitee_id = @user_id) AND f.status = 1"
+        );
+
+        cmd.Parameters.AddWithValue("user_id", userId);
+
+        var friends = new List<FriendInfo>();
+
+        await using var reader = await cmd.ExecuteReaderAsync();
+        while (await reader.ReadAsync())
+        {
+            var friendInfo = new FriendInfo
+            {
+                FriendId = reader.GetInt32(0),
+                FriendName = reader.GetString(1),
+            };
+
+            friends.Add(friendInfo);
+        }
+
+        return friends.ToArray();
+    }
+
+    public async Task<FriendRequestInfo[]> GetFriendRequests(int userId)
+    {
+        await using var cmd = _dataSource.CreateCommand(
+            @"SELECT fi.invite_id, fi.initiator_id, a.username AS initiator_username
+                FROM friendInvite fi
+                JOIN account a ON fi.initiator_id = a.account_id
+                WHERE fi.invitee_id = @invitee_id AND fi.status = 0"
+        );
+
+        cmd.Parameters.AddWithValue("invitee_id", userId);
+
+        var friendRequests = new List<FriendRequestInfo>();
+
+        await using var reader = await cmd.ExecuteReaderAsync();
+        while (await reader.ReadAsync())
+        {
+            var friendRequestInfo = new FriendRequestInfo
+            {
+                InviteId = reader.GetInt32(0),
+                InitiatorId = reader.GetInt32(1),
+                InitiatorUsername = reader.GetString(2),
+            };
+
+            friendRequests.Add(friendRequestInfo);
+        }
+
+        return friendRequests.ToArray();
+    }
+
+    public async Task<UserInfo[]> PopulateUsers()
+    {
+        await using var cmd = _dataSource.CreateCommand(
+            @"SELECT account_id, username
+                FROM account"
+        );
+
+        var users = new List<UserInfo>();
+
+        await using var reader = await cmd.ExecuteReaderAsync();
+        while (await reader.ReadAsync())
+        {
+            var userInfo = new UserInfo
+            {
+                UserId = reader.GetInt32(0),
+                Username = reader.GetString(1),
+            };
+
+            users.Add(userInfo);
+        }
+
+        return users.ToArray();
+    }
+
+    public async Task UpdateFriendInviteStatus(int inviteId, int status)
+    {
+        if (status == 1)
+        {
+            await using var cmd = _dataSource.CreateCommand(
+                @"UPDATE friendInvite
+                    SET status = @status
+                    WHERE invite_id = @invite_id"
+            );
+
+            cmd.Parameters.AddWithValue("invite_id", inviteId);
+            cmd.Parameters.AddWithValue("status", status);
+
+            await cmd.ExecuteNonQueryAsync();
+        }
+        else if (status == 2)
+        {
+            await using var cmd = _dataSource.CreateCommand(
+                @"DELETE FROM friendInvite
+              WHERE invite_id = @invite_id"
+            );
+
+            cmd.Parameters.AddWithValue("invite_id", inviteId);
+
+            await cmd.ExecuteNonQueryAsync();
+        }
+    }
 }
