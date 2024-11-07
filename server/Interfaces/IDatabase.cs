@@ -1,5 +1,6 @@
 using Overtake.Entities;
 using Overtake.Models;
+using Overtake.Models.Requests;
 
 namespace Overtake.Interfaces;
 
@@ -35,6 +36,10 @@ public interface IDatabase
 
     Task<int> InsertBallotAsync(int userId, int leagueId, int raceId, List<DriverPrediction> driverPredictions, int? totalScore);
 
+    Task<bool> UpdateBallotAsync(int userId, int leagueId, int raceId, List<DriverPrediction> driverPredictions);
+
+    Task<bool> UpdateBallotScoreAsync(int userId, int leagueId, int raceId, int score);
+
     Task<RaceLeagueInfo[]> GetPublicLeagues();
 
     Task<Driver[]> PopulateDriversAsync();
@@ -44,6 +49,16 @@ public interface IDatabase
     Task<Track> GetTrackDataByRoundAsync(int roundNumber);
 
     Task<Member[]> GetLeagueDetailsAsync(int leagueId);
+
+    Task<int> InsertFriendRequest(int initiatorId, FriendRequest request);
+
+    Task<FriendInfo[]> GetFriends(int userId);
+
+    Task<FriendRequestInfo[]> GetFriendRequests(int userId);
+
+    Task<UserInfo[]> PopulateUsers();
+
+    Task UpdateFriendInviteStatus(int inviteId, int status);
 
     Task<RaceLeagueInfo> JoinLeagueAsyncByInvite(string invite, int user_id);
 }

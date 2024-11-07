@@ -2,17 +2,15 @@
   "ExpandedNodes": [
     "",
     "\\server",
-    "\\server\\Controllers",
-    "\\server\\Entities",
     "\\server\\Interfaces",
     "\\server\\Models",
     "\\server\\Models\\Requests",
+    "\\server\\Properties",
     "\\web",
     "\\web\\src",
     "\\web\\src\\app",
-    "\\web\\src\\app\\lib",
-    "\\web\\src\\app\\lib\\context"
+    "\\web\\src\\app\\ballot"
   ],
-  "SelectedNode": "\\server\\Services\\PostgresDatabase.cs",
+  "SelectedNode": "\\server\\Interfaces\\IDatabase.cs",
   "PreviewInSolutionExplorer": false
 }

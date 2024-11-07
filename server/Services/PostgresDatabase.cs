@@ -2,6 +2,7 @@ using Npgsql;
 using Overtake.Entities;
 using Overtake.Interfaces;
 using Overtake.Models;
+using Overtake.Models.Requests;
 
 namespace Overtake.Services;
 
@@ -340,6 +341,54 @@ public class PostgresDatabase : IDatabase
         return ballotId; // Return the newly generated ballot ID
     }
 
+    public async Task<bool> UpdateBallotAsync(int userId, int leagueId, int raceId, List<DriverPrediction> driverPredictions)
+    {
+        // Step 1: Retrieve the ballot ID based on user, league, and race
+        int ballotId;
+        using (var cmd = _dataSource.CreateCommand(
+            @"SELECT ballot_id FROM ballot WHERE user_id = @user_id AND league_id = @league_id AND race_id = @race_id"
+        ))
+        {
+            cmd.Parameters.AddWithValue("user_id", userId);
+            cmd.Parameters.AddWithValue("league_id", leagueId);
+            cmd.Parameters.AddWithValue("race_id", raceId);
+
+            await using var reader = await cmd.ExecuteReaderAsync();
+            if (!await reader.ReadAsync())
+            {
+                // Ballot does not exist; return false to indicate no update was performed
+                return false;
+            }
+            ballotId = reader.GetInt32(0);
+        }
+
+        // Step 2: Delete existing entries in ballotContent for this ballot
+        using (var cmdDeleteContent = _dataSource.CreateCommand(
+            @"DELETE FROM ballotContent WHERE ballot_id = @ballot_id"
+        ))
+        {
+            cmdDeleteContent.Parameters.AddWithValue("ballot_id", ballotId);
+            await cmdDeleteContent.ExecuteNonQueryAsync();
+        }
+
+        // Step 3: Insert updated driver predictions into ballotContent
+        foreach (var prediction in driverPredictions)
+        {
+            using var cmdContent = _dataSource.CreateCommand(
+                @"INSERT INTO ballotContent (ballot_id, position, driver_name)
+                VALUES (@ballot_id, @position, @driver_name)"
+            );
+
+            cmdContent.Parameters.AddWithValue("ballot_id", ballotId);
+            cmdContent.Parameters.AddWithValue("position", prediction.Position);
+            cmdContent.Parameters.AddWithValue("driver_name", prediction.DriverName);
+
+            await cmdContent.ExecuteNonQueryAsync();
+        }
+
+        return true; // Return true to indicate the ballot was successfully updated
+    }
+
 
     public async Task<int?> GetBallotByUserIdAsync(int accountId)
     {
@@ -413,6 +462,44 @@ public class PostgresDatabase : IDatabase
         }
 
         return ballotContents.ToArray();
+    }
+
+    public async Task<bool> UpdateBallotScoreAsync(int userId, int leagueId, int raceId, int score)
+    {
+
+        int ballotId;
+
+        // Step 1: Retrieve the ballot ID based on user, league, and race
+        using (var cmd = _dataSource.CreateCommand(
+            @"SELECT ballot_id FROM ballot 
+          WHERE user_id = @user_id AND league_id = @league_id AND race_id = @race_id"
+        ))
+        {
+            cmd.Parameters.AddWithValue("user_id", userId);
+            cmd.Parameters.AddWithValue("league_id", leagueId);
+            cmd.Parameters.AddWithValue("race_id", raceId);
+
+            await using var reader = await cmd.ExecuteReaderAsync();
+            if (!await reader.ReadAsync())
+            {
+                // Ballot does not exist; return false to indicate no update was performed
+                return false;
+            }
+            ballotId = reader.GetInt32(0);
+        }
+
+        // Step 2: Update the score in the ballot table for the retrieved ballotId
+        using (var cmdUpdateScore = _dataSource.CreateCommand(
+            @"UPDATE ballot SET score = @score WHERE ballot_id = @ballot_id"
+        ))
+        {
+            cmdUpdateScore.Parameters.AddWithValue("score", score);
+            cmdUpdateScore.Parameters.AddWithValue("ballot_id", ballotId);
+
+            int rowsAffected = await cmdUpdateScore.ExecuteNonQueryAsync();
+            return rowsAffected > 0; // Return true if the score was updated successfully
+        }
+
     }
 
     public async Task<RaceLeagueInfo[]> GetPublicLeagues()
@@ -550,13 +637,13 @@ public class PostgresDatabase : IDatabase
 
         await using var cmd = _dataSource.CreateCommand(
             @"SELECT a.username, COALESCE(SUM(b.score), 0) AS total_score
-            FROM account a
-            JOIN raceLeagueMembership rlm
-            ON a.account_id = rlm.user_id
-            LEFT JOIN ballot b
-            ON rlm.user_id = b.user_id AND rlm.league_id = b.league_id
-            WHERE rlm.league_id = @league_id
-            GROUP BY a.username"
+          FROM account a
+          JOIN raceLeagueMembership rlm
+          ON a.account_id = rlm.user_id
+          LEFT JOIN ballot b
+          ON rlm.user_id = b.user_id AND rlm.league_id = b.league_id
+          WHERE rlm.league_id = @league_id
+          GROUP BY a.username"
         );
 
         cmd.Parameters.AddWithValue("league_id", leagueId);
@@ -621,5 +708,143 @@ public class PostgresDatabase : IDatabase
         return new string(Enumerable.Repeat(chars, length)
             .Select(s => s[random.Next(s.Length)]).ToArray());
     }
+    public async Task<int> InsertFriendRequest(int initiatorId, FriendRequest request)
+    {
+        await using var cmd = _dataSource.CreateCommand(
+            @"INSERT INTO friendInvite (initiator_id, invitee_id, message, request_time, status)
+                VALUES (@initiator_id, @invitee_id, @message, @request_time, @status)
+                RETURNING invite_id"
+        );
 
+        cmd.Parameters.AddWithValue("initiator_id", initiatorId);
+        cmd.Parameters.AddWithValue("invitee_id", request.InviteeId);
+        cmd.Parameters.AddWithValue("message", request.Message);
+        cmd.Parameters.AddWithValue("request_time", DateTime.UtcNow);
+        cmd.Parameters.AddWithValue("status", 0);
+
+        await using var reader = await cmd.ExecuteReaderAsync();
+
+        await reader.ReadAsync();
+        int newRequestId = reader.GetInt32(0);
+
+        return newRequestId;
+    }
+
+    public async Task<FriendInfo[]> GetFriends(int userId)
+    {
+        await using var cmd = _dataSource.CreateCommand(
+            @"SELECT 
+                CASE 
+                    WHEN initiator_id = @user_id THEN invitee_id
+                    ELSE initiator_id
+                END AS friend_id,
+                a.username
+            FROM friendInvite f
+            JOIN account a ON a.account_id = 
+                CASE 
+                    WHEN f.initiator_id = @user_id THEN f.invitee_id
+                    ELSE f.initiator_id
+                END
+            WHERE (f.initiator_id = @user_id OR f.invitee_id = @user_id) AND f.status = 1"
+        );
+
+        cmd.Parameters.AddWithValue("user_id", userId);
+
+        var friends = new List<FriendInfo>();
+
+        await using var reader = await cmd.ExecuteReaderAsync();
+        while (await reader.ReadAsync())
+        {
+            var friendInfo = new FriendInfo
+            {
+                FriendId = reader.GetInt32(0),
+                FriendName = reader.GetString(1),
+            };
+
+            friends.Add(friendInfo);
+        }
+
+        return friends.ToArray();
+    }
+
+    public async Task<FriendRequestInfo[]> GetFriendRequests(int userId)
+    {
+        await using var cmd = _dataSource.CreateCommand(
+            @"SELECT fi.invite_id, fi.initiator_id, a.username AS initiator_username
+                FROM friendInvite fi
+                JOIN account a ON fi.initiator_id = a.account_id
+                WHERE fi.invitee_id = @invitee_id AND fi.status = 0"
+        );
+
+        cmd.Parameters.AddWithValue("invitee_id", userId);
+
+        var friendRequests = new List<FriendRequestInfo>();
+
+        await using var reader = await cmd.ExecuteReaderAsync();
+        while (await reader.ReadAsync())
+        {
+            var friendRequestInfo = new FriendRequestInfo
+            {
+                InviteId = reader.GetInt32(0),
+                InitiatorId = reader.GetInt32(1),
+                InitiatorUsername = reader.GetString(2),
+            };
+
+            friendRequests.Add(friendRequestInfo);
+        }
+
+        return friendRequests.ToArray();
+    }
+
+    public async Task<UserInfo[]> PopulateUsers()
+    {
+        await using var cmd = _dataSource.CreateCommand(
+            @"SELECT account_id, username
+                FROM account"
+        );
+
+        var users = new List<UserInfo>();
+
+        await using var reader = await cmd.ExecuteReaderAsync();
+        while (await reader.ReadAsync())
+        {
+            var userInfo = new UserInfo
+            {
+                UserId = reader.GetInt32(0),
+                Username = reader.GetString(1),
+            };
+
+            users.Add(userInfo);
+        }
+
+        return users.ToArray();
+    }
+
+    public async Task UpdateFriendInviteStatus(int inviteId, int status)
+    {
+        if (status == 1)
+        {
+            await using var cmd = _dataSource.CreateCommand(
+                @"UPDATE friendInvite
+                    SET status = @status
+                    WHERE invite_id = @invite_id"
+            );
+
+            cmd.Parameters.AddWithValue("invite_id", inviteId);
+            cmd.Parameters.AddWithValue("status", status);
+
+            await cmd.ExecuteNonQueryAsync();
+        }
+        else if (status == 2)
+        {
+            await using var cmd = _dataSource.CreateCommand(
+                @"DELETE FROM friendInvite
+              WHERE invite_id = @invite_id"
+            );
+
+            cmd.Parameters.AddWithValue("invite_id", inviteId);
+
+            await cmd.ExecuteNonQueryAsync();
+        }
+    }
 }

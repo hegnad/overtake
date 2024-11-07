@@ -86,7 +86,87 @@ public class BallotController : ControllerBase
 
         return new OkObjectResult(ballot);
     }
+
+    [HttpPut]
+    [Route("update")]
+    [Produces("application/json")]
+    public async Task<ActionResult> UpdateAsync([FromBody] CreateBallotRequest request)
+    {
+        // Validate request
+        if (request.DriverPredictions == null || request.DriverPredictions.Count != 10)
+        {
+            return BadRequest("All 10 driver positions must be provided.");
+        }
+
+        // Validate leagueId
+        if (!request.LeagueId.HasValue)
+        {
+            return BadRequest("LeagueId is required.");
+        }
+
+        // Get current user ID
+        int userId = Convert.ToInt32(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+
+        int leagueId = request.LeagueId.Value;
+
+        int raceId = 1; // Replace with actual race ID retrieval logic
+
+        // Create a list of DriverPrediction objects
+        var driverPredictions = request.DriverPredictions.Select((name, index) => new DriverPrediction
+        {
+            DriverName = name,
+            Position = index + 1
+        }).ToList();
+
+        // Call the database update method
+        bool updateSuccess = await _database.UpdateBallotAsync(userId, leagueId, raceId, driverPredictions);
+
+        if (!updateSuccess)
+        {
+            return NotFound("No ballot found to update.");
+        }
+
+        return Ok("Ballot updated successfully.");
+    }
+
+    [HttpPut]
+    [Route("updateScore")]
+    [Produces("application/json")]
+    public async Task<ActionResult> UpdateScoreAsync([FromBody] UpdateScoreRequest request)
+    {
+        // Extract userId from the claims in the HTTP context
+        int userId = Convert.ToInt32(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+
+        // Call the updated UpdateBallotScoreAsync with userId, leagueId, and raceId
+        bool result = await _database.UpdateBallotScoreAsync(userId, request.LeagueId, request.RaceId, request.Score);
+
+        if (result)
+        {
+            return Ok("Score updated successfully.");
+        }
+        else
+        {
+            return NotFound("Ballot not found or could not update score.");
+        }
+    }
+
+    [HttpGet]
+    [Route("getBallotId")]
+    [Produces("application/json")]
+    public async Task<ActionResult<int?>> GetBallotIdAsync(int leagueId)
+    {
+        int userId = Convert.ToInt32(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+        int? ballotId = await _database.GetBallotByUserIdAndLeagueIdAsync(userId, leagueId);
+
+        if (ballotId == null)
+        {
+            Console.WriteLine($"No ballotId found for user {userId} in league {leagueId}");
+            return NotFound();
+        }
+
+        Console.WriteLine($"Found ballotId: {ballotId} for user {userId} in league {leagueId}");
+        return Ok(ballotId);
+    }
+
+
 }
-
-
-

@@ -1,0 +1,32 @@
+.submissionContainer {
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+}
+
+.submitButton {
+    padding: 10px 20px;
+    background-color: #FF8A00;
+    color: white;
+    width: 66%;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s, transform 0.3s ease;
+}
+
+    .submitButton:hover {
+        background-color: #4CAF50;
+        transform: scale(1.05);
+    }
+
+.editButton:hover::after {
+    content: "EDIT BALLOT";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-size: 16px;
+}

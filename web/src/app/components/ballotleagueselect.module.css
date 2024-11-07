@@ -1,0 +1,37 @@
+.leagueSelection {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    padding: 20px;
+}
+
+/* Container for dropdown */
+.leagueDropdown {
+    width: 100%;
+    padding: 8px 12px;
+    font-size: 1rem;
+    color: #ffffff;
+    background-color: #0A0A0F;
+    border: 2px solid #42425E;
+    border-radius: 15px;
+    appearance: none;
+    transition: border-color 0.3s ease;
+    cursor: pointer;
+}
+
+    .leagueDropdown:focus {
+        border-color: #FF8A00;
+        outline: none;
+    }
+
+    .leagueDropdown option {
+        background-color: #2E2E3A;
+        color: #FFFFFF;
+        padding: 10px;
+    }
+
+        /* Adjust placeholder option color */
+        .leagueDropdown option[value=""][disabled] {
+            color: #AAAAAA;
+        }

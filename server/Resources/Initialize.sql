@@ -135,25 +135,6 @@ VALUES
   ('user9', 'Grace', 'Blue', 'grace.blue@example.com', 'hash9'),
   ('user10', 'Hannah', 'Purple', 'hannah.purple@example.com', 'hash10');
 
-
--- Insert test data for friendInvite table
-INSERT INTO friendInvite (initiator_id, invitee_id, message, request_time, status)
-VALUES 
-  (1, 2, 'Let�s be friends!', NOW(), 0),
-  (2, 3, 'Game on!', NOW(), 1),
-  (3, 4, 'Join my team?', NOW(), 0),
-  (4, 5, 'Let�s race!', NOW(), 1),
-  (5, 1, 'Need a teammate!', NOW(), 2);
-
--- Insert test data for directMessage table
-INSERT INTO directMessage (sender_id, receiver_id, content, send_time)
-VALUES 
-  (1, 2, 'Hello Jane!', NOW()),
-  (2, 3, 'Good luck!', NOW()),
-  (3, 4, 'Ready to race?', NOW()),
-  (4, 5, 'See you on the track!', NOW()),
-  (5, 1, 'Good job!', NOW());
-
 -- Insert test data for raceleague table
 INSERT INTO raceleague (owner_id, name, is_public, create_time, invite_code)
 VALUES 
