@@ -23,3 +23,16 @@ export async function getDriverImages(driver_number) {
         return null;
     }
 }
+
+export async function getTrackLayoutImage(round_number) {
+    const apiUrl = `http://localhost:8080/api/images/track/${round_number}`;
+    try {
+        const response = await fetch(apiUrl);
+        const data = await response.json();
+        console.log(data);
+        return data;
+    } catch (error) {
+        console.error("Error fetching track layout image url: ", error);
+        return null;
+    }
+}

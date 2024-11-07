@@ -45,4 +45,5 @@ public interface IDatabase
 
     Task<Member[]> GetLeagueDetailsAsync(int leagueId);
 
+    Task<RaceLeagueInfo> JoinLeagueAsyncByInvite(string invite, int user_id);
 }

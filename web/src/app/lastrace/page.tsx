@@ -12,13 +12,15 @@ import {
 import SidebarLayout from "../ui/sidebar-layout";
 import styles from "./lastrace.module.css";
 import Image from "next/image";
-import { getDriverHeadshot } from "../utils/api/overtake";
+import { getDriverHeadshot, getTrackLayoutImage } from "../utils/api/overtake";
+import { get } from "http";
 
 export default function LastRace() {
   const [raceResults, setRaceResults] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [winnerImage, setWinnerImage] = useState(null);
+  const [trackImage, setTrackImage] = useState(null);
 
   // Fetch race results when the component mounts
   useEffect(() => {
@@ -34,7 +36,10 @@ export default function LastRace() {
         setRaceResults(data.MRData.RaceTable.Races[0]); // Set the last race results
         const winnerDriverId = data.MRData.RaceTable.Races[0].Results[0].number;
         const winnerImageUrl = await getDriverHeadshot(winnerDriverId);
+        const raceRound = data.MRData.RaceTable.Races[0].round;
+        const trackImageUrl = await getTrackLayoutImage(raceRound);
         setWinnerImage(winnerImageUrl);
+        setTrackImage(trackImageUrl);
         setLoading(false);
       } catch (err: any) {
         setError(err.message);
@@ -76,6 +81,14 @@ export default function LastRace() {
               <p>
                 Location: {Location.locality}, {Location.country}
               </p>
+            </div>
+            <div>
+              <Image
+                src={trackImage || "Loading..."}
+                alt="Track"
+                width={200}
+                height={200}
+              />
             </div>
             <div className={styles.winnerbox}>
               <h1>Race Winner</h1>

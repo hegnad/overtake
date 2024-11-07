@@ -30,7 +30,8 @@ CREATE TABLE raceleague (
   owner_id INT REFERENCES account(account_id) ON DELETE SET NULL,
   name VARCHAR(50) NOT NULL,
   is_public BOOLEAN NOT NULL,
-  create_time TIMESTAMP NOT NULL
+  create_time TIMESTAMP NOT NULL,
+  invite_code VARCHAR(10) NOT NULL
 );
 
 CREATE TABLE raceLeagueMembership (
@@ -154,13 +155,13 @@ VALUES
   (5, 1, 'Good job!', NOW());
 
 -- Insert test data for raceleague table
-INSERT INTO raceleague (owner_id, name, is_public, create_time)
+INSERT INTO raceleague (owner_id, name, is_public, create_time, invite_code)
 VALUES 
-  (1, 'Speedsters League', true, NOW()),
-  (2, 'Pro Racers League', false, NOW()),
-  (3, 'Weekend Warriors', true, NOW()),
-  (4, 'Champions Circuit', true, NOW()),
-  (5, 'Rookie Racers', false, NOW());
+  (1, 'Speedsters League', true, NOW(), 'D34RFGTUH5'),
+  (2, 'Pro Racers League', false, NOW(), 'GY674EDFTH'),
+  (3, 'Weekend Warriors', true, NOW(), 'DT654UJ876'),
+  (4, 'Champions Circuit', true, NOW(), 'FTG54D78I9'),
+  (5, 'Rookie Racers', false, NOW(), 'FT546Y3WE3');
 
 -- Insert test data for raceLeagueMembership table
 INSERT INTO raceLeagueMembership (league_id, user_id, join_time)
@@ -186,6 +187,7 @@ VALUES
   (5, 2, NOW(), 0);
 
 -- Insert test data for track table
+
 INSERT INTO track (round_number, name, location, distance, turns, layout_image_path)
 VALUES 
   (16, 'Monza', 'Italy', 5.79, 11,'./assets/track_layout/monza.png'),
