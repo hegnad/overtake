@@ -512,44 +512,13 @@ public class PostgresDatabase : IDatabase
         return drivers.ToArray();
     }
 
-    public async Task<Member[]> GetLeagueDetailsAsync(int leagueId)
-    {
-        var members = new List<Member>();
-
-        await using var cmd = _dataSource.CreateCommand(
-            @"SELECT a.username, COALESCE(SUM(b.score), 0) AS total_score
-          FROM account a
-          JOIN raceLeagueMembership rlm
-          ON a.account_id = rlm.user_id
-          LEFT JOIN ballot b
-          ON rlm.user_id = b.user_id AND rlm.league_id = b.league_id
-          WHERE rlm.league_id = @league_id
-          GROUP BY a.username"
-        );
-
-        cmd.Parameters.AddWithValue("league_id", leagueId);
-
-        await using var reader = await cmd.ExecuteReaderAsync();
-        while (await reader.ReadAsync())
-        {
-            var member = new Member
-            {
-                Username = reader.GetString(0), // Get the username
-                TotalScore = reader.GetInt32(1)  // Get the total score
-            };
-
-            members.Add(member); // Add each member object to the list
-        }
-
-        return members.ToArray(); // Return an array of Member objects
-    }
 
     public async Task<Track> GetTrackDataByRoundAsync(int roundNumber)
     {
         await using var cmd = _dataSource.CreateCommand(
             @"SELECT round_number, name, location, distance, turns, layout_image_path
-              FROM track
-              WHERE round_number=@round_number"
+                FROM track
+                WHERE round_number=@round_number"
         );
 
         cmd.Parameters.AddWithValue("round_number", roundNumber);
@@ -571,4 +540,37 @@ public class PostgresDatabase : IDatabase
 
         return null;
     }
+
+    public async Task<Member[]> GetLeagueDetailsAsync(int leagueId)
+    {
+        var members = new List<Member>();
+
+        await using var cmd = _dataSource.CreateCommand(
+            @"SELECT a.username, COALESCE(SUM(b.score), 0) AS total_score
+            FROM account a
+            JOIN raceLeagueMembership rlm
+            ON a.account_id = rlm.user_id
+            LEFT JOIN ballot b
+            ON rlm.user_id = b.user_id AND rlm.league_id = b.league_id
+            WHERE rlm.league_id = @league_id
+            GROUP BY a.username"
+        );
+
+        cmd.Parameters.AddWithValue("league_id", leagueId);
+
+        await using var reader = await cmd.ExecuteReaderAsync();
+        while (await reader.ReadAsync())
+        {
+            var member = new Member
+            {
+                Username = reader.GetString(0), // Get the username
+                TotalScore = reader.GetInt32(1)  // Get the total score
+            };
+
+            members.Add(member); // Add each member object to the list
+        }
+
+        return members.ToArray(); // Return an array of Member objects
+    }
+
 }
