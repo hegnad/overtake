@@ -31,7 +31,7 @@ export default function PodiumDisplay({ drivers, gridPredictions }: PodiumDispla
                 const shortLastName = driverData ? driverData.familyName.slice(0, 3).toUpperCase() : "---";
 
                 return (
-                    <div key={index} className={`${styles.driverContainer} ${podiumClass}`}>
+                    <div key={index} className={`${styles.driverContainer} ${podiumClass}`} data-podium={index + 1}>
                         {driverData ? (
                             <>
                                 <Image

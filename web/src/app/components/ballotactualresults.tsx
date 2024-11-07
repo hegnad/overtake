@@ -37,10 +37,18 @@ export default function BallotActualResults({ gridPredictions, drivers }: Ballot
 
             const predictedPosition = gridPredictions.indexOf(driverName);
 
-            if (predictedPosition === actualPosition) return 25;  // Exact match
-            if (Math.abs(predictedPosition - actualPosition) === 1) return 5;  // +/- 1 position
-            if (Math.abs(predictedPosition - actualPosition) === 2) return 3;  // +/- 2 positions
-            if (predictedPosition !== -1) return 1;  // In ballot but different position
+            if (predictedPosition === -1) return 0;
+
+            if (predictedPosition === actualPosition) {
+                if (actualPosition === 0) return 25; // 1st place
+                if (actualPosition === 1) return 20; // 2nd place
+                if (actualPosition === 2) return 15; // 3rd place
+                return 10;
+            }
+
+            if (Math.abs(predictedPosition - actualPosition) === 1) return 5;  // +/- 1 pos
+            if (Math.abs(predictedPosition - actualPosition) === 2) return 3;  // +/- 2 pos
+
             return 0;  // No points if not in ballot
 
         });
@@ -56,6 +64,7 @@ export default function BallotActualResults({ gridPredictions, drivers }: Ballot
         if (predictedPosition === actualPosition) return styles.exactMatch;  // Exact match (green)
         if (Math.abs(predictedPosition - actualPosition) === 1) return styles.oneOffMatch;  // +/- 1 position (yellow)
         if (Math.abs(predictedPosition - actualPosition) === 2) return styles.twoOffMatch;  // +/- 2 positions (orange)
+        if (predictedPosition !== -1) return styles.inBallotNoMatch // In ballot, no points scored ()
         return "";
 
     };

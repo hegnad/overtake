@@ -127,6 +127,8 @@ function calculateBallotScore(predictions: (string | null)[], results: string[])
 
         const actualPosition = results.indexOf(predictedDriver);
 
+        if (actualPosition === -1) return;
+
         if (actualPosition === predictedPosition) {
             if (predictedPosition === 0) totalScore += 25;
             else if (predictedPosition === 1) totalScore += 20;
