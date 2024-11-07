@@ -22,14 +22,13 @@ export default function BallotSubmission({
     const [buttonText, setButtonText] = useState("SUBMIT BALLOT");
     const [isEditing, setIsEditing] = useState(false);
     const [hovering, setHovering] = useState(false);
-    const [hasLoadedBallot, setHasLoadedBallot] = useState(false);
 
     // Check for existing ballot on league change
     useEffect(() => {
 
         const checkExistingBallot = async () => {
 
-            if (!selectedLeagueId || hasLoadedBallot) return;
+            if (!selectedLeagueId) return;
 
             try {
 
@@ -45,11 +44,9 @@ export default function BallotSubmission({
                     const ballotPredictions = ballotData.map((item: { driverId: string }) => item.driverId);
                     onLoadExistingBallot(ballotPredictions); // Send data to parent component
                     setIsEditing(true); // Set editing mode if a ballot exists
-                    setHasLoadedBallot(true);
                 } else {
                     setIsEditing(false);
                     onLoadExistingBallot(Array(10).fill(null)); // Reset if no ballot
-                    setHasLoadedBallot(true);
                 }
 
             } catch (error) {
@@ -60,7 +57,7 @@ export default function BallotSubmission({
 
         checkExistingBallot();
 
-    }, [selectedLeagueId, hasLoadedBallot, identity.sessionToken, onLoadExistingBallot]);
+    }, [selectedLeagueId, identity.sessionToken, onLoadExistingBallot]);
 
     useEffect(() => {
         const isComplete = gridPredictions.every(position => position !== null);
