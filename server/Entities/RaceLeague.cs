@@ -7,4 +7,5 @@ public class RaceLeague
     public required string Name { get; set; }
     public required bool IsPublic { get; set; }
     public required DateTime CreateTime { get; set; }
+    public required string InviteCode { get; set; }
 }

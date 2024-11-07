@@ -44,4 +44,6 @@ public interface IDatabase
     Task<Track> GetTrackDataByRoundAsync(int roundNumber);
 
     Task<Member[]> GetLeagueDetailsAsync(int leagueId);
+
+    Task<RaceLeagueInfo> JoinLeagueAsyncByInvite(string invite, int user_id);
 }

@@ -103,6 +103,7 @@ export default function JoinRaceLeague({ onLeagueJoined }: JoinRaceLeagueProps) 
                 JOIN LEAGUE
             </button>
         </div>
+        
     );
     
 }
