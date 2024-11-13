@@ -61,4 +61,6 @@ public interface IDatabase
     Task UpdateFriendInviteStatus(int inviteId, int status);
 
     Task<RaceLeagueInfo> JoinLeagueAsyncByInvite(string invite, int user_id);
+
+    Task<UserPoints> GetUserPoints(int userId);
 }

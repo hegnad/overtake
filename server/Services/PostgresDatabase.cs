@@ -708,6 +708,7 @@ public class PostgresDatabase : IDatabase
         return new string(Enumerable.Repeat(chars, length)
             .Select(s => s[random.Next(s.Length)]).ToArray());
     }
+
     public async Task<int> InsertFriendRequest(int initiatorId, FriendRequest request)
     {
         await using var cmd = _dataSource.CreateCommand(
@@ -839,7 +840,7 @@ public class PostgresDatabase : IDatabase
         {
             await using var cmd = _dataSource.CreateCommand(
                 @"DELETE FROM friendInvite
-              WHERE invite_id = @invite_id"
+                    WHERE invite_id = @invite_id"
             );
 
             cmd.Parameters.AddWithValue("invite_id", inviteId);
@@ -847,4 +848,63 @@ public class PostgresDatabase : IDatabase
             await cmd.ExecuteNonQueryAsync();
         }
     }
+
+    public async Task<UserPoints> GetUserPoints(int userId)
+    {
+        var userPoints = new UserPoints
+        {
+            Username = string.Empty,
+            TotalPoints = 0,
+            PointsThisSeason = 0,
+            HighestLeaguePoints = 0,
+            HighestLeagueName = string.Empty,
+        };
+
+        // Get the total score of all ballots created by the user
+        await using var cmdTotalPoints = _dataSource.CreateCommand(
+            @"SELECT COALESCE(SUM(score), 0) AS total_points
+          FROM ballot
+          WHERE user_id = @user_id"
+        );
+        cmdTotalPoints.Parameters.AddWithValue("@user_id", userId);
+        userPoints.TotalPoints = Convert.ToInt32(await cmdTotalPoints.ExecuteScalarAsync() ?? 0);
+
+        // Get the total score of all ballots created by the user during the current year
+        await using var cmdPointsThisSeason = _dataSource.CreateCommand(
+            @"SELECT COALESCE(SUM(score), 0) AS points_this_season
+          FROM ballot
+          WHERE user_id = @user_id
+          AND EXTRACT(YEAR FROM create_time) = EXTRACT(YEAR FROM CURRENT_DATE)"
+        );
+        cmdPointsThisSeason.Parameters.AddWithValue("@user_id", userId);
+        userPoints.PointsThisSeason = Convert.ToInt32(await cmdPointsThisSeason.ExecuteScalarAsync() ?? 0);
+
+        // Get the highest scoring league and its points for the user
+        await using var cmdHighestLeague = _dataSource.CreateCommand(
+            @"SELECT rl.name AS league_name, COALESCE(SUM(b.score), 0) AS league_score
+          FROM raceleague rl
+          JOIN raceLeagueMembership rlm ON rl.league_id = rlm.league_id
+          LEFT JOIN ballot b ON rlm.league_id = b.league_id AND b.user_id = rlm.user_id
+          WHERE rlm.user_id = @user_id
+          GROUP BY rl.name
+          ORDER BY league_score DESC
+          LIMIT 1"
+        );
+        cmdHighestLeague.Parameters.AddWithValue("@user_id", userId);
+
+        await using var reader = await cmdHighestLeague.ExecuteReaderAsync();
+        if (await reader.ReadAsync())
+        {
+            userPoints.HighestLeagueName = reader.GetString(0); // Get the league name
+            userPoints.HighestLeaguePoints = reader.GetInt32(1); // Get the league score
+        }
+        else
+        {
+            userPoints.HighestLeagueName = "N/A";
+            userPoints.HighestLeaguePoints = 0;
+        }
+
+        return userPoints;
+    }
+
 }

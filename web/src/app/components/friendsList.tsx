@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from 'next/navigation';
 import { useEffect, useState, useContext } from "react";
 import { IdentityContext } from "../lib/context/identity";
 import styles from "./friendsList.module.css"
@@ -36,6 +37,7 @@ export default function FriendsList() {
     const [requests, setRequests] = useState<FriendRequestInfo[]>([]);
     const [users, setUsers] = useState<UserInfo[]>([]);
     const [selectedUser, setSelectedUser] = useState<UserInfo | null>(null);
+    const router = useRouter();
 
     useEffect(() => {
         const fetchFriends = async () => {
@@ -135,6 +137,11 @@ export default function FriendsList() {
 
     const handleUserSelect = (user: UserInfo) => {
         setSelectedUser(user);
+    }
+
+    const handleViewProfile = (friendId: number) => {
+        sessionStorage.setItem("profileUserId", friendId.toString());
+        router.push("/profile")
     }
 
     const handleAddUser = async () => {
@@ -251,7 +258,14 @@ export default function FriendsList() {
                         <p>No Users Found</p>
                     )}
                     {selectedUser && (
-                        <button onClick={handleAddUser}>Add {selectedUser.username}</button>
+                        <div>
+                            <button onClick={handleAddUser}>
+                                Add {selectedUser.username}
+                            </button>
+                            <button onClick={() => handleViewProfile(selectedUser.userId)}>
+                                View {selectedUser.username}&apos;s Profile
+                            </button>
+                        </div>
                     )}
                 </div>
             )}
