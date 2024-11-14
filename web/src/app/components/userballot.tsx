@@ -5,6 +5,8 @@ import { IdentityContext } from "../lib/context/identity";
 import { useState, useContext, useEffect } from "react";''
 import StyledLine from './styledline';
 import styles from "./userballot.module.css";
+import leagueMenuStyle from "./ballotleagueselect.module.css";
+
 export default function UserBallot() {
     const identity = useContext(IdentityContext);
     const [ballots, setBallots] = useState<{ position: number; driverId: string }[]>([]);
@@ -78,12 +80,11 @@ export default function UserBallot() {
 
     return (
         <div>
-            <h2 className={styles.heading}>Your Ballot</h2>
+            <h2 className={styles.heading} onClick={handleClick}>Your Ballot {'>'}</h2>
             <StyledLine color="red" size="thick" />
 
             {/* Dropdown for selecting league */}
-            <label htmlFor="leagueSelect">Select League:</label>
-            <select id="leagueSelect" onChange={handleLeagueChange} value={selectedLeagueId || ''}>
+            <select id="leagueSelect" onChange={handleLeagueChange} className={leagueMenuStyle.leagueDropdownLeaguePage} value={selectedLeagueId || ''}>
                 <option value="">Select a league</option>
                 {leagues.map(league => (
                     <option key={league.leagueId} value={league.leagueId}>
@@ -91,6 +92,9 @@ export default function UserBallot() {
                     </option>
                 ))}
             </select>
+
+            <br />
+            <br />
 
             <button onClick={handleClick}>
                 <ul className={styles.driverList}>

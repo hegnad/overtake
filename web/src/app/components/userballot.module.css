@@ -5,6 +5,10 @@
     margin-bottom: 20px;
 }
 
+    .heading:hover {
+        cursor: pointer;
+    }
+
 .footer {
     font-size: 1.2rem;
     color: white;

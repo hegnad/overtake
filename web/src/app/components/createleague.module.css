@@ -1,7 +1,7 @@
 .form {
     display: flex;
     flex-direction: column;
-    padding: 20px;
+    padding: 30px;
     background-color: #310a0a;
     border-radius: 10px;
     width: 100%;
@@ -34,14 +34,19 @@
     width: 100%;
     padding: 10px;
     border-radius: 5px;
-    border: 1px solid #ffaa00; 
+    border: 1px solid #ffaa00;
     background-color: #1a1a2e;
     color: white;
     font-size: 1rem;
+    transition: transform 0.3s ease;
 }
 
     .input::placeholder {
         color: #999;
+    }
+
+    .input:hover {
+        transform: scale(1.02);
     }
 
 .buttonGroup {
@@ -51,21 +56,26 @@
 }
 
 .privacyButton {
+    width: 20%;
     padding: 10px 20px;
-    background-color: #ffaa00; 
+    background-color: #aa0000;
     color: white;
     border: none;
-    border-radius: 5px;
+    border-radius: 15px;
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    text-transform: uppercase;
+    transition: background-color 0.3s ease, transform 0.3s ease;
 }
 
     .privacyButton:hover {
         background-color: #e69500;
+        transform: scale(1.05); 
     }
 
+
     .privacyButton.active {
-        background-color: #aa0000; 
+        border: 3px solid #ffaa00;
+        box-sizing: border-box;
     }
 
 .submitButton {
@@ -77,9 +87,10 @@
     border-radius: 5px;
     font-size: 1.2rem;
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    transition: background-color 0.5s ease, transform 0.3s ease;
 }
 
     .submitButton:hover {
-        background-color: #e69500;
+        background-color: #4CAF50;
+        transform: scale(1.02);
     }

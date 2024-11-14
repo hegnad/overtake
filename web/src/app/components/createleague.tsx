@@ -51,6 +51,8 @@ export default function CreateRaceLeague({ onLeagueCreated }: CreateRaceLeaguePr
                 />
             </div>
 
+            <br />
+
             <div className={styles.formGroup}>
                 <h2 className={styles.heading}>
                     <label>League Visibility</label>
@@ -74,6 +76,8 @@ export default function CreateRaceLeague({ onLeagueCreated }: CreateRaceLeaguePr
                     </button>
                 </div>
             </div>
+
+            <br />
 
             <div className={styles.formGroup}>
                 <button type="submit" className={styles.submitButton}>

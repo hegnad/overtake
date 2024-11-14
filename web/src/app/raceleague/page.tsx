@@ -71,14 +71,14 @@ export default function RaceLeague() {
             </div>
           </div>
         ) : showConfirmation && confirmationType === "created" ? (
-          <div>
+          <div className={styles.leagueCreated}>
             <h2> League Created Successfully!</h2>
             <button className={styles.closeButton} onClick={handleCloseModal}>
               CLOSE
             </button>
           </div>
         ) : showConfirmation && confirmationType === "joined" ? (
-          <div>
+          <div className={styles.leagueCreated}>
             <h2> League Joined Successfully!</h2>
             <button className={styles.closeButton} onClick={handleCloseModal}>
               CLOSE

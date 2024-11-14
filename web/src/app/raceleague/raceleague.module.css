@@ -32,4 +32,14 @@
     border: none;
     border-radius: 5px;
     cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+    .closeButton:hover {
+        transform: scale(1.05);
+    }
+
+.leagueCreated h2 {
+    color: white;
+    text-transform: uppercase;
 }

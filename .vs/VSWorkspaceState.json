@@ -2,15 +2,15 @@
   "ExpandedNodes": [
     "",
     "\\server",
-    "\\server\\Interfaces",
-    "\\server\\Models",
     "\\server\\Models\\Requests",
-    "\\server\\Properties",
+    "\\server\\Resources",
     "\\web",
     "\\web\\src",
     "\\web\\src\\app",
-    "\\web\\src\\app\\ballot"
+    "\\web\\src\\app\\ballot",
+    "\\web\\src\\app\\utils",
+    "\\web\\src\\app\\utils\\api"
   ],
-  "SelectedNode": "\\server\\Interfaces\\IDatabase.cs",
+  "SelectedNode": "\\server\\Models",
   "PreviewInSolutionExplorer": false
 }

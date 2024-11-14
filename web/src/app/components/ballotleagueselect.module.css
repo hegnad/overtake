@@ -20,6 +20,19 @@
     cursor: pointer;
 }
 
+.leagueDropdownLeaguePage {
+    width: 25%;
+    padding: 8px 12px;
+    font-size: 1rem;
+    color: #ffffff;
+    background-color: #0A0A0F;
+    border: 2px solid #42425E;
+    border-radius: 15px;
+    appearance: none;
+    transition: border-color 0.3s ease;
+    cursor: pointer;
+}
+
     .leagueDropdown:focus {
         border-color: #FF8A00;
         outline: none;
