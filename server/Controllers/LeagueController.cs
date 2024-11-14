@@ -105,13 +105,43 @@ public class LeagueController : ControllerBase
     public async Task<ActionResult<RaceLeagueInfo>> JoinLeagueInvite(string invite)
     {
         int userId = Convert.ToInt32(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
-
-        var account = await _database.GetAccountByIdAsync(userId);
             
-        var joinLeague = await _database.JoinLeagueAsyncByInvite(invite, account.AccountId);
+        var joinLeague = await _database.JoinLeagueAsyncByInvite(invite, userId);
 
         return new OkObjectResult(joinLeague);
 
     }
 
+    [HttpPost]
+    [Route("invite")]
+    [Produces("application/json")]
+    public async Task<ActionResult<int>> CreateLeagueInviteAsync([FromBody] LeagueInviteRequest request)
+    {
+
+        int leagueInvite = await _database.CreateLeagueInvite(request);
+
+        return new OkObjectResult(leagueInvite);
+    }
+
+    [HttpGet]
+    [Route("populateInvites")]
+    [Produces("application/json")]
+    public async Task<ActionResult<LeagueInviteInfo[]>> PopulateLeagueInvitesAsync()
+    {
+        int userId = Convert.ToInt32(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+
+        var leagueInvites = await _database.GetLeagueInvites(userId);
+
+        return new OkObjectResult(leagueInvites);
+    }
+
+    [HttpPost]
+    [Route("updateStatus")]
+    [Produces("application/json")]
+    public async Task<IActionResult> UpdateLeagueInviteStatusAsync([FromBody] UpdateStatusRequest request)
+    {
+        await _database.UpdateLeagueInviteStatus(request.InviteId, request.Status);
+
+        return Ok();
+    }
 }

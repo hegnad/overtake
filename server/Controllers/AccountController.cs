@@ -120,6 +120,7 @@ public class AccountController : ControllerBase
         return new AccountInfo
         {
             Username = account.Username,
+            UserId = account.AccountId,
         };
     }
 
@@ -142,5 +143,25 @@ public class AccountController : ControllerBase
 
         var token = tokenHandler.CreateToken(tokenDescriptor);
         return tokenHandler.WriteToken(token);
+    }
+
+    [Authorize]
+    [HttpGet]
+    [Route("pointsInfo")]
+    [Produces("application/json")]
+    public async Task<ActionResult<UserPoints>> GetUserPointsAsync([FromQuery] int userId)
+    {
+        var account = await _database.GetAccountByIdAsync(userId);
+
+        var points = await _database.GetUserPoints(userId);
+
+        return new OkObjectResult(new UserPoints
+        {
+            Username = account.Username,
+            TotalPoints = points.TotalPoints,
+            PointsThisSeason = points.PointsThisSeason,
+            HighestLeaguePoints = points.HighestLeaguePoints,
+            HighestLeagueName = points.HighestLeagueName
+        });
     }
 }

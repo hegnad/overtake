@@ -18,7 +18,8 @@ interface Identity {
 }
 
 interface AccountInfo {
-  username: string;
+    username: string;
+    userId: number;
 }
 
 interface IdentityProviderProps {
@@ -26,12 +27,8 @@ interface IdentityProviderProps {
 }
 
 export function IdentityProvider({ children }: IdentityProviderProps) {
-  const [sessionToken, setSessionToken] = useState<string | undefined>(
-    undefined,
-  );
-  const [accountInfo, setAccountInfo] = useState<AccountInfo | undefined>(
-    undefined,
-  );
+  const [sessionToken, setSessionToken] = useState<string | undefined>(undefined);
+  const [accountInfo, setAccountInfo] = useState<AccountInfo | undefined>(undefined);
 
   useEffect(() => {
     setSessionToken(localStorage.getItem(SESSION_TOKEN) ?? undefined);
@@ -49,6 +46,7 @@ export function IdentityProvider({ children }: IdentityProviderProps) {
                 const accountInfo = (await response.json()) as AccountInfoModel;
                 setAccountInfo({
                     username: accountInfo.username,
+                    userId: accountInfo.userId,
                 });
             } else {
                 console.error(`non-successful status code: ${response.status}`);

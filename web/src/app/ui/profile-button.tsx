@@ -31,13 +31,21 @@ export default function ProfileButton() {
         setShowButtons((prevShowButtons) => !prevShowButtons);
     }
 
+    const handleProfileClick = () => {
+        const currentUserId = identity.accountInfo?.userId;
+        if (currentUserId) {
+            sessionStorage.setItem("profileUserId", currentUserId.toString());
+        }
+        router.push('/profile')
+    }
+
     return (
         <>
             {identity.sessionToken ? (
                 <div className={styles.user}>
                     {showButtons && (
                         <div className={styles.buttonList}>
-                            <button className={styles.actionButton}>
+                            <button onClick={handleProfileClick} className={styles.actionButton}>
                                 Profile
                             </button>
                             <button onClick={handleFriendsClick} className={styles.actionButton}>
