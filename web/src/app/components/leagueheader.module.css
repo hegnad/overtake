@@ -10,7 +10,29 @@
     color: white;
     border-radius: 15px;
     cursor: pointer;
-    font-size: 16px;
+    font-size: 1.6rem;
     width: 100%;
     transition: transform 0.3s ease, background-color 0.3s ease;
 }
+
+    .button:hover {
+        transform: scale(1.02);
+        background-color: #900000;
+    }
+
+.returnButton {
+    padding: 5px;
+    margin-top: 5px;
+    background-color: #AA0000;
+    color: white;
+    border-radius: 15px;
+    cursor: pointer;
+    font-size: 3rem;
+    width: 15%;
+    transition: transform 0.3s ease, background-color 0.3s ease;
+}
+
+    .returnButton:hover {
+        transform: scale(1.02);
+        background-color: #900000;
+    }

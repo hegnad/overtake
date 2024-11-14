@@ -11,6 +11,7 @@ import UserBallot from "../components/userballot";
 import LeagueHeader from "../components/leagueheader";
 import StyledLine from "../components/styledline";
 import JoinWithCode from "../components/joinwithcode";
+import { useRouter } from 'next/navigation';
 
 export default function RaceLeague() {
   const [showCreateLeague, setShowCreateLeague] = useState(false);
@@ -18,7 +19,9 @@ export default function RaceLeague() {
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [confirmationType, setConfirmationType] = useState<
     "created" | "joined" | null
-  >(null);
+        >(null);
+
+    const router = useRouter();
 
   const handleCreateLeagueClick = () => {
     setShowCreateLeague(true);
@@ -47,13 +50,25 @@ export default function RaceLeague() {
     setShowJoinLeague(false);
     setShowConfirmation(true);
     setConfirmationType("joined");
+    };
+
+    const handleReturnClick = () => {
+      if (!showCreateLeague && !showJoinLeague) {
+        router.push('/');
+      } else {
+        setShowCreateLeague(false);
+        setShowJoinLeague(false);
+        setShowConfirmation(false);
+        setConfirmationType(null);
+      }
   };
 
   return (
     <SidebarLayout>
       <LeagueHeader
-        onCreateLeagueClick={handleCreateLeagueClick}
-        onJoinLeagueClick={handleJoinLeagueClick}
+              onCreateLeagueClick={handleCreateLeagueClick}
+              onJoinLeagueClick={handleJoinLeagueClick}
+              onReturnClick={handleReturnClick}
       />
       <StyledLine color="yellow" size="thick" />
       <div className={styles.container}>
@@ -67,7 +82,7 @@ export default function RaceLeague() {
               <JoinRaceLeague onLeagueJoined={handleLeagueJoined} />
             </div>
             <div>
-              <JoinWithCode />
+              <JoinWithCode onLeagueJoined={handleLeagueJoined} />
             </div>
           </div>
         ) : showConfirmation && confirmationType === "created" ? (

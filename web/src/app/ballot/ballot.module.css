@@ -18,6 +18,34 @@
     border-radius: 15px;
 }
 
+.podiumAndReturn {
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.returnButton {
+    background-color: #AA0000;
+    padding: 15px 30px;
+    height: 20%;
+    margin-left: 5%;
+    border-radius: 15px;
+    color: white;
+    font-size: 3rem;
+    transition: transform 0.3s ease;
+}
+
+    .returnButton:hover {
+        transform: scale(1.05);
+        background-color: #900000;
+    }
+
+.podiumDisplayContainer {
+    display: flex;
+    justify-content: center;
+    flex-grow: 1;
+}
+
 .scoreDisplay {
     color: white;
     font-size: 1.5rem;
@@ -41,3 +69,10 @@
     .toggleButton:hover {
         background-color: #45a049;
     }
+
+.loadingImageContainer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 60%
+}

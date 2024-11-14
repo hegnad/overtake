@@ -75,10 +75,6 @@ export default function UserBallot() {
         return `/assets/driver_headshot/${driverId}.png`;
     };
 
-    const getFlagImagePath = (nationality: string) => {
-        return `/assets/country_flags/${nationality.substring(0, 2).toLowerCase()}.svg`;
-    };
-
     const getLastName = (fullName: string) => {
         const lastName = fullName.split(' ').pop() || "";
         return lastName.substring(0, 3).toUpperCase();
@@ -169,7 +165,7 @@ export default function UserBallot() {
                                     height={200}
                                     className={podiumStyle.podiumImage}
                                 />
-                                <span className={styles.position3}>{driver3.position}</span>
+                            <span className={styles.position3}>{driver3.position}</span>
                                     <StyledLine color="bronze" size="thin" />
                                     <div className={podiumStyle.podiumNameAndFlag}>
                                         <h2>{getLastName(driver3.driverId)}</h2>
@@ -178,7 +174,7 @@ export default function UserBallot() {
                                     <span className={styles.teamName}>TEAM</span>
                             </div>
                         ) : (
-                            <p className={styles.footer}>No Ballots Found.</p>
+                            <p className={styles.footer} onClick={handleClick}>No Ballots Found.</p>
                         )}
 
                 </div>

@@ -58,7 +58,7 @@
 .privacyButton {
     width: 20%;
     padding: 10px 20px;
-    background-color: #aa0000;
+    background-color: #7C0000;
     color: white;
     border: none;
     border-radius: 15px;
@@ -74,6 +74,7 @@
 
 
     .privacyButton.active {
+        background-color: #AA0000;
         border: 3px solid #ffaa00;
         box-sizing: border-box;
     }

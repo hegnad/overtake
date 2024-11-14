@@ -14,7 +14,8 @@ import BallotSubmission from "../components/ballotsubmission";
 import PodiumDisplay from "../components/ballotpodiumdisplay";
 import BallotScore from "../components/ballotscore";
 import BallotActualResults from "../components/ballotactualresults";
-
+import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 
 export default function Top10GridPrediction() {
 
@@ -35,6 +36,7 @@ export default function Top10GridPrediction() {
     const [error, setError] = useState<string | null>(null);
     const [loadingDrivers, setLoadingDrivers] = useState(true);
 
+    const router = useRouter();
 
     // Driver fetch
     useEffect(() => {
@@ -43,6 +45,7 @@ export default function Top10GridPrediction() {
 
             try {
                 const driverData = await getDrivers();
+                await new Promise((resolve) => setTimeout(resolve, 1000));
                 if (driverData) setDrivers(driverData);
             } catch (error) {
                 setError("Failed to fetch drivers");
@@ -114,6 +117,14 @@ export default function Top10GridPrediction() {
         setShowActualResults(!showActualResults);
     };
 
+    const getLoadingImagePath = () => {
+        return `/images/loading.svg`;
+    };
+
+    const handleReturnClick = () => {
+        router.push('./raceleague');
+    };
+
     return (
 
         <SidebarLayout>
@@ -158,12 +169,23 @@ export default function Top10GridPrediction() {
 
                 <div className={styles.rightColumn}>
 
-                    {!showActualResults && (
-                        <PodiumDisplay
-                            drivers={drivers}
-                            gridPredictions={gridPredictions}
-                        />
-                    )}
+                    <div className={styles.podiumAndReturn}>
+
+                        <button onClick={handleReturnClick} className={styles.returnButton}>
+                            {'<'}
+                        </button>
+
+                        <div className={styles.podiumDisplayContainer}>
+                            {!showActualResults && (
+                                <PodiumDisplay
+                                    drivers={drivers}
+                                    gridPredictions={gridPredictions}
+                                />
+                            )}
+                        </div>
+
+                    </div>
+
                     {showActualResults ? (
                         <>
                             <BallotActualResults
@@ -177,7 +199,15 @@ export default function Top10GridPrediction() {
                             )}
                         </>
                     ) : loadingDrivers ? (
-                        <p>Loading drivers...</p>
+                        <div className={styles.loadingImageContainer}>
+                            <Image
+                                src={getLoadingImagePath()}
+                                alt={'Loading Drivers...'}
+                                className={styles.loadingImage}
+                                width={90}
+                                height={90}
+                            />
+                        </div>
                     ) : error ? (
                         <p>{error}</p>
                     ) : (

@@ -15,7 +15,7 @@
     border: 2px solid #42425E;
     border-radius: 15px;
     appearance: none;
-    transition: border-color 0.3s ease;
+    transition: border-color 0.3s ease, background-color 0.3s ease;
     cursor: pointer;
 }
 
@@ -28,6 +28,10 @@
         background-color: #2E2E3A;
         color: #FFFFFF;
         padding: 10px;
+    }
+
+    .leagueDropdown:hover {
+        background-color: #42425E;
     }
 
         .leagueDropdown option[value=""][disabled] {
@@ -46,7 +50,7 @@
     border: 2px solid #42425E;
     border-radius: 15px;
     appearance: none;
-    transition: border-color 0.3s ease;
+    transition: border-color 0.3s ease, background-color 0.3s ease;
     cursor: pointer;
 }
 
@@ -61,6 +65,24 @@
         padding: 10px;
     }
 
+    .leagueDropdownLeaguePage:hover {
+        background-color: #42425E;
+    }
+
         .leagueDropdownLeaguePage option[value=""][disabled] {
             color: #AAAAAA;
         }
+
+.leagueDropdownCode {
+    width: 20%;
+    padding: 8px 12px;
+    margin-top: 10px;
+    font-size: 1rem;
+    color: #ffffff;
+    background-color: #0A0A0F;
+    border: 2px solid #42425E;
+    border-radius: 15px;
+    appearance: none;
+    transition: border-color 0.3s ease, background-color 0.3s ease;
+    cursor: pointer;
+}

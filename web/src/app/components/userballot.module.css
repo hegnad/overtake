@@ -11,7 +11,6 @@
     font-size: 1.7rem;
     color: white;
     text-align: left;
-    margin-bottom: 20px;
 }
 
 .ballotButton {
@@ -25,22 +24,14 @@
     .ballotButton:hover {
         background-color: #AA0000; 
         text-decoration: underline; 
-        transform: scale(1.05);
+        transform: scale(1.03);
     }
-
-.footer {
-    font-size: 1.5rem;
-    color: white;
-    text-align: left; /* Adjust alignment if needed */
-    margin: 20px;
-}
 
 .position1 {
     font-size: 3rem;
     font-weight: bold;
     text-align: center;
     color: gold;
-    margin-top: 10px;
 }
 
 .position2 {
@@ -48,7 +39,6 @@
     font-weight: bold;
     text-align: center;
     color: silver;
-    margin-top: 10px;
 }
 
 .position3 {
@@ -56,7 +46,6 @@
     font-weight: bold;
     text-align: center;
     color: #944700;
-    margin-top: 10px;
 }
 
 .flag {
@@ -75,4 +64,12 @@
 
 .podiumImage {
     width: 100%; /* Ensures the image fills the container */
+}
+
+.footer {
+    font-size: 1.5rem;
+    color: white;
+    text-align: left; /* Adjust alignment if needed */
+    margin: 20px;
+    cursor: pointer;
 }
