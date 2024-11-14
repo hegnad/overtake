@@ -6,22 +6,8 @@
     padding: 20px;
 }
 
-/* Container for dropdown */
 .leagueDropdown {
     width: 100%;
-    padding: 8px 12px;
-    font-size: 1rem;
-    color: #ffffff;
-    background-color: #0A0A0F;
-    border: 2px solid #42425E;
-    border-radius: 15px;
-    appearance: none;
-    transition: border-color 0.3s ease;
-    cursor: pointer;
-}
-
-.leagueDropdownLeaguePage {
-    width: 25%;
     padding: 8px 12px;
     font-size: 1rem;
     color: #ffffff;
@@ -44,7 +30,37 @@
         padding: 10px;
     }
 
-        /* Adjust placeholder option color */
         .leagueDropdown option[value=""][disabled] {
+            color: #AAAAAA;
+        }
+
+.leagueDropdownLeaguePage {
+    width: 33%;
+    height: 10%;
+    padding: 8px 12px;
+    margin-top: 30px;
+    text-align: center;
+    font-size: 1rem;
+    color: #ffffff;
+    background-color: #0A0A0F;
+    border: 2px solid #42425E;
+    border-radius: 15px;
+    appearance: none;
+    transition: border-color 0.3s ease;
+    cursor: pointer;
+}
+
+    .leagueDropdownLeaguePage:focus {
+        border-color: #FF8A00;
+        outline: none;
+    }
+
+    .leagueDropdownLeaguePage option {
+        background-color: #2E2E3A;
+        color: #FFFFFF;
+        padding: 10px;
+    }
+
+        .leagueDropdownLeaguePage option[value=""][disabled] {
             color: #AAAAAA;
         }

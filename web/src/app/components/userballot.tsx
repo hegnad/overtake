@@ -5,11 +5,13 @@ import { IdentityContext } from "../lib/context/identity";
 import { useState, useContext, useEffect } from "react";''
 import StyledLine from './styledline';
 import styles from "./userballot.module.css";
+import podiumStyle from "./ballotpodiumdisplay.module.css"
 import leagueMenuStyle from "./ballotleagueselect.module.css";
+import Image from "next/image";
 
 export default function UserBallot() {
     const identity = useContext(IdentityContext);
-    const [ballots, setBallots] = useState<{ position: number; driverId: string }[]>([]);
+    const [ballots, setBallots] = useState<{ position: number; driverId: string, fullName: string, nationality: string, team: string }[]>([]);
     const [leagues, setLeagues] = useState<{ leagueId: string; name: string }[]>([]);
     const [selectedLeagueId, setSelectedLeagueId] = useState<string | null>(null);
     const router = useRouter();
@@ -69,92 +71,120 @@ export default function UserBallot() {
         router.push('./ballot');
     };
 
+    const getDriverImagePath = (driverId: string) => {
+        return `/assets/driver_headshot/${driverId}.png`;
+    };
+
+    const getFlagImagePath = (nationality: string) => {
+        return `/assets/country_flags/${nationality.substring(0, 2).toLowerCase()}.svg`;
+    };
+
     const getLastName = (fullName: string) => {
         const lastName = fullName.split(' ').pop() || "";
         return lastName.substring(0, 3).toUpperCase();
+    }
+
+    const convertLastToDriverId = (fullName: string) => {
+        const lastName = fullName.split(' ').pop() || "";
+        return lastName.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
     }
 
     const driver1 = ballots.find(ballot => ballot.position === 1);
     const driver2 = ballots.find(ballot => ballot.position === 2);
     const driver3 = ballots.find(ballot => ballot.position === 3);
 
+    console.log(ballots);
+
     return (
+
         <div>
-            <h2 className={styles.heading} onClick={handleClick}>Your Ballot {'>'}</h2>
+            <div className={styles.heading}>
+                <button className={styles.ballotButton} onClick={handleClick}>
+                    Your Ballot {'>'}
+                </button>
+            </div>
             <StyledLine color="red" size="thick" />
 
-            {/* Dropdown for selecting league */}
-            <select id="leagueSelect" onChange={handleLeagueChange} className={leagueMenuStyle.leagueDropdownLeaguePage} value={selectedLeagueId || ''}>
-                <option value="">Select a league</option>
-                {leagues.map(league => (
-                    <option key={league.leagueId} value={league.leagueId}>
-                        {league.name}
-                    </option>
-                ))}
-            </select>
+            <div className={styles.yourBallotContainer}>
 
-            <br />
-            <br />
+                {/* Dropdown for selecting league */}
+                <select id="leagueSelect" onChange={handleLeagueChange} className={leagueMenuStyle.leagueDropdownLeaguePage} value={selectedLeagueId || ''}>
+                    <option value="">Select a league</option>
+                    {leagues.map(league => (
+                        <option key={league.leagueId} value={league.leagueId}>
+                            {league.name}
+                        </option>
+                    ))}
+                </select>
 
-            <button onClick={handleClick}>
-                <ul className={styles.driverList}>
-                    {driver2 ? (
-                        <li className={styles.driverCard}>
-                            <div className={styles.driverInfo}>
-                                <div className={styles.imageBackground2}>
-                                    <p className={styles.driverImage}>Driver Img...</p>
-                                </div>
-                                <span className={styles.position}>{driver2.position}</span>
-                                <StyledLine color="silver" size="thin" />
-                                    <div className={styles.flexRow}>
-                                        <span className={styles.driverName}>{getLastName(driver2.driverId)}</span>
-                                    <span className={styles.flag}>Flag</span>
-                                </div>
-                                <StyledLine color="silver" size="thin" />
-                                <span className={styles.teamName}>TEAM</span>
+                <br />
+                <br />
+
+                <div className={podiumStyle.podiumDisplayLeaguePage}>
+
+                        {driver2 ? (
+                            <div className={podiumStyle.driverContainer}>
+                                <Image
+                                    src={getDriverImagePath(convertLastToDriverId(driver2.driverId))}
+                                    alt={`${driver2.driverId}`}
+                                    width={200}
+                                    height={200}
+                                    className={podiumStyle.podiumImage}
+                                />
+                                    <span className={styles.position2}>{driver2.position}</span>
+                                    <StyledLine color="silver" size="thin" />
+                                    <div className={podiumStyle.podiumNameAndFlag}>
+                                        <h2>{getLastName(driver2.driverId)}</h2>
+                                    </div>
+                                    <StyledLine color="silver" size="thin" />
+                                    <span className={styles.teamName}>TEAM</span>
                             </div>
-                        </li>
-                    ) : null} 
+                        ) : null} 
 
-                    {driver1 ? (
-                        <li className={styles.driverCard}>
-                            <div className={styles.driverInfo}>
-                                <div className={styles.imageBackground1}>
-                                    <p className={styles.driverImage}>Driver Img...</p>
-                                </div>
-                                <span className={styles.position}>{driver1.position}</span>
-                                <StyledLine color="yellow" size="thin" />
-                                <div className={styles.flexRow}>
-                                    <span className={styles.driverName}>{getLastName(driver1.driverId)}</span>
-                                    <span className={styles.flag}>Flag</span>
-                                </div>
-                                <StyledLine color="yellow" size="thin" />
-                                <span className={styles.teamName}>TEAM</span>
+                        {driver1 ? (
+                            <div className={podiumStyle.driverContainer}>
+                                <Image
+                                    src={getDriverImagePath(convertLastToDriverId(driver1.driverId))}
+                                    alt={`${driver1.driverId}`}
+                                    width={200}
+                                    height={200}
+                                    className={podiumStyle.podiumImage}
+                                />
+                                <span className={styles.position1}>{driver1.position}</span>
+                                    <StyledLine color="yellow" size="thin" />
+                                    <div className={podiumStyle.podiumNameAndFlag}>
+                                        <h2>{getLastName(driver1.driverId)}</h2>
+                                    </div>
+                                    <StyledLine color="yellow" size="thin" />
+                                    <span className={styles.teamName}>TEAM</span>
                             </div>
-                        </li>
-                    ) : null}
+                        ) : null}
 
-                    {driver3 ? (
-                        <li className={styles.driverCard}>
-                            <div className={styles.driverInfo}>
-                                <div className={styles.imageBackground3}>
-                                    <p className={styles.driverImage}>Driver Img...</p>
-                                </div>
-                                <span className={styles.position}>{driver3.position}</span>
-                                <StyledLine color="bronze" size="thin" />
-                                <div className={styles.flexRow}>
-                                    <span className={styles.driverName}>{getLastName(driver3.driverId)}</span>
-                                    <span className={styles.flag}>Flag</span>
-                                </div>
-                                <StyledLine color="bronze" size="thin" />
-                                <span className={styles.teamName}>TEAM</span>
+                        {driver3 ? (
+                            <div className={podiumStyle.driverContainer}>
+                                <Image
+                                    src={getDriverImagePath(convertLastToDriverId(driver3.driverId))}
+                                    alt={`${driver3.driverId}`}
+                                    width={200}
+                                    height={200}
+                                    className={podiumStyle.podiumImage}
+                                />
+                                <span className={styles.position3}>{driver3.position}</span>
+                                    <StyledLine color="bronze" size="thin" />
+                                    <div className={podiumStyle.podiumNameAndFlag}>
+                                        <h2>{getLastName(driver3.driverId)}</h2>
+                                    </div>
+                                    <StyledLine color="bronze" size="thin" />
+                                    <span className={styles.teamName}>TEAM</span>
                             </div>
-                        </li>
-                    ) : (
-                        <p className={styles.footer}>No Ballots Found.</p>
-                    )}
-                </ul>
-            </button>
+                        ) : (
+                            <p className={styles.footer}>No Ballots Found.</p>
+                        )}
+
+                </div>
+
+            </div>
+
         </div>
     );
 }
