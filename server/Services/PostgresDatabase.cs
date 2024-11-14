@@ -907,4 +907,77 @@ public class PostgresDatabase : IDatabase
         return userPoints;
     }
 
+    public async Task<int> CreateLeagueInvite(LeagueInviteRequest request)
+    {
+        await using var cmd = _dataSource.CreateCommand(
+            @"INSERT INTO leagueInvite (league_id, invitee_id, request_time, status)
+              VALUES (@league_id, @invitee_id, @request_time, @status)
+              RETURNING invite_id"
+        );
+
+        cmd.Parameters.AddWithValue("league_id", request.LeagueId);
+        cmd.Parameters.AddWithValue("invitee_id", request.InviteeId);
+        cmd.Parameters.AddWithValue("request_time", DateTime.UtcNow);
+        cmd.Parameters.AddWithValue("status", 0);
+
+        await using var reader = await cmd.ExecuteReaderAsync();
+        await reader.ReadAsync();
+        int newInviteId = reader.GetInt32(0);
+        return newInviteId;
+    }
+
+    public async Task<LeagueInviteInfo[]> GetLeagueInvites(int userId)
+    {
+        await using var cmd = _dataSource.CreateCommand(
+            @"SELECT li.invite_id, li.league_id, rl.name AS league_name
+              FROM leagueInvite li
+              JOIN raceleague rl ON li.league_id = rl.league_id
+              WHERE li.invitee_id = @invitee_id AND li.status = 0"
+        );
+
+        cmd.Parameters.AddWithValue("invitee_id", userId);
+
+        var leagueInvites = new List<LeagueInviteInfo>();
+
+        await using var reader = await cmd.ExecuteReaderAsync();
+        while (await reader.ReadAsync())
+        {
+            var leagueInviteInfo = new LeagueInviteInfo
+            {
+                InviteId = reader.GetInt32(0),
+                LeagueId = reader.GetInt32(1),
+                LeagueName = reader.GetString(2),
+            };
+
+            leagueInvites.Add(leagueInviteInfo);
+        }
+
+        return leagueInvites.ToArray();
+    }
+
+    public async Task UpdateLeagueInviteStatus(int inviteId, int status)
+    {
+        if (status == 1)
+        {
+            await using var cmd = _dataSource.CreateCommand(
+                @"INSERT INTO raceLeagueMembership (league_id, user_id, join_time)
+                  SELECT league_id, invitee_id, NOW()
+                  FROM leagueInvite
+                  WHERE invite_id = @inviteId;"
+            );
+
+            cmd.Parameters.AddWithValue("inviteId", inviteId);
+
+            await cmd.ExecuteNonQueryAsync();
+        }
+
+        await using var deleteCmd = _dataSource.CreateCommand(
+            @"DELETE FROM leagueInvite
+          WHERE invite_id = @inviteId"
+        );
+
+        deleteCmd.Parameters.AddWithValue("inviteId", inviteId);
+
+        await deleteCmd.ExecuteNonQueryAsync();
+    }
 }
