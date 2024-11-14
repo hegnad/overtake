@@ -34,7 +34,8 @@
 
 .selected {
     background-color: #ffeb3b; /* Highlight color for selected box */
-    border: 1px solid #ff9800;
+    border: 2px solid #ff9800;
+    box-sizing: border-box;
 }
 
 .filledBox {
