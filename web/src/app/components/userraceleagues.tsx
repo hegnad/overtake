@@ -3,6 +3,7 @@
 import { IdentityContext } from "../lib/context/identity";
 import { useState, useContext, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import Image from 'next/image';
 import styles from "./userraceleagues.module.css";
 import StyledLine from "./styledline";
 
@@ -67,10 +68,12 @@ export default function UserRaceLeagues() {
               >
                 <div className={styles.iconContainer}>
                   <div className={styles.iconBackground}>
-                    <img
+                    <Image
                       src="/images/logo.svg"
-                      alt="flags"
-                      className={styles.icon}
+                        alt="flags"
+                        width={70}
+                        height={70}
+                        className={styles.icon}
                     />
                   </div>
                 </div>

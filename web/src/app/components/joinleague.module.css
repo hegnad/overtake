@@ -1,0 +1,93 @@
+.joinLeagueContainer {
+    padding: 30px;
+    background-color: #0A0A0F;
+    border-radius: 15px;
+}
+
+.leagueSearchBar {
+    margin-bottom: 20px;
+}
+
+.leagueList {
+    background-color: #42425E;
+    list-style-type: none;
+    padding: 20px;
+    border-radius: 15px;
+    margin: 0;
+    max-height: 300px; /* Assuming each item is ~75px high, this displays 3 items */
+    overflow-y: auto; /* Enables vertical scrolling */
+    scrollbar-width: thin;
+    scrollbar-color: #42425E #7E7E7E;
+}
+
+    /* Scrollbar styles for WebKit browsers (Chrome, Safari, Edge) */
+    .leagueList::-webkit-scrollbar {
+        width: 12px; /* Set width of the scrollbar */
+    }
+
+    .leagueList::-webkit-scrollbar-track {
+        background-color: #310A0A; /* Background of the scrollbar track */
+        border-radius: 10px; /* Round the edges of the track */
+    }
+
+    .leagueList::-webkit-scrollbar-thumb {
+        background-color: #ffaa00; /* Color of the scrollbar thumb */
+        border-radius: 10px; /* Round the edges of the scrollbar thumb */
+        border: 3px solid #310A0A; /* Add a border to make the thumb smaller and better contrast */
+    }
+
+        .leagueList::-webkit-scrollbar-thumb:hover {
+            background-color: #e69500; /* Change color on hover for better interaction */
+        }
+
+.leagueItem {
+    display: flex;
+    align-items: center;
+    background-color: #7E7E7E; /* Background similar to the image */
+    color: white;
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 15px;
+    height: 25%;
+    transition: transform 0.4s ease, background-color 0.4s ease-in-out;
+}
+
+    .leagueItem:hover {
+        transform: scale(1.01);
+        background-color: #2E0000;
+    }
+
+.selectedLeague {
+    background-color: #2E0000;
+}
+
+.joinLeagueButton {
+    background-color: #FF8A00;
+    width: 20%;
+    color: white;
+    padding: 10px;
+    border-radius: 15px;
+    margin-top: 20px;
+    transition: background-color 0.3s ease;
+}
+
+    .joinLeagueButton:hover {
+        background-color: #4CAF50;
+    }
+
+.joinLeagueCodeContainer {
+    margin-top: 20px;
+    padding: 30px;
+    background-color: #0A0A0F;
+    border-radius: 15px;
+}
+
+    .joinLeagueCodeContainer h1 {
+        color: white;
+        font-size: 1.4rem;
+    }
+
+    .joinLeagueCodeContainer p {
+        margin-top: 10px;
+        color: white;
+    }

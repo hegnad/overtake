@@ -21,14 +21,19 @@ export default function BallotSubmission({
     const identity = useContext(IdentityContext);
     const [buttonText, setButtonText] = useState("SUBMIT BALLOT");
     const [isEditing, setIsEditing] = useState(false);
+    const [hasCheckedBallot, setHasCheckedBallot] = useState(false);
     const [hovering, setHovering] = useState(false);
+
+    useEffect(() => {
+        setHasCheckedBallot(false);
+    }, [selectedLeagueId]);
 
     // Check for existing ballot on league change
     useEffect(() => {
 
         const checkExistingBallot = async () => {
 
-            if (!selectedLeagueId) return;
+            if (!selectedLeagueId || hasCheckedBallot) return;
 
             try {
 
@@ -49,6 +54,8 @@ export default function BallotSubmission({
                     onLoadExistingBallot(Array(10).fill(null)); // Reset if no ballot
                 }
 
+                setHasCheckedBallot(true);
+
             } catch (error) {
                 console.error("Error checking for existing ballot:", error);
             }
@@ -57,7 +64,7 @@ export default function BallotSubmission({
 
         checkExistingBallot();
 
-    }, [selectedLeagueId, identity.sessionToken, onLoadExistingBallot]);
+    }, [selectedLeagueId, hasCheckedBallot, identity.sessionToken, onLoadExistingBallot]);
 
     useEffect(() => {
         const isComplete = gridPredictions.every(position => position !== null);
@@ -101,6 +108,7 @@ export default function BallotSubmission({
                 setButtonText("BALLOT SUBMITTED!");
                 onSubmissionSuccess();
                 setIsEditing(true);
+                setHasCheckedBallot(true);
                 console.log("Ballot Request Body: ", requestBody);
             } else {
                 console.error(`Failed to ${isEditing ? "update" : "create"} ballot:`, response.status);

@@ -2,6 +2,8 @@
 
 import { IdentityContext } from "../lib/context/identity";
 import { useState, useContext, useEffect } from "react";
+import styles from './joinleague.module.css';
+import leagueDropdownStyle from './ballotleagueselect.module.css';
 
 interface RaceLeagueInfo {
     leagueId: number;
@@ -70,38 +72,42 @@ export default function JoinRaceLeague({ onLeagueJoined }: JoinRaceLeagueProps) 
     };
 
     return (
-        <div style={{ padding: 10 }}>
+
+        <div className={styles.joinLeagueContainer}>
+
             {/* Header with search bar */}
-            <div>
+            <div className={styles.leagueSearchBar}>
                 <input
                     type="text"
                     placeholder="Search leagues"
                     value={search}
                     onChange={(e) => setSearch(e.target.value)} // Updated to work with HTML input
-                    style={{ height: 40, borderColor: 'gray', borderWidth: 1, marginBottom: 10 }}
+                    className={leagueDropdownStyle.leagueDropdown}
                 />
             </div>
 
             {/* Scrollable list of leagues */}
-            <div style={{ height: '300px', overflowY: 'scroll' }}>
+            <ul className={styles.leagueList}>
                 {leagues.map((league) => (
                     <div
                         key={league.leagueId}
                         onClick={() => handleLeagueSelect(league.leagueId)}
-                        style={{ padding: 10, backgroundColor: selectedLeagueId === league.leagueId ? '#ddd' : '#fff', marginBottom: 5, cursor: 'pointer' }}
+                        className={`${styles.leagueItem} ${selectedLeagueId === league.leagueId ? styles.selectedLeague : ''}`}
                     >
                         {league.name}
                     </div>
                 ))}
-            </div>
+            </ul>
 
             {/* Join League button */}
             <button
                 onClick={handleJoinLeague} // Use the prop for handling league joining
                 disabled={!selectedLeagueId} // Disable the button if no league is selected
+                className={styles.joinLeagueButton}
             >
                 JOIN LEAGUE
             </button>
+
         </div>
         
     );

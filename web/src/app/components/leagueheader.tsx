@@ -4,12 +4,16 @@ import React from 'react';
 interface LeagueHeaderProps {
     onCreateLeagueClick: () => void;
     onJoinLeagueClick: () => void;
+    onReturnClick: () => void;
 }
 
-const LeagueHeader: React.FC<LeagueHeaderProps> = ({ onCreateLeagueClick, onJoinLeagueClick }) => {
+const LeagueHeader: React.FC<LeagueHeaderProps> = ({ onCreateLeagueClick, onJoinLeagueClick, onReturnClick }) => {
 
     return (
         <div className={styles.container}>
+            <button className={styles.returnButton} onClick={onReturnClick}>
+                {'<'}
+            </button>
             <button className={styles.button} onClick={onCreateLeagueClick}>
                 CREATE A RACE LEAGUE
             </button>
