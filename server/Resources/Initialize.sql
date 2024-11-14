@@ -46,7 +46,7 @@ CREATE TABLE leagueInvite (
 	league_id INT REFERENCES raceleague(league_id) ON DELETE CASCADE NOT NULL,
 	invitee_id INT REFERENCES account(account_id) ON DELETE CASCADE NOT NULL,
 	request_time TIMESTAMP NOT NULL,
-	status SMALLINT NOT NULL
+	status INT NOT NULL
 );
 
 CREATE TABLE track (
