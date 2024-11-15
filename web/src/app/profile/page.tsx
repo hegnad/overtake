@@ -3,6 +3,7 @@
 import { useEffect, useState, useContext } from "react";
 import { IdentityContext } from "../lib/context/identity";
 import SidebarLayout from "../ui/sidebar-layout";
+import styles from "./profile.module.css"
 
 interface UserPoints {
     username: string;
@@ -55,8 +56,10 @@ export default function Profile() {
             {isLoading ? (
                 <p>Loading...</p>
             ) : userPoints ? (
-                <div>
-                    <h1>Profile of {userPoints.username}</h1>
+                <div className={styles.container}>
+                    <div className={styles.header}>
+                        <h1>{userPoints.username}</h1>
+                    </div>
                     <h2>Lifetime Points: {userPoints.totalPoints}</h2>
                     <h2>Points this season: {userPoints.pointsThisSeason}</h2>
                     <h2>Highest Individual League Points this season: {userPoints.highestLeaguePoints} ({userPoints.highestLeagueName})</h2>

@@ -24,6 +24,7 @@ export default function ProfileButton() {
 
     const handleUsernameClick = () => {
         setShowButtons((prevShowButtons) => !prevShowButtons); // Toggle the buttons
+        setShowFriends(false);
     };
 
     const handleFriendsClick = () => {
@@ -60,8 +61,8 @@ export default function ProfileButton() {
                         </div>
                     )}
                     {showFriends && (
-                        <div>
-                            <FriendsList/>
+                        <div className={styles.friendsListContainer}>
+                            <FriendsList />
                         </div>
                     )}
                     {identity.accountInfo ? (

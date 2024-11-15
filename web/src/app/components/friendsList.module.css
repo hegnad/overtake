@@ -1,25 +1,74 @@
 .container {
     display: flex;
     flex-direction: column;
-    padding: 2px;
-    background-color: #1a1a2e;
-    border-radius: 2px;
+    padding: 10px;
+    background-color: #15151e;
+    border-radius: 15px;
     width: 100%;
     max-width: 400px;
-    height: 100%;
-    min-height: 250px;
+    height: 375px;
+    min-height: 375px;
+    position: relative;
 }
 
 .buttonContainer {
     display: flex;
-    flex-direction: row;
-    padding: 2px;
-    background-color: #310a0a;
+    justify-content: space-between;
+    background-color: #630000;
+    border: 1px solid #aa0000;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    padding: 0;
+    gap: 0;
+    overflow: hidden;
 }
 
-.headerButton {
-    color: white;
-    font-size: 1rem;
+    .buttonContainer button {
+        flex: 1;
+        color: white;
+        font-size: 1rem;
+        background-color: transparent;
+        padding: 10px 0;
+        border: none;
+        cursor: pointer;
+        text-align: center;
+        transition: background-color 0.3s ease;
+    }
+
+        .buttonContainer button:hover,
+        .buttonContainer button:focus {
+            background-color: #420000;
+        }
+
+        .buttonContainer button:first-child {
+            border-radius: 10px 0 0 10px;
+        }
+
+        .buttonContainer button:last-child {
+            border-radius: 0 10px 10px 0;
+        }
+
+.addContainer, .searchContainer, .listContainer {
+    padding: 15px;
+    background-color: #15151e;
+    border: 1px solid #aa0000;
+    border-radius: 10px;
+    margin-top: 10px;
+    width: 100%;
+}
+
+    .searchContainer input {
+        width: 100%;
+        padding: 8px;
+        margin-bottom: 5px; /* Added 5px margin between input and list */
+        border: 1px solid #aa0000;
+        border-radius: 5px;
+        color: white;
+        background-color: #262630;
+    }
+
+.listContainer {
+    padding: 0;
 }
 
 .list {
@@ -27,27 +76,140 @@
     padding: 0;
     margin: 0;
     height: 150px;
-    overflow-y: scroll;
+    overflow-y: auto;
+    background-color: #15151e;
+    border-radius: 10px;
 }
 
 .listItem {
     padding: 8px;
-    border-top: 1px solid black;
-    border-bottom: 1px solid black;
+    border-bottom: 1px solid #262630;
     cursor: pointer;
+    color: white;
+    transition: background-color 0.3s ease;
 }
 
+    .listItem:hover {
+        background-color: #420000;
+    }
+
 .selectedItem {
-    background-color: #3b3b3b;
+    background-color: #630000;
 }
 
 .buttonSection {
     display: flex;
     justify-content: space-between;
     padding: 8px;
-    background-color: #222;
+    background-color: #15151e;
+    border-radius: 10px;
+    margin-top: 10px;
 }
 
-.addContainer {
-    padding: 10px;
+    .buttonSection button {
+        flex: 1;
+        color: white;
+        font-size: 0.9rem;
+        background-color: #262630;
+        padding: 6px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        text-align: center;
+        transition: background-color 0.3s ease;
+    }
+
+        .buttonSection button:hover {
+            background-color: #420000;
+        }
+
+/* Full highlight on hover for filter buttons */
+.filterButtonContainer {
+    display: flex;
+    justify-content: space-between;
+    background-color: #630000;
+    border: 1px solid #aa0000;
+    border-radius: 10px;
+    padding: 4px 0;
+    gap: 0;
+    overflow: hidden;
+    margin-bottom: 15px;
 }
+
+    .filterButtonContainer button {
+        flex: 1;
+        color: white;
+        font-size: 0.85rem;
+        background-color: transparent;
+        padding: 6px 0;
+        border: none;
+        cursor: pointer;
+        text-align: center;
+        transition: background-color 0.3s ease;
+    }
+
+        .filterButtonContainer button:first-child {
+            border-radius: 10px 0 0 10px;
+        }
+
+        .filterButtonContainer button:last-child {
+            border-radius: 0 10px 10px 0;
+        }
+
+        .filterButtonContainer button:hover,
+        .filterButtonContainer button:focus {
+            background-color: #420000;
+            padding-top: 4px; /* Ensures full highlight area is covered */
+            padding-bottom: 4px;
+        }
+
+/* Confirmation message overlay styling */
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    border-radius: 15px; /* Matches the container border-radius */
+}
+
+.confirmationMessage {
+    background-color: #15151e; /* Matches container background */
+    border: 1px solid #aa0000;
+    padding: 20px;
+    border-radius: 15px; /* Matches container border-radius */
+    text-align: center;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+    width: 80%;
+    max-width: 300px;
+}
+
+    .confirmationMessage p {
+        color: white;
+        margin-bottom: 10px;
+    }
+
+    .confirmationMessage button {
+        flex: 1;
+        color: white;
+        font-size: 0.85rem;
+        background-color: transparent;
+        padding: 6px 0;
+        border: none;
+        cursor: pointer;
+        text-align: center;
+        border-radius: 5px;
+        transition: background-color 0.3s ease;
+        background-color: #630000;
+        width: 100%;
+    }
+
+        .confirmationMessage button:hover,
+        .confirmationMessage button:focus {
+            background-color: #420000;
+        }
