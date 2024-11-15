@@ -41,3 +41,7 @@
 .login {
     margin-top: 10px;
 }
+
+.friendsListContainer {
+    width: 300px;
+}

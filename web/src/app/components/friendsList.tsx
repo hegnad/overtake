@@ -41,6 +41,8 @@ interface LeagueInviteInfo {
 
 export default function FriendsList() {
     const identity = useContext(IdentityContext);
+    const router = useRouter();
+
     const [showFriends, setShowFriends] = useState(true);
     const [showNotifications, setShowNotifications] = useState(false);
     const [showRequests, setShowRequests] = useState(false);
@@ -58,30 +60,27 @@ export default function FriendsList() {
     const [selectedInvite, setSelectedInvite] = useState<LeagueInviteInfo | null>(null);
     const [selectedFriend, setSelectedFriend] = useState<FriendInfo | null>(null);
     const [selectedLeague, setSelectedLeague] = useState<LeagueInfo | null>(null);
-    const router = useRouter();
+    const [confirmationMessage, setConfirmationMessage] = useState<string | null>(null);
+
+    const fetchFriends = async () => {
+        const response = await fetch("http://localhost:8080/api/friend/populate", {
+            method: "GET",
+            headers: {
+                Authorization: `Bearer ${identity.sessionToken}`,
+                "Content-Type": "application/json",
+            },
+        });
+
+        if (response.status === 200) {
+            const data = await response.json();
+            setFriends(data);
+        } else {
+            console.error(`non-successful status code: ${response.status}`);
+        }
+    };
 
     useEffect(() => {
-        const fetchFriends = async () => {
-            const response = await fetch("http://localhost:8080/api/friend/populate", {
-                method: "GET",
-                headers: {
-                    Authorization: `Bearer ${identity.sessionToken}`,
-                    "Content-Type": "application/json",
-                },
-            });
-
-            if (response.status === 200) {
-                const data = await response.json();
-
-                setFriends(data);
-                console.log(data);
-                console.log(friends);
-            } else {
-                console.error(`non-successful status code: ${response.status}`)
-            }
-        };
-
-        if(identity.sessionToken) {
+        if (identity.sessionToken) {
             fetchFriends();
         }
     }, [identity.sessionToken]);
@@ -187,7 +186,16 @@ export default function FriendsList() {
         }
     }, [identity.sessionToken]);
 
+    const resetSelections = () => {
+        setSelectedRequest(null);
+        setSelectedInvite(null);
+        setSelectedFriend(null);
+        setSelectedLeague(null);
+        setSelectedUser(null);
+    };
+
     const handleShowFriends = () => {
+        resetSelections();
         setShowFriends(true);
         setShowNotifications(false);
         setShowRequests(false);
@@ -197,6 +205,7 @@ export default function FriendsList() {
     };
 
     const handleShowRequests = () => {
+        resetSelections();
         setShowFriends(false);
         setShowNotifications(true);
         setShowRequests(true);
@@ -206,6 +215,7 @@ export default function FriendsList() {
     };
 
     const handleShowAdd = () => {
+        resetSelections();
         setShowFriends(false);
         setShowNotifications(false);
         setShowRequests(false);
@@ -267,13 +277,14 @@ export default function FriendsList() {
             });
 
             if (response.status === 200) {
-                const leagueInviteId = await response.json();
-                console.log(`League invite created with ID: ${leagueInviteId}`);
+                setConfirmationMessage(`Invite to ${selectedFriend?.friendName} sent successfully.`);
+                resetSelections();
+                setShowLeagues(false);
             } else {
-                console.error(`Failed to create league invite: ${response.status}`);
+                setConfirmationMessage("Failed to send invite.");
             }
         } catch (error) {
-            console.error("Error creating league invite:", error);
+            setConfirmationMessage("Error creating league invite.");
         }
     };
 
@@ -295,14 +306,13 @@ export default function FriendsList() {
                 });
 
                 if (response.status === 200) {
-                    const newRequestId = await response.json();
-                    console.log(`Friend request created with ID: ${newRequestId}`);
-                    setSelectedUser(null); // Optionally reset selection
+                    setConfirmationMessage(`Friend request sent to ${selectedUser.username}.`);
+                    setSelectedUser(null);
                 } else {
-                    console.error(`Failed to create friend request: ${response.status}`);
+                    setConfirmationMessage("Failed to send friend request.");
                 }
             } catch (error) {
-                console.error("Error creating friend request:", error);
+                setConfirmationMessage("Error creating friend request.");
             }
         }
     };
@@ -310,19 +320,26 @@ export default function FriendsList() {
     const handleFriendInvite = async (inviteId: number, status: number) => {
         const response = await fetch("http://localhost:8080/api/friend/updateStatus", {
             method: "PUT",
-                headers: {
-                    Authorization: `Bearer ${identity.sessionToken}`,
-                    "Content-Type": "application/json",
+            headers: {
+                Authorization: `Bearer ${identity.sessionToken}`,
+                "Content-Type": "application/json",
             },
             body: JSON.stringify({ inviteId, status }),
         });
 
         if (response.status === 200) {
+            setConfirmationMessage(status === 1 ? "Friend request accepted." : "Friend request declined.");
             setRequests((prevRequests) => prevRequests.filter((req) => req.inviteId !== inviteId));
+            setSelectedRequest(null);
+
+            // Refetch friends list if the request was accepted
+            if (status === 1) {
+                await fetchFriends();
+            }
         } else {
-            console.error(`Failed to update request status: ${response.status}`);
+            setConfirmationMessage("Failed to update request status.");
         }
-    }
+    };
 
     const handleLeagueInvite = async (inviteId: number, status: number) => {
         const response = await fetch("http://localhost:8080/api/league/updateStatus", {
@@ -335,160 +352,194 @@ export default function FriendsList() {
         });
 
         if (response.status === 200) {
+            setConfirmationMessage(status === 1 ? "League invite accepted." : "League invite declined.");
             setInvites((prevInvites) => prevInvites.filter((req) => req.inviteId !== inviteId));
+            setSelectedInvite(null);
         } else {
-            console.error(`Failed to update request status: ${response.status}`);
+            setConfirmationMessage("Failed to update invite status.");
         }
-    }
+    };
 
     return (
         <div className={styles.container}>
-            <div className={styles.buttonContainer}>
-                <button onClick={handleShowFriends}>Friends</button>
-                <button onClick={handleShowRequests}>Requests</button>
-                <button onClick={handleShowAdd}>Add</button>
-            </div>
-
-            {showFriends && (
-                friends.length > 0 ? (
-                    <ul className={styles.list}>
-                        {friends.map((friend) => (
-                            <li
-                                key={friend.friendId}
-                                onClick={() => handleFriendSelect(friend)}
-                                className={`${styles.listItem} ${selectedFriend?.friendId === friend.friendId ? styles.selectedItem : ''}`}>
-                                {friend.friendName}
-                            </li>
-                        ))}
-                    </ul>
-                ) : <p>No Friends Found</p>
-            )}
-            {selectedFriend && !showLeagues &&(
-                <div className={styles.buttonSection}>
-                    <button onClick={() => handleViewProfile(selectedFriend.friendId)}>View Profile</button>
-                    <button onClick={handleShowLeagues}>Invite to League</button>
+            {confirmationMessage ? (
+                <div className={styles.overlay}>
+                    <div className={styles.confirmationMessage}>
+                        <p>{confirmationMessage}</p>
+                        <button onClick={() => setConfirmationMessage(null)}>Close</button>
+                    </div>
                 </div>
-            )}
-
-            {showLeagues && (
-                leagues.length > 0 ? (
-                    <ul className={styles.list}>
-                        {leagues.map((league) => (
-                            <li
-                                key={league.leagueId}
-                                onClick={() => handleLeagueSelect(league)}
-                                className={`${styles.listItem} ${selectedLeague?.leagueId === league.leagueId ? styles.selectedItem : ''}`}
-                            >
-                                {league.name}
-                            </li>
-                        ))}
-                    </ul>
-                ) : <p>No Leagues Found</p>
-            )}
-            {selectedLeague && selectedFriend && (
-                <div className={styles.buttonSection}>
-                    <button onClick={() => handleInviteToLeague(selectedLeague.leagueId, selectedFriend.friendId)}>
-                        Invite to {selectedLeague.name}
-                    </button>
-                </div>
-            )}
-
-            {showNotifications && (
+            ) : (
                 <>
                     <div className={styles.buttonContainer}>
-                        <button
-                            onClick={() => { setShowRequests(true); setShowInvites(false); }}
-                            className={showRequests ? styles.activeButton : ''}
-                        >
-                            Friend
-                        </button>
-                        <button
-                            onClick={() => { setShowInvites(true); setShowRequests(false); }}
-                            className={showInvites ? styles.activeButton : ''}
-                        >
-                            League
-                        </button>
+                        <button onClick={handleShowFriends}>Friends</button>
+                        <button onClick={handleShowRequests}>Requests</button>
+                        <button onClick={handleShowAdd}>Add</button>
                     </div>
 
-                    {showRequests && (
-                        requests.length > 0 ? (
-                            <ul className={styles.list}>
-                                {requests.map((request) => (
-                                    <li
-                                        key={request.inviteId}
-                                        onClick={() => handleRequestSelect(request)}
-                                        className={`${styles.listItem} ${selectedRequest?.inviteId === request.inviteId ? styles.selectedItem : ''}`}>
-                                        {request.initiatorUsername}
-                                    </li>
-                                ))}
-                            </ul>
-                        ) : <p>No Friend Requests</p>
+                    {/* Friends tab with red outline */}
+                    {showFriends && (
+                        <div className={styles.addContainer}>
+                            {friends.length > 0 ? (
+                                <ul className={`${styles.list} ${styles.friendsList}`}>
+                                    {friends.map((friend) => (
+                                        <li
+                                            key={friend.friendId}
+                                            onClick={() => handleFriendSelect(friend)}
+                                            className={`${styles.listItem} ${selectedFriend?.friendId === friend.friendId ? styles.selectedItem : ''}`}
+                                        >
+                                            {friend.friendName}
+                                        </li>
+                                    ))}
+                                </ul>
+                            ) : (
+                                <p>No Friends Found</p>
+                            )}
+                            {selectedFriend && !showLeagues && (
+                                <div className={styles.buttonSection}>
+                                    <button onClick={() => handleViewProfile(selectedFriend.friendId)}>View Profile</button>
+                                    <button onClick={handleShowLeagues}>Invite to League</button>
+                                </div>
+                            )}
+                        </div>
                     )}
 
-                    {showInvites && (
-                        invites.length > 0 ? (
-                            <ul className={styles.list}>
-                                {invites.map((invite) => (
-                                    <li
-                                        key={invite.inviteId}
-                                        onClick={() => handleInviteSelect(invite)}
-                                        className={`${styles.listItem} ${selectedInvite?.inviteId === invite.inviteId ? styles.selectedItem : ''}`}>
-                                        {invite.leagueName}
-                                    </li>
-                                ))}
-                            </ul>
-                        ) : <p>No League Invites</p>
+                    {/* Leagues selection for inviting a friend with red outline */}
+                    {showLeagues && (
+                        <div className={styles.addContainer}>
+                            {leagues.length > 0 ? (
+                                <ul className={`${styles.list} ${styles.leaguesList}`}>
+                                    {leagues.map((league) => (
+                                        <li
+                                            key={league.leagueId}
+                                            onClick={() => handleLeagueSelect(league)}
+                                            className={`${styles.listItem} ${selectedLeague?.leagueId === league.leagueId ? styles.selectedItem : ''}`}
+                                        >
+                                            {league.name}
+                                        </li>
+                                    ))}
+                                </ul>
+                            ) : (
+                                <p>No Leagues Found</p>
+                            )}
+                            {selectedLeague && selectedFriend && (
+                                <div className={styles.buttonSection}>
+                                    <button onClick={() => handleInviteToLeague(selectedLeague.leagueId, selectedFriend.friendId)}>
+                                        Invite to {selectedLeague.name}
+                                    </button>
+                                </div>
+                            )}
+                        </div>
+                    )}
+
+                    {/* Notifications tab with red outline */}
+                    {showNotifications && (
+                        <div className={styles.addContainer}>
+                            <div className={styles.filterButtonContainer}>
+                                <button
+                                    onClick={() => { setShowRequests(true); setShowInvites(false); }}
+                                    className={showRequests ? styles.activeButton : ''}
+                                >
+                                    Friend
+                                </button>
+                                <button
+                                    onClick={() => { setShowInvites(true); setShowRequests(false); }}
+                                    className={showInvites ? styles.activeButton : ''}
+                                >
+                                    League
+                                </button>
+                            </div>
+
+                            {showRequests && (
+                                requests.length > 0 ? (
+                                    <ul className={`${styles.list} ${styles.requestsList}`}>
+                                        {requests.map((request) => (
+                                            <li
+                                                key={request.inviteId}
+                                                onClick={() => handleRequestSelect(request)}
+                                                className={`${styles.listItem} ${selectedRequest?.inviteId === request.inviteId ? styles.selectedItem : ''}`}
+                                            >
+                                                {request.initiatorUsername}
+                                            </li>
+                                        ))}
+                                    </ul>
+                                ) : (
+                                    <p>No Friend Requests</p>
+                                )
+                            )}
+
+                            {showInvites && (
+                                invites.length > 0 ? (
+                                    <ul className={`${styles.list} ${styles.invitesList}`}>
+                                        {invites.map((invite) => (
+                                            <li
+                                                key={invite.inviteId}
+                                                onClick={() => handleInviteSelect(invite)}
+                                                className={`${styles.listItem} ${selectedInvite?.inviteId === invite.inviteId ? styles.selectedItem : ''}`}
+                                            >
+                                                {invite.leagueName}
+                                            </li>
+                                        ))}
+                                    </ul>
+                                ) : (
+                                    <p>No League Invites</p>
+                                )
+                            )}
+                            {selectedRequest && (
+                                <div className={styles.buttonSection}>
+                                    <button onClick={() => handleFriendInvite(selectedRequest.inviteId, 1)}>Accept</button>
+                                    <button onClick={() => handleFriendInvite(selectedRequest.inviteId, 2)}>Decline</button>
+                                </div>
+                            )}
+
+                            {selectedInvite && (
+                                <div className={styles.buttonSection}>
+                                    <button onClick={() => handleLeagueInvite(selectedInvite.inviteId, 1)}>Accept</button>
+                                    <button onClick={() => handleLeagueInvite(selectedInvite.inviteId, 2)}>Decline</button>
+                                </div>
+                            )}
+                        </div>
+                    )}
+
+                    {/* Add tab for adding new friends */}
+                    {showAdd && (
+                        <div className={styles.addContainer}>
+                            <input
+                                type="text"
+                                placeholder="Search by Username"
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                                style={{ color: "black" }}
+                            />
+                            {filteredUsers.length > 0 ? (
+                                <ul className={`${styles.list} ${styles.addList}`}>
+                                    {filteredUsers.map((user) => (
+                                        <li
+                                            key={user.userId}
+                                            onClick={() => handleUserSelect(user)}
+                                            className={`${styles.listItem} ${selectedUser?.userId === user.userId ? styles.selectedItem : ''}`}
+                                        >
+                                            {user.username}
+                                        </li>
+                                    ))}
+                                </ul>
+                            ) : (
+                                <p>No Users Found</p>
+                            )}
+                            {selectedUser && (
+                                <div className={styles.buttonSection}>
+                                    <button onClick={handleAddUser}>
+                                        Add {selectedUser.username}
+                                    </button>
+                                    <button onClick={() => handleViewProfile(selectedUser.userId)}>
+                                        View {selectedUser.username}&apos;s Profile
+                                    </button>
+                                </div>
+                            )}
+                        </div>
                     )}
                 </>
             )}
-            {selectedRequest && (
-                <div className={styles.buttonSection}>
-                    <button onClick={() => handleFriendInvite(selectedRequest.inviteId, 1)}>Accept</button>
-                    <button onClick={() => handleFriendInvite(selectedRequest.inviteId, 2)}>Decline</button>
-                </div>
-            )}
-            {selectedInvite && (
-                <div className={styles.buttonSection}>
-                    <button onClick={() => handleLeagueInvite(selectedInvite.inviteId, 1)}>Accept</button>
-                    <button onClick={() => handleLeagueInvite(selectedInvite.inviteId, 2)}>Decline</button>
-                </div>
-            )}
-
-            {showAdd && (
-                <div className={styles.addContainer}>
-                    <input
-                        type="text"
-                        placeholder="Search by Username"
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                    />
-                    {filteredUsers.length > 0 ? (
-                        <ul className={styles.list}>
-                            {filteredUsers.map((user) => (
-                                <li
-                                    key={user.userId}
-                                    onClick={() => handleUserSelect(user)}
-                                    className={`${styles.listItem} ${selectedUser?.userId === user.userId ? styles.selectedItem : ''}`}
-                                >
-                                    {user.username}
-                                </li>
-                            ))}
-                        </ul>
-                    ) : (
-                        <p>No Users Found</p>
-                    )}
-                    {selectedUser && (
-                        <div className={styles.buttonSection}>
-                            <button onClick={handleAddUser}>
-                                Add {selectedUser.username}
-                            </button>
-                            <button onClick={() => handleViewProfile(selectedUser.userId)}>
-                                View {selectedUser.username}&apos;s Profile
-                            </button>
-                        </div>
-                    )}
-                </div>
-            )}
         </div>
-    )
+    );
 }
