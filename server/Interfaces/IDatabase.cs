@@ -69,4 +69,6 @@ public interface IDatabase
     Task<LeagueInviteInfo[]> GetLeagueInvites(int userId);
 
     Task UpdateLeagueInviteStatus(int inviteId, int status);
+
+    Task<LeagueRoundDetails[]> GetLeagueRoundDetails(int leagueId, int raceId);
 }
