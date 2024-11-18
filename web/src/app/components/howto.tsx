@@ -17,7 +17,7 @@ export default function HowToPlay() {
       <div className={styles.modal}>
         <h2>Scoring</h2>
         <p>
-          Points are awarded based on how closely a player's predictions align
+          Points are awarded based on how closely a player&apos;s predictions align
           with the actual race results. Scoring is broken down by prediction
           type:
         </p>
