@@ -144,4 +144,36 @@ public class LeagueController : ControllerBase
 
         return Ok();
     }
+
+    [HttpGet]
+    [Route("getLeagueName")]
+    [Produces("application/json")]
+    public async Task<ActionResult<string>> GetLeagueNameAsync(int leagueId)
+    {
+        try
+        {
+            var league = await _database.GetLeagueByIdAsync(leagueId);
+
+            if (league == null)
+            {
+                return NotFound("League not found");
+            }
+
+            return Ok(league.Name);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, "An error occurred while retrieving the league name.");
+        }
+    }
+
+    [HttpGet]
+    [Route("getLeagueRoundDetails")]
+    [Produces("application/json")]
+    public async Task<ActionResult<LeagueRoundDetails[]>> GetRoundDetailsAsync([FromQuery] int leagueId, [FromQuery] int raceId)
+    {
+        var details = await _database.GetLeagueRoundDetails(leagueId, raceId);
+
+        return new OkObjectResult(details);
+    }
 }

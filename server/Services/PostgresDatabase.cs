@@ -637,13 +637,13 @@ public class PostgresDatabase : IDatabase
 
         await using var cmd = _dataSource.CreateCommand(
             @"SELECT a.username, COALESCE(SUM(b.score), 0) AS total_score
-          FROM account a
-          JOIN raceLeagueMembership rlm
-          ON a.account_id = rlm.user_id
-          LEFT JOIN ballot b
-          ON rlm.user_id = b.user_id AND rlm.league_id = b.league_id
-          WHERE rlm.league_id = @league_id
-          GROUP BY a.username"
+              FROM account a
+              JOIN raceLeagueMembership rlm
+              ON a.account_id = rlm.user_id
+              LEFT JOIN ballot b
+              ON rlm.user_id = b.user_id AND rlm.league_id = b.league_id
+              WHERE rlm.league_id = @league_id
+              GROUP BY a.username"
         );
 
         cmd.Parameters.AddWithValue("league_id", leagueId);
@@ -973,11 +973,50 @@ public class PostgresDatabase : IDatabase
 
         await using var deleteCmd = _dataSource.CreateCommand(
             @"DELETE FROM leagueInvite
-          WHERE invite_id = @inviteId"
+                WHERE invite_id = @inviteId"
         );
 
         deleteCmd.Parameters.AddWithValue("inviteId", inviteId);
 
         await deleteCmd.ExecuteNonQueryAsync();
+    }
+
+    public async Task<LeagueRoundDetails[]> GetLeagueRoundDetails(int leagueId, int raceId)
+    {
+        // Create the command with the SQL query
+        await using var cmd = _dataSource.CreateCommand(
+            @"SELECT b.ballot_id, b.user_id, a.username, b.score
+          FROM ballot b
+          JOIN account a ON b.user_id = a.account_id
+          WHERE b.league_id = @league_id AND b.race_id = @race_id"
+        );
+
+        // Add parameters
+        cmd.Parameters.AddWithValue("league_id", leagueId);
+        cmd.Parameters.AddWithValue("race_id", raceId);
+
+        // Initialize the list to store results
+        var ballots = new List<LeagueRoundDetails>();
+
+        // Execute the command and read results
+        await using var reader = await cmd.ExecuteReaderAsync();
+        while (await reader.ReadAsync())
+        {
+            // Create a LeagueRoundDetails object and populate its properties
+            var leagueRoundDetails = new LeagueRoundDetails
+            {
+                BallotId = reader.GetInt32(0),
+                UserId = reader.GetInt32(1),
+                Username = reader.GetString(2),
+                // Explicitly cast nullable int to int or handle null
+                Score = reader.IsDBNull(3) ? null : reader.GetFieldValue<int?>(3) ?? default,
+            };
+
+            // Add the object to the list
+            ballots.Add(leagueRoundDetails);
+        }
+
+        // Return the list as an array
+        return ballots.ToArray();
     }
 }
