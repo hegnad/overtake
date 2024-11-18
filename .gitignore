@@ -1,3 +1,4 @@
 
 *.vsidx
 /.vs/overtake/CopilotIndices/0.2.1653.9816
+/node_modules
