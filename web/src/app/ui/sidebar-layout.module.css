@@ -1,65 +1,84 @@
 .container {
-    display: flex;
-    height: 100vh;
+  display: flex;
+  height: 100vh;
 }
 
 .sidebar {
-    width: 20%;
-    background-color: #2e0000;
-    color: #fff;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    align-items: center;
+  width: 20%;
+  background-color: #2e0000;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .logoContainer {
-    display: flex;
-    align-items: center;
-    padding: 1.5rem;
+  display: flex;
+  align-items: center;
+  padding: 1.5rem;
 }
 
 .logoImage {
-    width: 5vw; /* Adjust size as needed */
-    height: auto; /* Adjust size as needed */
-    max-height: 100px;
-    margin-right: 1rem;
+  width: 5vw; /* Adjust size as needed */
+  height: auto; /* Adjust size as needed */
+  max-height: 100px;
+  margin-right: 1rem;
 }
 
 .logoLink {
-    font-size: 2.5vw;
-    color: white;
-    text-decoration: none;
-    margin-right: 1rem;
+  font-size: 2.5vw;
+  color: white;
+  text-decoration: none;
+  margin-right: 1rem;
 }
 
 .nav {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 0 1rem;
-    width: 100%; /* Full width of the sidebar */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 1rem;
+  width: 100%; /* Full width of the sidebar */
 }
 
 .navItem {
-    display: block;
-    width: calc(100% - 2rem);
-    height: 4rem;
-    margin: 0.5rem 1rem;
-    padding: 0.5rem;
-    background-color: #AA0000;
-    color: white;
-    border-radius: 5px;
-    font-size: 1.5vw;
-    box-sizing: border-box;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: transform 0.3s ease, background-color 0.3s ease;
+  display: block;
+  width: calc(100% - 2rem);
+  height: 4rem;
+  margin: 0.5rem 1rem;
+  padding: 0.5rem;
+  background-color: #aa0000;
+  color: white;
+  border-radius: 5px;
+  font-size: 1.5vw;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition:
+    transform 0.3s ease,
+    background-color 0.3s ease;
 }
 
-    .navItem:hover {
-        background-color: #FF8A00;
-        color: #AA0000;
-        transform: scale(1.05);
-    }
+.navItem:hover {
+  background-color: #ff8a00;
+  color: #aa0000;
+  transform: scale(1.05);
+}
+
+.modalContainer {
+  color: aliceblue;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 90%;
+  height: 90%;
+  background-color: rgba(92, 0, 0, 0.918);
+  z-index: 100;
+  border-radius: 25px;
+}
