@@ -1,8 +1,20 @@
+"use client";
+
 import SidebarLayout from "./ui/sidebar-layout";
 import styles from "./home.module.css";
 import RaceCountdown from "./components/racecountdown";
+import { overtakerOfTheRace } from "./utils/api/ergast";
+import { useEffect, useState } from "react";
 
 export default function Home() {
+  const [overtaker, setOvertaker] = useState(null);
+
+  useEffect(() => {
+    overtakerOfTheRace().then((data) => {
+      setOvertaker(data);
+    });
+  }, []);
+
   return (
     <SidebarLayout>
       <div className={styles.container}>
