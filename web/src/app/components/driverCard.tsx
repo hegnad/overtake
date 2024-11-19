@@ -1,6 +1,7 @@
 import React from 'react';
 import Image from 'next/image';
 import styles from './driverCard.module.css';
+import StyledLine from './styledline'
 
 interface DriverCardProps {
     givenName: string;
@@ -28,6 +29,8 @@ export default function DriverCard({ givenName, familyName, driverId, permanentN
                 <Image src={driverImagePath} alt={givenName} width={220} height={220} className={styles.driverImage} />
             </div>
 
+            <StyledLine color='red' size='thin' />
+
             <div className={styles.driverNumAndFlag}>
                 <div className={styles.numContainer}>
                     <h2>{permanentNumber}</h2>
@@ -35,6 +38,7 @@ export default function DriverCard({ givenName, familyName, driverId, permanentN
                 <Image src={flagImagePath} alt={nationality} width={40} height={40} className={styles.flag} />
             </div>
 
+            <StyledLine color='red' size='thin' />
 
         </div>
 

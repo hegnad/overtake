@@ -1,16 +1,16 @@
 {
   "ExpandedNodes": [
     "",
-    "\\server",
-    "\\server\\Models\\Requests",
-    "\\server\\Resources",
     "\\web",
+    "\\web\\public",
+    "\\web\\public\\assets",
+    "\\web\\public\\assets\\track_layout",
     "\\web\\src",
     "\\web\\src\\app",
-    "\\web\\src\\app\\ballot",
+    "\\web\\src\\app\\formulalearn",
     "\\web\\src\\app\\utils",
     "\\web\\src\\app\\utils\\api"
   ],
-  "SelectedNode": "\\server\\Models",
+  "SelectedNode": "\\web\\src\\app\\components\\ballotdriverselect.module.css",
   "PreviewInSolutionExplorer": false
 }

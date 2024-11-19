@@ -19,13 +19,15 @@
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
-    gap: 6px;
 }
 
 .driverGridContainer {
     display: flex;
     align-items: center;
     justify-content: center;
+    background-color: #0A0A0F;
+    border-radius: 15px;
+    padding: 20px;
 }
 
 .navButton {
@@ -73,10 +75,45 @@
 }
 
 .circuits {
-
+    width: 100%;
+    background: #15151E;
+    border-radius: 15px;
+    width: 100%;
+    margin-left: 10px;
+    overflow: hidden;
 }
 
     .circuits h2 {
         color: white;
     }
 
+
+.circuitsGrid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* Two columns */
+    max-height: 400px; /* Limit height for scrolling */
+    overflow-y: auto; /* Enable vertical scrolling */
+    padding: 10px; /* Add padding around the grid */
+    scrollbar-width: thin; /* Style scrollbar (Firefox) */
+    scrollbar-color: #ffaa00 #42425E; /* Thumb and track colors */
+}
+
+/* Scrollbar styling for WebKit browsers (Chrome, Safari, Edge) */
+.circuitGridContainer::-webkit-scrollbar {
+    width: 12px;
+}
+
+.circuitGridContainer::-webkit-scrollbar-track {
+    background-color: #42425E;
+    border-radius: 10px;
+}
+
+.circuitGridContainer::-webkit-scrollbar-thumb {
+    background-color: #ffaa00;
+    border-radius: 10px;
+    border: 3px solid #42425E;
+}
+
+    .circuitGridContainer::-webkit-scrollbar-thumb:hover {
+        background-color: #e69500;
+    }

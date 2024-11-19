@@ -1,0 +1,36 @@
+.circuitCard {
+    display: grid;
+    justify-content: center;
+    width: 100%;
+    height: auto;
+    background-color: #E4E4E4;
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+    .circuitCard:hover {
+        transform: scale(1.05);
+        box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.4);
+    }
+
+.imageContainer {
+}
+
+.layoutImage {
+}
+
+.circuitInfo h3 {
+    font-size: 1.2rem;
+    margin-bottom: 5px;
+}
+
+.circuitInfo p {
+    font-size: 1rem;
+    color: #cccccc;
+}
+
+.error {
+    color: #ff4d4d;
+}

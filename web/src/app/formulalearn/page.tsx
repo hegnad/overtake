@@ -7,6 +7,7 @@ import { getDrivers, getConstructors, getCircuits } from "../utils/api/ergast";
 import { Driver, Constructor, Circuit } from "./formulaLearnTypes";
 import DriverCard from "../components/driverCard";
 import ConstructorCard from "../components/constructorCard";
+import CircuitCard from "../components/circuitCard";
 
 export default function FormulaLearn() {
 
@@ -86,7 +87,7 @@ export default function FormulaLearn() {
     // Function to calculate the number of drivers per page based on window width
     const calculateDriversPerPage = () => {
         const windowWidth = window.innerWidth;
-        const driversThatFit = Math.floor((windowWidth - 400) / cardWidth); // Subtract margins and divide by card width
+        const driversThatFit = Math.floor((windowWidth - 200) / cardWidth); // Subtract margins and divide by card width
         setDriversPerPage(driversThatFit);
     };
 
@@ -202,17 +203,28 @@ export default function FormulaLearn() {
 
                 {/* Circuits Display */}
                 <div className={styles.circuits}>
-                    <h2>Circuits</h2>
+                    <div className={styles.header}>
+                        <h1>CIRCUITS</h1>
+                    </div>
+
                     {loadingCircuits ? (
                         <p>Loading circuits...</p>
                     ) : (
-                        <ul>
-                            {circuits.map((circuit) => (
-                                <li key={circuit.circuitId}>
-                                    {circuit.circuitName} ({circuit.location.country})
-                                </li>
-                            ))}
-                        </ul>
+                            <>
+                                <div className={styles.circuitsGrid}>
+                                    <div className={styles.circuitCard}>
+                                        {circuits.map((circuit, index) => (
+                                            <CircuitCard
+                                                key={circuit.circuitId}
+                                                circuitId={circuit.circuitId}
+                                                circuitName={circuit.circuitName}
+                                                location={circuit.location}
+                                                roundNumber={index + 1}
+                                            />
+                                        ))}
+                                    </div>
+                                </div>
+                            </>
                     )}
                 </div>
 
