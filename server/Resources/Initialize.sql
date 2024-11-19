@@ -1,3 +1,5 @@
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
+
 CREATE TABLE account (
   account_id SERIAL PRIMARY KEY,
   username VARCHAR(50) NOT NULL UNIQUE,
@@ -124,16 +126,11 @@ CREATE TABLE raceResult (
 -- Insert test data for account table
 INSERT INTO account (username, first_name, last_name, email, password_hash)
 VALUES 
-  ('admin', 'Dominic', 'Goncalves', 'dgonc99@gmail.com', '15ee03dd2ee557c4209759937d210613a2aaa6df20d26fda470227ca3c248b86'),
-  ('user2', 'Jane', 'Smith', 'jane.smith@example.com', 'hash2'),
-  ('user3', 'Bob', 'Brown', 'bob.brown@example.com', 'hash3'),
-  ('user4', 'Alice', 'Green', 'alice.green@example.com', 'hash4'),
-  ('user5', 'Charlie', 'Black', 'charlie.black@example.com', 'hash5'),
-  ('user6', 'David', 'White', 'david.white@example.com', 'hash6'),
-  ('user7', 'Emily', 'Gray', 'emily.gray@example.com', 'hash7'),
-  ('user8', 'Frank', 'Yellow', 'frank.yellow@example.com', 'hash8'),
-  ('user9', 'Grace', 'Blue', 'grace.blue@example.com', 'hash9'),
-  ('user10', 'Hannah', 'Purple', 'hannah.purple@example.com', 'hash10');
+  ('admin', 'Overtake', 'Admin', 'admin@gmail.com', digest('overtake|test', 'sha256')),
+  ('user2', 'Jane', 'Smith', 'jane.smith@example.com', digest('overtake|test', 'sha256')),
+  ('user3', 'Bob', 'Brown', 'bob.brown@example.com', digest('overtake|test', 'sha256')),
+  ('user4', 'Alice', 'Green', 'alice.green@example.com', digest('overtake|test', 'sha256')),
+  ('user5', 'Charlie', 'Black', 'charlie.black@example.com', digest('overtake|test', 'sha256'));
 
 -- Insert test data for raceleague table
 INSERT INTO raceleague (owner_id, name, is_public, create_time, invite_code)
@@ -151,12 +148,7 @@ VALUES
   (1, 2, NOW()),
   (1, 3, NOW()),
   (1, 4, NOW()),
-  (1, 5, NOW()),
-  (1, 6, NOW()),
-  (1, 7, NOW()),
-  (1, 8, NOW()),
-  (1, 9, NOW()),
-  (1, 10, NOW());
+  (1, 5, NOW());
 
 -- Insert test data for leagueInvite table
 INSERT INTO leagueInvite (league_id, invitee_id, request_time, status)
@@ -208,65 +200,16 @@ VALUES
 -- Insert test data for ballot table
 INSERT INTO ballot (league_id, race_id, user_id, create_time, settle_time, score)
 VALUES 
-  (1, 1, 1, NOW(), NOW(), 11),
-  (1, 2, 1, NOW(), NOW(), 25),
-  (1, 3, 1, NOW(), NOW(), 8),
-  (1, 4, 1, NOW(), NOW(), 18),
-  (1, 5, 1, NOW(), NOW(), 24),
-
-  (1, 1, 2, NOW(), NOW(), 36),
-  (1, 2, 2, NOW(), NOW(), 44),
-  (1, 3, 2, NOW(), NOW(), 19),
-  (1, 4, 2, NOW(), NOW(), 22),
-  (1, 5, 2, NOW(), NOW(), 10),
-
-  (1, 1, 3, NOW(), NOW(), 47),
-  (1, 2, 3, NOW(), NOW(), 15),
-  (1, 3, 3, NOW(), NOW(), 33),
-  (1, 4, 3, NOW(), NOW(), 6),
-  (1, 5, 3, NOW(), NOW(), 30),
-
-  (1, 1, 4, NOW(), NOW(), 29),
-  (1, 2, 4, NOW(), NOW(), 14),
-  (1, 3, 4, NOW(), NOW(), 45),
-  (1, 4, 4, NOW(), NOW(), 20),
-  (1, 5, 4, NOW(), NOW(), 50),
-
-  (1, 1, 5, NOW(), NOW(), 23),
-  (1, 2, 5, NOW(), NOW(), 13),
-  (1, 3, 5, NOW(), NOW(), 12),
-  (1, 4, 5, NOW(), NOW(), 7),
-  (1, 5, 5, NOW(), NOW(), 9),
-
-  (1, 1, 6, NOW(), NOW(), 17),
-  (1, 2, 6, NOW(), NOW(), 46),
-  (1, 3, 6, NOW(), NOW(), 2),
-  (1, 4, 6, NOW(), NOW(), 27),
-  (1, 5, 6, NOW(), NOW(), 32),
-
-  (1, 1, 7, NOW(), NOW(), 16),
-  (1, 2, 7, NOW(), NOW(), 26),
-  (1, 3, 7, NOW(), NOW(), 5),
-  (1, 4, 7, NOW(), NOW(), 38),
-  (1, 5, 7, NOW(), NOW(), 31),
-
-  (1, 1, 8, NOW(), NOW(), 42),
-  (1, 2, 8, NOW(), NOW(), 1),
-  (1, 3, 8, NOW(), NOW(), 40),
-  (1, 4, 8, NOW(), NOW(), 28),
-  (1, 5, 8, NOW(), NOW(), 48),
-
-  (1, 1, 9, NOW(), NOW(), 21),
-  (1, 2, 9, NOW(), NOW(), 35),
-  (1, 3, 9, NOW(), NOW(), 41),
-  (1, 4, 9, NOW(), NOW(), 4),
-  (1, 5, 9, NOW(), NOW(), 43),
-
-  (1, 1, 10, NOW(), NOW(), 3),
-  (1, 2, 10, NOW(), NOW(), 37),
-  (1, 3, 10, NOW(), NOW(), 34),
-  (1, 4, 10, NOW(), NOW(), 39),
-  (1, 5, 10, NOW(), NOW(), 49);
+  (1, 1, 1, NOW(), NOW(), 15),
+  (1, 1, 2, NOW(), NOW(), 85),
+  (1, 2, 1, NOW(), NOW(), 125),
+  (1, 2, 2, NOW(), NOW(), 0),
+  (1, 3, 1, NOW(), NOW(), 25),
+  (1, 3, 2, NOW(), NOW(), 55),
+  (1, 4, 1, NOW(), NOW(), 75),
+  (1, 4, 2, NOW(), NOW(), 905),
+  (1, 5, 1, NOW(), NOW(), 55),
+  (1, 5, 2, NOW(), NOW(), 150);
 
 
 -- Insert test data for team table
@@ -303,13 +246,108 @@ VALUES
   (43, 'Franco', 'Colapinto', 18, 'Argentina', 1.75, 5, './assets/driver_headshot/colapinto.png', './assets/cars/williams.png', './assets/teamlogos/williams_mini.png');
 
 -- Insert test data for ballotContent table
-INSERT INTO ballotContent (ballot_id, position, driver_name)
-VALUES 
-  (1, 1, 'Bob'),
-  (2, 2, 'Bob'),
-  (3, 3, 'Bob'),
-  (4, 4, 'Bob'),
-  (5, 5, 'Bob');
+INSERT INTO ballotContent (ballot_id, position, driver_name) 
+VALUES
+(1, 1, 'Valtteri Bottas'),
+(1, 2, 'Esteban Ocon'),
+(1, 3, 'Fernando Alonso'),
+(1, 4, 'Lance Stroll'),
+(1, 5, 'Alexander Albon'),
+(1, 6, 'Nico Hülkenberg'),
+(1, 7, 'Max Verstappen'),
+(1, 8, 'Oliver Bearman'),
+(1, 9, 'Charles Leclerc'),
+(1, 10, 'Yuki Tsunoda'),
+(2, 1, 'Lando Norris'),
+(2, 2, 'Max Verstappen'),
+(2, 3, 'Yuki Tsunoda'),
+(2, 4, 'Sergio Pérez'),
+(2, 5, 'Valtteri Bottas'),
+(2, 6, 'Alexander Albon'),
+(2, 7, 'Oscar Piastri'),
+(2, 8, 'Esteban Ocon'),
+(2, 9, 'Nico Hülkenberg'),
+(2, 10, 'Oliver Bearman'),
+(3, 1, 'Charles Leclerc'),
+(3, 2, 'Oscar Piastri'),
+(3, 3, 'Lando Norris'),
+(3, 4, 'Valtteri Bottas'),
+(3, 5, 'Yuki Tsunoda'),
+(3, 6, 'Lance Stroll'),
+(3, 7, 'Lewis Hamilton'),
+(3, 8, 'Oliver Bearman'),
+(3, 9, 'Max Verstappen'),
+(3, 10, 'Alexander Albon'),
+(4, 1, 'Alexander Albon'),
+(4, 2, 'Lance Stroll'),
+(4, 3, 'Charles Leclerc'),
+(4, 4, 'Oliver Bearman'),
+(4, 5, 'Esteban Ocon'),
+(4, 6, 'Sergio Pérez'),
+(4, 7, 'Yuki Tsunoda'),
+(4, 8, 'Pierre Gasly'),
+(4, 9, 'Valtteri Bottas'),
+(4, 10, 'Lando Norris'),
+(5, 1, 'George Russell'),
+(5, 2, 'Lewis Hamilton'),
+(5, 3, 'Esteban Ocon'),
+(5, 4, 'Nico Hülkenberg'),
+(5, 5, 'Yuki Tsunoda'),
+(5, 6, 'Lance Stroll'),
+(5, 7, 'Sergio Pérez'),
+(5, 8, 'Guanyu Zhou'),
+(5, 9, 'Pierre Gasly'),
+(5, 10, 'Valtteri Bottas'),
+(6, 1, 'Fernando Alonso'),
+(6, 2, 'Lance Stroll'),
+(6, 3, 'Max Verstappen'),
+(6, 4, 'Charles Leclerc'),
+(6, 5, 'Oscar Piastri'),
+(6, 6, 'Alexander Albon'),
+(6, 7, 'Oliver Bearman'),
+(6, 8, 'Yuki Tsunoda'),
+(6, 9, 'Guanyu Zhou'),
+(6, 10, 'Lewis Hamilton'),
+(7, 1, 'Oscar Piastri'),
+(7, 2, 'Oliver Bearman'),
+(7, 3, 'Lewis Hamilton'),
+(7, 4, 'Pierre Gasly'),
+(7, 5, 'Guanyu Zhou'),
+(7, 6, 'Nico Hülkenberg'),
+(7, 7, 'Fernando Alonso'),
+(7, 8, 'Charles Leclerc'),
+(7, 9, 'Max Verstappen'),
+(7, 10, 'Alexander Albon'),
+(8, 1, 'Lewis Hamilton'),
+(8, 2, 'Sergio Pérez'),
+(8, 3, 'Fernando Alonso'),
+(8, 4, 'George Russell'),
+(8, 5, 'Yuki Tsunoda'),
+(8, 6, 'Oscar Piastri'),
+(8, 7, 'Max Verstappen'),
+(8, 8, 'Alexander Albon'),
+(8, 9, 'Oliver Bearman'),
+(8, 10, 'Nico Hülkenberg'),
+(9, 1, 'Valtteri Bottas'),
+(9, 2, 'Yuki Tsunoda'),
+(9, 3, 'Lando Norris'),
+(9, 4, 'Guanyu Zhou'),
+(9, 5, 'Oscar Piastri'),
+(9, 6, 'Esteban Ocon'),
+(9, 7, 'Nico Hülkenberg'),
+(9, 8, 'Lewis Hamilton'),
+(9, 9, 'Oliver Bearman'),
+(9, 10, 'Alexander Albon'),
+(10, 1, 'Max Verstappen'),
+(10, 2, 'Oliver Bearman'),
+(10, 3, 'Fernando Alonso'),
+(10, 4, 'Lance Stroll'),
+(10, 5, 'Nico Hülkenberg'),
+(10, 6, 'Guanyu Zhou'),
+(10, 7, 'Esteban Ocon'),
+(10, 8, 'Valtteri Bottas'),
+(10, 9, 'Yuki Tsunoda'),
+(10, 10, 'George Russell');
 
 -- Insert test data for raceResult table
 INSERT INTO raceResult (race_id, position, driver_id)

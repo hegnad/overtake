@@ -1,0 +1,25 @@
+.modal {
+  border: 3px solid #aa0000;
+  border-radius: 25px;
+  padding: 5px;
+  margin: 25px
+}
+
+.modal h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+.modal ol {
+  list-style-type: number;
+  padding: 0;
+}
+
+.modal li {
+  margin-top: 1rem;
+}
+.modal :first-child li {
+  margin-top: 0;
+  font-style: italic;
+}
