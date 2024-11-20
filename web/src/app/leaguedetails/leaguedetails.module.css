@@ -1,8 +1,3 @@
-.scrollContainer {
-    max-height: calc(5 * 50px); /* Adjust the height to fit 5 member items */
-    overflow-y: auto;
-}
-
 .container {
     background: #15151e;
     padding: 25px;
@@ -28,15 +23,17 @@
     margin: 10px 0;
 }
 
-.membersList {
+.membersList,
+.ballotList {
     list-style-type: none;
     padding: 0;
-    color: white;
     margin: 0;
     font-size: large;
+    color: white;
 }
 
-.memberItem {
+.memberItem,
+.ballotItem {
     padding: 10px;
     background-color: #262630;
     margin: 5px 0;
@@ -45,6 +42,51 @@
     justify-content: space-between;
 }
 
-    .memberItem:nth-child(even) {
+    .memberItem:nth-child(even),
+    .ballotItem:nth-child(even) {
         background-color: #420000;
+    }
+
+.scrollContainer {
+    max-height: calc(5 * 50px);
+    overflow-y: auto;
+}
+
+.dropdown {
+    background-color: white;
+    color: black;
+    padding: 10px;
+    border-radius: 5px;
+    margin: 10px 0;
+    font-size: medium;
+}
+
+.roundDetailsList {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.roundDetailItem {
+    margin: 5px 0;
+}
+
+.detailButton {
+    width: 100%;
+    background-color: #262630;
+    color: white;
+    padding: 10px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+}
+
+    .detailButton:hover {
+        background-color: #420000;
+    }
+
+    .detailButton:focus {
+        outline: 2px solid #aa0000;
     }

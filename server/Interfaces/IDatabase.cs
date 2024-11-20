@@ -71,4 +71,6 @@ public interface IDatabase
     Task UpdateLeagueInviteStatus(int inviteId, int status);
 
     Task<LeagueRoundDetails[]> GetLeagueRoundDetails(int leagueId, int raceId);
+
+    Task<string[]> GetBallotContentById(int ballotId);
 }

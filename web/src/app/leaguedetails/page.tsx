@@ -28,6 +28,8 @@ export default function LeagueDetailsComponent() {
     const [raceRound, setRaceRound] = useState<string>("");
     const [rounds, setRounds] = useState<string[]>([]);
     const [roundDetails, setRoundDetails] = useState<RoundDetails[]>([]);
+    const [ballotId, setBallotId] = useState<string | null>(null);
+    const [ballotContent, setBallotContent] = useState<string[] | null>(null);
 
     const currentYear = new Date().getFullYear();
     const seasons = Array.from({ length: currentYear - 2024 + 1 }, (_, i) => currentYear - i);
@@ -69,6 +71,12 @@ export default function LeagueDetailsComponent() {
             fetchRoundDetails();
         }
     }, [raceSeason, raceRound]);
+
+    useEffect(() => {
+        if (ballotId) {
+            fetchBallotDetails();
+        }
+    }, [ballotId]);
 
     useEffect(() => {
         const storedLeagueId = sessionStorage.getItem('selectedLeagueId');
@@ -151,6 +159,25 @@ export default function LeagueDetailsComponent() {
         }
     };
 
+    const fetchBallotDetails = async () => {
+        try {
+            const response = await fetch(`http://localhost:8080/api/ballot/populateBallotContent?ballotId=${ballotId}`, {
+                method: "GET",
+                headers: {
+                    Authorization: `Bearer ${identity.sessionToken}`,
+                    "Content-Type": "application/json",
+                },
+            });
+
+            if (response.status === 200) {
+                const data = await response.json();
+                setBallotContent(data);
+            }
+        } catch (error) {
+            console.error("Error fetching league details:", error);
+        }
+    }
+
     return (
         <SidebarLayout>
             <div className={styles.container}>
@@ -183,7 +210,10 @@ export default function LeagueDetailsComponent() {
                         onChange={(e) => {
                             setRaceSeason(e.target.value);
                             setRaceRound("");
+                            setBallotId(null);
+                            setBallotContent(null);
                         }}
+                        className={styles.dropdown}
                     >
                         <option value="" disabled>
                             Select a season
@@ -199,7 +229,12 @@ export default function LeagueDetailsComponent() {
                             <h3>Select the round: </h3>
                             <select
                                 value={raceRound}
-                                onChange={(e) => setRaceRound(e.target.value)}
+                                onChange={(e) => {
+                                    setRaceRound(e.target.value);
+                                    setBallotId(null);
+                                    setBallotContent(null);
+                                }}
+                                className={styles.dropdown}
                             >
                                 <option value="" disabled>
                                     Select a round
@@ -220,8 +255,29 @@ export default function LeagueDetailsComponent() {
                         <ul className={styles.roundDetailsList}>
                             {roundDetails.map((detail) => (
                                 <li key={detail.ballotId} className={styles.roundDetailItem}>
-                                    <span>{detail.username}</span>
-                                    <span>Score: {detail.score}</span>
+                                    <button
+                                        onClick={() => setBallotId(detail.ballotId.toString())}
+                                        className={styles.detailButton}
+                                    >
+                                        <span>{detail.username}</span>
+                                        <span>Score: {detail.score}</span>
+                                    </button>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                )}
+
+                {ballotContent && (
+                    <div>
+                        <h3>
+                            Ballot Of {roundDetails.find((d) => d.ballotId.toString() === ballotId)?.username} for{" "}
+                            {raceName}
+                        </h3>
+                        <ul className={styles.ballotList}>
+                            {ballotContent.map((content, index) => (
+                                <li key={index} className={styles.ballotItem}>
+                                    {index + 1}. {content}
                                 </li>
                             ))}
                         </ul>
@@ -231,3 +287,4 @@ export default function LeagueDetailsComponent() {
         </SidebarLayout>
     );
 }
+ 
