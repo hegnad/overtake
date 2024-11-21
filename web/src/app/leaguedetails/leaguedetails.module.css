@@ -1,8 +1,3 @@
-.scrollContainer {
-    max-height: calc(5 * 50px); /* Adjust the height to fit 5 member items */
-    overflow-y: auto;
-}
-
 .container {
     background: #15151e;
     padding: 25px;
@@ -28,15 +23,17 @@
     margin: 10px 0;
 }
 
-.membersList {
+.membersList,
+.ballotList {
     list-style-type: none;
     padding: 0;
-    color: white;
     margin: 0;
     font-size: large;
+    color: white;
 }
 
-.memberItem {
+.memberItem,
+.ballotItem {
     padding: 10px;
     background-color: #262630;
     margin: 5px 0;
@@ -45,6 +42,133 @@
     justify-content: space-between;
 }
 
-    .memberItem:nth-child(even) {
+    .memberItem:nth-child(even),
+    .ballotItem:nth-child(even) {
         background-color: #420000;
+    }
+
+.scrollContainer {
+    max-height: calc(5 * 50px);
+    overflow-y: auto;
+}
+
+.dropdown {
+    background-color: white;
+    color: black;
+    padding: 10px;
+    border-radius: 5px;
+    margin: 10px 0;
+    font-size: medium;
+}
+
+.roundDetailsList {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.roundDetailItem {
+    margin: 5px 0;
+}
+
+.detailButton {
+    width: 100%;
+    background-color: #262630;
+    color: white;
+    padding: 10px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+}
+
+    .detailButton:hover {
+        background-color: #420000;
+    }
+
+    .detailButton:focus {
+        outline: 2px solid #aa0000;
+    }
+
+.ownerHeader {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.button {
+    padding: 25px;
+    margin-top: 5px;
+    background-color: #AA0000;
+    color: white;
+    border-radius: 15px;
+    cursor: pointer;
+    font-size: 1.6rem;
+    width: 100%;
+    transition: transform 0.3s ease, background-color 0.3s ease;
+}
+
+    .button:hover {
+        transform: scale(1.02);
+        background-color: #900000;
+    }
+
+.returnButton {
+    padding: 5px;
+    margin-top: 5px;
+    background-color: #AA0000;
+    color: white;
+    border-radius: 15px;
+    cursor: pointer;
+    font-size: 3rem;
+    width: 15%;
+    transition: transform 0.3s ease, background-color 0.3s ease;
+}
+
+    .returnButton:hover {
+        transform: scale(1.02);
+        background-color: #900000;
+    }
+
+.popup {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(100, 100, 100, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.popupContent {
+    background-color: #f5f5f5;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+    .popupContent p {
+        font-size: 1.5rem;
+        margin-bottom: 20px;
+    }
+
+.closeButton {
+    padding: 10px 20px;
+    background-color: #AA0000;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+    .closeButton:hover {
+        transform: scale(1.05);
+        background-color: #900000;
     }

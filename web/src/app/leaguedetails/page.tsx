@@ -3,6 +3,7 @@
 import { IdentityContext } from "../lib/context/identity";
 import { useEffect, useState, useContext } from 'react';
 import { getRaceResults, getSeasonRounds } from "../utils/api/ergast";
+import { useRouter } from 'next/navigation';
 import styles from "./leaguedetails.module.css";
 import SidebarLayout from "../ui/sidebar-layout";
 
@@ -28,11 +29,17 @@ export default function LeagueDetailsComponent() {
     const [raceRound, setRaceRound] = useState<string>("");
     const [rounds, setRounds] = useState<string[]>([]);
     const [roundDetails, setRoundDetails] = useState<RoundDetails[]>([]);
+    const [ballotId, setBallotId] = useState<string | null>(null);
+    const [ballotContent, setBallotContent] = useState<string[] | null>(null);
+    const [isOwner, setIsOwner] = useState<boolean>(false);
+    const [showJoinCode, setShowJoinCode] = useState<boolean>(false);
+    const [joinCode, setJoinCode] = useState<string | null>(null);
 
     const currentYear = new Date().getFullYear();
     const seasons = Array.from({ length: currentYear - 2024 + 1 }, (_, i) => currentYear - i);
 
     const identity = useContext(IdentityContext);
+    const router = useRouter();
 
     useEffect(() => {
         const fetchRounds = async () => {
@@ -71,8 +78,13 @@ export default function LeagueDetailsComponent() {
     }, [raceSeason, raceRound]);
 
     useEffect(() => {
+        if (ballotId) {
+            fetchBallotDetails();
+        }
+    }, [ballotId]);
+
+    useEffect(() => {
         const storedLeagueId = sessionStorage.getItem('selectedLeagueId');
-        console.log("Retrieved League ID from sessionStorage:", storedLeagueId);
 
         if (storedLeagueId) {
             setLeagueId(storedLeagueId);
@@ -120,8 +132,48 @@ export default function LeagueDetailsComponent() {
                 }
             };
 
+            const isUserLeagueOwner = async () => {
+                try {
+                    const response = await fetch(`http://localhost:8080/api/league/isUserLeagueOwner?leagueId=${encodeURIComponent(storedLeagueId)}`, {
+                        method: "GET",
+                        headers: {
+                            Authorization: `Bearer ${identity.sessionToken}`,
+                            "Content-Type": "application/json",
+                        },
+                    });
+
+                    if (response.status === 200) {
+                        const result = await response.json();
+                        setIsOwner(result);
+                    }
+                } catch (error) {
+                    console.error("Error fetching league details:", error);
+                }
+            };
+
+            const fetchJoinCode = async () => {
+                try {
+                    const response = await fetch(`http://localhost:8080/api/league/getJoinCode?leagueId=${encodeURIComponent(storedLeagueId)}`, {
+                        method: "GET",
+                        headers: {
+                            Authorization: `Bearer ${identity.sessionToken}`,
+                            "Content-Type": "application/json",
+                        },
+                    });
+
+                    if (response.status === 200) {
+                        const result = await response.json();
+                        setJoinCode(result);
+                    }
+                } catch (error) {
+                    console.error("Error fetching league details:", error);
+                }
+            };
+
             fetchLeagueName();
             fetchLeagueDetails();
+            isUserLeagueOwner();
+            fetchJoinCode();
         } else {
             console.error('No leagueId found in sessionStorage');
         }
@@ -151,9 +203,68 @@ export default function LeagueDetailsComponent() {
         }
     };
 
+    const fetchBallotDetails = async () => {
+        try {
+            const response = await fetch(`http://localhost:8080/api/ballot/populateBallotContent?ballotId=${ballotId}`, {
+                method: "GET",
+                headers: {
+                    Authorization: `Bearer ${identity.sessionToken}`,
+                    "Content-Type": "application/json",
+                },
+            });
+
+            if (response.status === 200) {
+                const data = await response.json();
+                setBallotContent(data);
+            }
+        } catch (error) {
+            console.error("Error fetching league details:", error);
+        }
+    }
+
+    const onReturnClick = () => {
+        router.push('/raceleague');
+    };
+
+    const onEditLeagueClick = () => {
+        router.push('/editleague');
+    }
+
+    const onViewJoinCodeClick = () => {
+        setShowJoinCode(true);
+    }
+
     return (
         <SidebarLayout>
             <div className={styles.container}>
+                {isOwner && (
+                    <div className={styles.ownerHeader}>
+
+                        <button className={styles.returnButton} onClick={onReturnClick}>
+                            {'<'}
+                        </button>
+                        <button className={styles.button} onClick={onEditLeagueClick}>
+                            EDIT LEAGUE
+                        </button>
+                        <button className={styles.button} onClick={onViewJoinCodeClick}>
+                            VIEW JOIN CODE
+                        </button>
+                    </div>
+                )}
+
+                {showJoinCode && (
+                    <div className={styles.popup}>
+                        <div className={styles.popupContent}>
+                            <p>
+                                Invite Code for <strong>{leagueName}</strong>: <strong>{joinCode}</strong>
+                            </p>
+                            <button className={styles.closeButton} onClick={() => setShowJoinCode(false)}>
+                                Close
+                            </button>
+                        </div>
+                    </div>
+                )}
+
                 <h1 className={styles.header}>League Details</h1>
                 <p className={styles.leagueInfo}>
                     {leagueName ? `League Name: ${leagueName}` : "Loading League Name..."}
@@ -183,7 +294,10 @@ export default function LeagueDetailsComponent() {
                         onChange={(e) => {
                             setRaceSeason(e.target.value);
                             setRaceRound("");
+                            setBallotId(null);
+                            setBallotContent(null);
                         }}
+                        className={styles.dropdown}
                     >
                         <option value="" disabled>
                             Select a season
@@ -199,7 +313,12 @@ export default function LeagueDetailsComponent() {
                             <h3>Select the round: </h3>
                             <select
                                 value={raceRound}
-                                onChange={(e) => setRaceRound(e.target.value)}
+                                onChange={(e) => {
+                                    setRaceRound(e.target.value);
+                                    setBallotId(null);
+                                    setBallotContent(null);
+                                }}
+                                className={styles.dropdown}
                             >
                                 <option value="" disabled>
                                     Select a round
@@ -220,8 +339,29 @@ export default function LeagueDetailsComponent() {
                         <ul className={styles.roundDetailsList}>
                             {roundDetails.map((detail) => (
                                 <li key={detail.ballotId} className={styles.roundDetailItem}>
-                                    <span>{detail.username}</span>
-                                    <span>Score: {detail.score}</span>
+                                    <button
+                                        onClick={() => setBallotId(detail.ballotId.toString())}
+                                        className={styles.detailButton}
+                                    >
+                                        <span>{detail.username}</span>
+                                        <span>Score: {detail.score}</span>
+                                    </button>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                )}
+
+                {ballotContent && (
+                    <div>
+                        <h3>
+                            Ballot Of {roundDetails.find((d) => d.ballotId.toString() === ballotId)?.username} for{" "}
+                            {raceName}
+                        </h3>
+                        <ul className={styles.ballotList}>
+                            {ballotContent.map((content, index) => (
+                                <li key={index} className={styles.ballotItem}>
+                                    {index + 1}. {content}
                                 </li>
                             ))}
                         </ul>
@@ -231,3 +371,4 @@ export default function LeagueDetailsComponent() {
         </SidebarLayout>
     );
 }
+ 

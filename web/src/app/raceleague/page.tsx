@@ -50,7 +50,7 @@ export default function RaceLeague() {
     setShowJoinLeague(false);
     setShowConfirmation(true);
     setConfirmationType("joined");
-    };
+  };
 
     const handleReturnClick = () => {
       if (!showCreateLeague && !showJoinLeague) {
@@ -61,7 +61,7 @@ export default function RaceLeague() {
         setShowConfirmation(false);
         setConfirmationType(null);
       }
-  };
+    };
 
   return (
     <SidebarLayout>
