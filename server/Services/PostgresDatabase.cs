@@ -1041,4 +1041,65 @@ public class PostgresDatabase : IDatabase
 
         return driverNames.ToArray();
     }
+
+    public async Task<bool> IsUserLeagueOwner(int userId, int leagueId)
+    {
+        await using var cmd = _dataSource.CreateCommand(
+            @"SELECT CASE
+                  WHEN owner_id = @user_id THEN true
+                  ELSE false
+              END
+              FROM raceleague
+              WHERE league_id = @league_id"
+        );
+
+        cmd.Parameters.AddWithValue("user_id", userId);
+        cmd.Parameters.AddWithValue("league_id", leagueId);
+
+        var isOwner = false;
+
+        await using var reader = await cmd.ExecuteReaderAsync();
+        if (await reader.ReadAsync())
+        {
+            isOwner = reader.GetBoolean(0);
+        }
+
+        return isOwner;
+    }
+
+    public async Task<string> getLeagueJoinCode(int leagueId)
+    {
+        await using var cmd = _dataSource.CreateCommand(
+            @"SELECT invite_code FROM raceLeague
+                WHERE league_id = @league_id"
+        );
+
+        cmd.Parameters.AddWithValue("league_id", leagueId);
+
+        string inviteCode = null;
+
+        await using var reader = await cmd.ExecuteReaderAsync();
+        if (await reader.ReadAsync())
+        {
+            inviteCode = reader.GetString(0);
+        }
+
+        return inviteCode;
+    }
+
+    public async Task<bool> UpdateLeagueDetailsAsync(UpdateLeagueRequest request)
+    {
+        await using var cmd = _dataSource.CreateCommand(
+            @"UPDATE raceleague
+              SET name = @name, is_public = @is_public
+              WHERE league_id = @league_id"
+        );
+
+        cmd.Parameters.AddWithValue("league_id", request.LeagueId);
+        cmd.Parameters.AddWithValue("name", request.Name);
+        cmd.Parameters.AddWithValue("is_public", request.IsPublic);
+
+        var rowsAffected = await cmd.ExecuteNonQueryAsync();
+        return rowsAffected > 0;
+    }
 }

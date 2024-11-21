@@ -73,4 +73,10 @@ public interface IDatabase
     Task<LeagueRoundDetails[]> GetLeagueRoundDetails(int leagueId, int raceId);
 
     Task<string[]> GetBallotContentById(int ballotId);
+
+    Task<bool> IsUserLeagueOwner(int userId, int leagueId);
+
+    Task<string> getLeagueJoinCode(int leagueId);
+
+    Task<bool> UpdateLeagueDetailsAsync(UpdateLeagueRequest request);
 }
