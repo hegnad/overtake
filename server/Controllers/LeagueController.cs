@@ -7,6 +7,7 @@ using Overtake.Entities;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 using System.Threading.Tasks.Dataflow;
+using System.Reflection.Metadata.Ecma335;
 
 
 /// <summary>
@@ -48,12 +49,40 @@ public class LeagueController : ControllerBase
         int membership = await _database.InsertLeagueMembershipAsync(newLeagueId, account.AccountId);
 
         return new OkObjectResult(new RaceLeagueInfo {LeagueId = newLeagueId, OwnerId = account.AccountId, Name = request.Name, IsPublic = request.IsPublic});
-
     }
 
-    /// <summary>
-    ///  Retrieves all race leagues for the current user.
-    /// </summary>
+    [HttpPut]
+    [Route("updateLeagueDetails")]
+    [Produces("application/json")]
+    public async Task<IActionResult> UpdateLeagueDetailsAsync([FromBody] UpdateLeagueRequest request)
+    {
+        if (request == null || string.IsNullOrWhiteSpace(request.Name))
+        {
+            return BadRequest(new { Message = "Invalid input. League name must be provided." });
+        }
+
+        var isUpdated = await _database.UpdateLeagueDetailsAsync(request);
+
+        if (isUpdated)
+        {
+            return Ok(new { Message = "League details updated successfully." });
+        }
+        else
+        {
+            return NotFound(new { Message = $"League with ID {request.LeagueId} not found." });
+        }
+    }
+
+    [HttpGet]
+    [Route("getLeagueById")]
+    [Produces("application/json")]
+    public async Task<ActionResult<RaceLeague>> GetLeagueByIdAsync([FromQuery] int leagueId)
+    {
+        var league = await _database.GetLeagueByIdAsync(leagueId);
+
+        return new OkObjectResult(league);
+    }
+
     [HttpGet]
     [Route("populate")]
     [Produces("application/json")]
@@ -150,21 +179,14 @@ public class LeagueController : ControllerBase
     [Produces("application/json")]
     public async Task<ActionResult<string>> GetLeagueNameAsync(int leagueId)
     {
-        try
-        {
-            var league = await _database.GetLeagueByIdAsync(leagueId);
+        var league = await _database.GetLeagueByIdAsync(leagueId);
 
-            if (league == null)
-            {
-                return NotFound("League not found");
-            }
-
-            return Ok(league.Name);
-        }
-        catch (Exception ex)
+        if (league == null)
         {
-            return StatusCode(500, "An error occurred while retrieving the league name.");
+            return NotFound("League not found");
         }
+
+        return Ok(league.Name);
     }
 
     [HttpGet]
@@ -175,5 +197,27 @@ public class LeagueController : ControllerBase
         var details = await _database.GetLeagueRoundDetails(leagueId, raceId);
 
         return new OkObjectResult(details);
+    }
+
+    [HttpGet]
+    [Route("isUserLeagueOwner")]
+    [Produces("application/json")]
+    public async Task<ActionResult<bool>> IsUserLeagueOwnerAsync([FromQuery] int leagueId)
+    {
+        int userId = Convert.ToInt32(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+
+        var isOwner = await _database.IsUserLeagueOwner(userId, leagueId);
+
+        return new OkObjectResult(isOwner);
+    }
+
+    [HttpGet]
+    [Route("getJoinCode")]
+    [Produces("application/json")]
+    public async Task<ActionResult<string>> getLeagueJoinCodeAsync([FromQuery] int leagueId)
+    {
+        var inviteCode = await _database.getLeagueJoinCode(leagueId);
+
+       return new OkObjectResult(inviteCode);
     }
 }
