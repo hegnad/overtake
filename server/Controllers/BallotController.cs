@@ -168,5 +168,13 @@ public class BallotController : ControllerBase
         return Ok(ballotId);
     }
 
+    [HttpGet]
+    [Route("populateBallotContent")]
+    [Produces("application/json")]
+    public async Task<ActionResult<string[]>> GetBallotContentByIdAsync([FromQuery] int ballotId)
+    {
+        var ballotContent = await _database.GetBallotContentById(ballotId);
 
+        return Ok(ballotContent);
+    }
 }

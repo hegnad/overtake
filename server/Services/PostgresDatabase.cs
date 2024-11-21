@@ -986,9 +986,9 @@ public class PostgresDatabase : IDatabase
         // Create the command with the SQL query
         await using var cmd = _dataSource.CreateCommand(
             @"SELECT b.ballot_id, b.user_id, a.username, b.score
-          FROM ballot b
-          JOIN account a ON b.user_id = a.account_id
-          WHERE b.league_id = @league_id AND b.race_id = @race_id"
+              FROM ballot b
+              JOIN account a ON b.user_id = a.account_id
+              WHERE b.league_id = @league_id AND b.race_id = @race_id"
         );
 
         // Add parameters
@@ -1018,5 +1018,27 @@ public class PostgresDatabase : IDatabase
 
         // Return the list as an array
         return ballots.ToArray();
+    }
+
+    public async Task<string[]> GetBallotContentById(int ballotId)
+    {
+        await using var cmd = _dataSource.CreateCommand(
+            @"SELECT driver_name
+              FROM ballotContent
+              WHERE ballot_id = @ballot_id
+              ORDER BY position ASC"
+        );
+
+        cmd.Parameters.AddWithValue("ballot_id", ballotId);
+
+        var driverNames = new List<string>();
+
+        await using var reader = await cmd.ExecuteReaderAsync();
+        while (await reader.ReadAsync())
+        {
+            driverNames.Add(reader.GetString(0));
+        }
+
+        return driverNames.ToArray();
     }
 }
