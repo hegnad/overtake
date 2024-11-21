@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { getNextRace } from "../utils/api/ergast";
-import HamsterLoader from "./loaders/hamsterloader";
+import { getNextRace } from "../../utils/api/ergast";
+import HamsterLoader from "../loaders/hamsterloader";
 
 export default function RaceCountdown() {
   const [raceData, setRaceData] = useState(null);

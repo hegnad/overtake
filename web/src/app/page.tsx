@@ -1,15 +1,11 @@
-
-
 import SidebarLayout from "./ui/sidebar-layout";
 import styles from "./home.module.css";
-import RaceCountdown from "./components/racecountdown";
+import RaceCountdown from "./components/home/racecountdown";
 import { overtakerOfTheRace } from "./utils/api/ergast";
 import { useEffect, useState } from "react";
 import OvertakerOfTheDay from "./components/home/overtakeroftheday";
 
 export default function Home() {
-
-
   return (
     <SidebarLayout>
       <div className={styles.container}>
