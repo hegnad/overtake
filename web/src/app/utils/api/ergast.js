@@ -197,7 +197,8 @@ export async function overtakerOfTheRace() {
     const data = await response.json();
     const overtakes = data.MRData.RaceTable.Races[0].Results.map((result) => ({
       driverId: result.number,
-      fullName: `${result.Driver.givenName} ${result.Driver.familyName}`,
+      firstName: result.Driver.givenName,
+      lastName: result.Driver.familyName,
       finishPosition: result.position,
       startingPosition: result.grid,
       overtakes: result.grid - result.position,
