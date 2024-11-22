@@ -85,11 +85,23 @@ public class RaceTriggerService : BackgroundService
                 if (raceData?.MRData?.RaceTable?.Races?.Count > 0)
                 {
                     var nextRace = raceData.MRData.RaceTable.Races[0];
-                    var raceStartTime = DateTime.Parse(nextRace.Date + "T" + nextRace.Time);
 
-                    // Set trigger time for normal operation (3 hours after race start)
-                    _triggerTime = raceStartTime.AddHours(3);
-                    _logger.LogInformation("Next race trigger set for: {TriggerTime}", _triggerTime.Value);
+                    // Parse the race start time and explicitly set it to UTC
+                    var raceStartTimeUtc = DateTime.SpecifyKind(
+                        DateTime.Parse(nextRace.Date + "T" + nextRace.Time),
+                        DateTimeKind.Utc
+                    );
+
+                    // Convert UTC to server local time (Mountain Time for Calgary)
+                    var mountainTimeZone = TimeZoneInfo.FindSystemTimeZoneById("America/Edmonton");
+                    var raceStartTimeLocal = TimeZoneInfo.ConvertTimeFromUtc(raceStartTimeUtc, mountainTimeZone);
+
+                    // Calculate the trigger time (3 hours after race start)
+                    _triggerTime = raceStartTimeLocal.AddHours(3);
+
+                    // Log both the race start and the calculated trigger time
+                    _logger.LogInformation("Race start time (local): {RaceStartTime}", raceStartTimeLocal);
+                    _logger.LogInformation("Next race trigger set for: {TriggerTime} (local time)", _triggerTime.Value);
                 }
                 else
                 {
