@@ -75,7 +75,7 @@ public class RaceTriggerService : BackgroundService
         try
         {
             using var httpClient = _httpClientFactory.CreateClient();
-            var response = await httpClient.GetAsync("https://ergast.com/api/f1/current/next.json");
+            var response = await httpClient.GetAsync("https://api.jolpi.ca/ergast/f1/current/next.json");
 
             if (response.IsSuccessStatusCode)
             {
