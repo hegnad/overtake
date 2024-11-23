@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { getNextRace } from "../utils/api/ergast";
+import { getNextRace } from "../../utils/api/ergast";
+import HamsterLoader from "../loaders/hamsterloader";
 
 export default function RaceCountdown() {
   const [raceData, setRaceData] = useState(null);
@@ -48,7 +49,7 @@ export default function RaceCountdown() {
   return (
     <div>
       {raceData ? (
-        <div className="border-2 rounded-xl text-center m-2">
+        <div className="border-2 rounded-xl text-center m-2 h-250px">
           <div className="m-2">
             <h2>{raceData.gpName} lights out in:</h2>
             <p>
@@ -87,7 +88,7 @@ export default function RaceCountdown() {
           )}
         </div>
       ) : (
-        <p>Loading race data...</p>
+        <HamsterLoader />
       )}
     </div>
   );
