@@ -16,6 +16,8 @@ public class Program
         // Add services to the container.
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();
+        builder.Services.AddHostedService<RaceTriggerService>();
+        builder.Services.AddHttpClient();
         builder.Services.AddSwaggerGen(options =>
         {
             // Enables loading XML docs for OpenAPI

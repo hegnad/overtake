@@ -1,5 +1,5 @@
 export async function getNextRace() {
-  const apiUrl = "https://ergast.com/api/f1/current/next.json";
+  const apiUrl = "https://api.jolpi.ca/ergast/f1/current/next.json";
 
   try {
     const response = await fetch(apiUrl);
