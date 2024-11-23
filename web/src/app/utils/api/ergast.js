@@ -64,28 +64,25 @@ export async function getRaceResults(season, round) {
 }
 
 export async function getPrevRace() {
+  const apiUrl = "https://ergast.com/api/f1/current/last/results.json";
 
-    const apiUrl = "https://ergast.com/api/f1/current/last/results.json";
-
-    try {
-        const response = await fetch(apiUrl);
-        if (!response.ok) {
-            throw new Error("Failed to fetch race results");
-        }
-
-        const data = await response.json();
-        const raceResults = data.MRData.RaceTable.Races[0].Results.slice(0, 10).map(
-            (result) => `${result.Driver.givenName} ${result.Driver.familyName}`
-        );
-
-        console.log("Fetched previous race results:", raceResults);
-        return raceResults;
-
-    } catch (error) {
-        console.error("Error fetching previous race results:", error);
-        return [];
+  try {
+    const response = await fetch(apiUrl);
+    if (!response.ok) {
+      throw new Error("Failed to fetch race results");
     }
 
+    const data = await response.json();
+    const raceResults = data.MRData.RaceTable.Races[0].Results.slice(0, 10).map(
+      (result) => `${result.Driver.givenName} ${result.Driver.familyName}`
+    );
+
+    console.log("Fetched previous race results:", raceResults);
+    return raceResults;
+  } catch (error) {
+    console.error("Error fetching previous race results:", error);
+    return [];
+  }
 }
 
 export async function getSeasonRounds(season) {
@@ -185,6 +182,32 @@ export async function getCircuits() {
     return ergastCircuits;
   } catch (error) {
     console.error("Error fetching circuits data: ", error);
+    return null;
+  }
+}
+
+export async function overtakerOfTheRace() {
+  const apiUrl = "https://ergast.com/api/f1/current/last/results.json";
+
+  try {
+    const response = await fetch(apiUrl);
+    if (!response.ok) {
+      throw new Error("Failed to fetch");
+    }
+    const data = await response.json();
+    const overtakes = data.MRData.RaceTable.Races[0].Results.map((result) => ({
+      driverId: result.number,
+      firstName: result.Driver.givenName,
+      lastName: result.Driver.familyName,
+      finishPosition: result.position,
+      startingPosition: result.grid,
+      overtakes: result.grid - result.position,
+    }));
+    overtakes.sort((a, b) => b.overtakes - a.overtakes);
+    console.log("Fetched overtakes:", overtakes);
+    return overtakes[0];
+  } catch (error) {
+    console.error("Error fetching data: ", error);
     return null;
   }
 }

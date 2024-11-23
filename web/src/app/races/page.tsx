@@ -1,5 +1,6 @@
 "use client";
 
+import HamsterLoader from "../components/loaders/hamsterloader";
 import SidebarLayout from "../ui/sidebar-layout";
 import { getRaceResults, getSeasonRounds } from "../utils/api/ergast";
 import styles from "./races.module.css";
@@ -107,7 +108,7 @@ export default function Races() {
           {raceSeason == "" || raceRound == "" ? (
             <p></p>
           ) : raceResults && raceResults.length === 0 ? (
-            <p>Loading Results...</p>
+            <HamsterLoader />
           ) : (
             <div className={styles.raceresults}>
               <table>

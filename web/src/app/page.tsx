@@ -1,6 +1,9 @@
 import SidebarLayout from "./ui/sidebar-layout";
 import styles from "./home.module.css";
-import RaceCountdown from "./components/racecountdown";
+import RaceCountdown from "./components/home/racecountdown";
+import { overtakerOfTheRace } from "./utils/api/ergast";
+import { useEffect, useState } from "react";
+import OvertakerOfTheDay from "./components/home/overtakeroftheday";
 
 export default function Home() {
   return (
@@ -8,53 +11,7 @@ export default function Home() {
       <div className={styles.container}>
         <div className={styles.main}>
           <div className={styles.top}>
-            <div className={styles.driver}>
-              <div className={styles.title}>OVERTAKE DRIVER OF THE DAY</div>
-              <img
-                src="/images/yellowline.png"
-                alt="Yellow Line"
-                style={{ width: "100%" }}
-              />
-              <div className={styles.driverInfo}>
-                <div className={styles.driverDetails}>
-                  <div className={styles.driverName}>
-                    LEWIS
-                    <br />
-                    HAMILTON
-                  </div>
-                  <div className={styles.driverNoAndFlag}>
-                    <div className={styles.driverNumber}>44</div>
-                    <div className={styles.driverFlag}>
-                      <img
-                        src="/images/uk.png"
-                        alt="UK Flag"
-                        style={{
-                          width: "109px",
-                          height: "63px",
-                          borderRadius: "5px",
-                          marginRight: "1rem",
-                        }}
-                      />
-                    </div>
-                  </div>
-                </div>
-                <div className={styles.driverPhoto}>
-                  <img
-                    src="/assets/driver_headshot/hamilton.png"
-                    style={{
-                      display: "block",
-                    }}
-                    alt="Lewis Hamilton"
-                    className={styles.driverImage}
-                  />
-                </div>
-              </div>
-              <img
-                src="/images/yellowline.png"
-                alt="Yellow Line"
-                style={{ width: "100%" }}
-              />
-            </div>
+            <OvertakerOfTheDay />
             <div className={styles.nextRace}>
               <div className={styles.title}>UPCOMING GRAND PRIX</div>
               <div className="">
