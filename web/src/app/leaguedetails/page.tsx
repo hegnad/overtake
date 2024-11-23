@@ -19,6 +19,14 @@ interface RoundDetails {
     score: number;
 }
 
+interface DriverResult {
+    position: string;
+    Driver: {
+        givenName: string;
+        familyName: string;
+    };
+}
+
 export default function LeagueDetailsComponent() {
     const [leagueId, setLeagueId] = useState<string | null>(null);
     const [leagueName, setLeagueName] = useState<string | null>(null);
@@ -34,6 +42,7 @@ export default function LeagueDetailsComponent() {
     const [isOwner, setIsOwner] = useState<boolean>(false);
     const [showJoinCode, setShowJoinCode] = useState<boolean>(false);
     const [joinCode, setJoinCode] = useState<string | null>(null);
+    const [ballotRaceResults, setBallotRaceResults] = useState<DriverResult[] | null>(null);
 
     const currentYear = new Date().getFullYear();
     const seasons = Array.from({ length: currentYear - 2024 + 1 }, (_, i) => currentYear - i);
@@ -205,7 +214,7 @@ export default function LeagueDetailsComponent() {
 
     const fetchBallotDetails = async () => {
         try {
-            const response = await fetch(`http://localhost:8080/api/ballot/populateBallotContent?ballotId=${ballotId}`, {
+            const ballotResponse = await fetch(`http://localhost:8080/api/ballot/populateBallotContent?ballotId=${ballotId}`, {
                 method: "GET",
                 headers: {
                     Authorization: `Bearer ${identity.sessionToken}`,
@@ -213,14 +222,38 @@ export default function LeagueDetailsComponent() {
                 },
             });
 
-            if (response.status === 200) {
-                const data = await response.json();
-                setBallotContent(data);
+            if (ballotResponse.status === 200) {
+                const ballotData = await ballotResponse.json();
+                setBallotContent(ballotData);
+
+                // Fetch race results for the selected race
+                const results = await getRaceResults(raceSeason, raceRound);
+                if (results) {
+                    const raceResults = results?.raceResults || [];
+                    setBallotRaceResults(raceResults);
+                }
             }
         } catch (error) {
-            console.error("Error fetching league details:", error);
+            console.error("Error fetching ballot details:", error);
         }
-    }
+    };
+
+    const getDriverIdByName = (driverFullName: string | null | undefined) => {
+        if (typeof driverFullName !== "string" || !driverFullName) {
+            return "default";
+        }
+        return driverFullName.toLowerCase().replace(/\s+/g, "_");
+    };
+
+    const getBallotComparisonClass = (driverName: string, position: number) => {
+        const predictedPosition = ballotContent?.indexOf(driverName) ?? -1;
+
+        if (predictedPosition === position) return styles.exactMatch; // Exact match (green)
+        if (Math.abs(predictedPosition - position) === 1) return styles.oneOffMatch; // +/- 1 position (yellow)
+        if (Math.abs(predictedPosition - position) === 2) return styles.twoOffMatch; // +/- 2 positions (orange)
+        if (predictedPosition !== -1) return styles.inBallotNoMatch; // In ballot, no points scored
+        return ""; // Not in ballot
+    };
 
     const onReturnClick = () => {
         router.push('/raceleague');
@@ -352,19 +385,55 @@ export default function LeagueDetailsComponent() {
                     </div>
                 )}
 
-                {ballotContent && (
-                    <div>
+                {ballotContent && ballotRaceResults && (
+                    <div className={styles.resultsGrid}>
                         <h3>
                             Ballot Of {roundDetails.find((d) => d.ballotId.toString() === ballotId)?.username} for{" "}
                             {raceName}
                         </h3>
-                        <ul className={styles.ballotList}>
-                            {ballotContent.map((content, index) => (
-                                <li key={index} className={styles.ballotItem}>
-                                    {index + 1}. {content}
-                                </li>
-                            ))}
-                        </ul>
+
+                        {ballotContent.map((predictedDriver, index) => {
+                            // Find the driver's actual position in race results
+                            const actualIndex = ballotRaceResults.findIndex(
+                                (result) => `${result.Driver.givenName} ${result.Driver.familyName}` === predictedDriver
+                            );
+
+                            // Determine points and styling based on position difference
+                            let points = 0;
+                            let styleClass = styles.inBallotNoMatch; // Default style for no match
+
+                            if (actualIndex !== -1) {
+                                const positionDifference = Math.abs(actualIndex - index);
+
+                                if (positionDifference === 0) {
+                                    points = 25;
+                                    styleClass = styles.exactMatch;
+                                } else if (positionDifference === 1) {
+                                    points = 5;
+                                    styleClass = styles.oneOffMatch;
+                                } else if (positionDifference === 2) {
+                                    points = 3;
+                                    styleClass = styles.twoOffMatch;
+                                }
+                            }
+
+                            // Generate driver ID for image
+                            const driverId = getDriverIdByName(predictedDriver);
+
+                            return (
+                                <div key={index} className={`${styles.resultBox} ${styleClass}`}>
+                                    <img
+                                        src={`/assets/driver_headshot/${driverId}.png`}
+                                        alt={predictedDriver}
+                                        className={styles.driverImage}
+                                        onError={(e) => (e.currentTarget.src = "/assets/driver_headshot/default.png")}
+                                    />
+                                    <p className={styles.position}>{index + 1}.</p>
+                                    <p className={styles.driverName}>{predictedDriver}</p>
+                                    <p className={styles.driverPoints}>+{points}</p>
+                                </div>
+                            );
+                        })}
                     </div>
                 )}
             </div>
