@@ -537,9 +537,9 @@ public class PostgresDatabase : IDatabase
     public async Task<Driver> GetDriverMetadataByNumberAsync(int driverNumber)
     {
         await using var cmd = _dataSource.CreateCommand(
-            @"SELECT driver_id, driver_number, first_name, last_name, age, nationality, height, team_id, headshot_path, car_image_path, team_image_path
+            @"SELECT driver_id, driver_number, first_name, last_name, age, nationality, height, team_id, headshot_path, car_image_path, team_image_path, flag_image_path
           FROM driver
-          WHERE driver_number=@driver_number"
+          WHERE driver_number=@driver_number OR @driver_number = (SELECT permanent_number FROM driver WHERE permanent_number IS NOT NULL AND permanent_number=@driver_number)"
         );
 
         cmd.Parameters.AddWithValue("driver_number", driverNumber);
@@ -560,7 +560,8 @@ public class PostgresDatabase : IDatabase
                 TeamId = reader.GetInt32(7),
                 HeadshotPath = reader.GetString(8),
                 CarImagePath = reader.GetString(9),
-                TeamImagePath = reader.GetString(10)
+                TeamImagePath = reader.GetString(10),
+                FlagImagePath = reader.GetString(11)
             };
         }
 
@@ -573,7 +574,7 @@ public class PostgresDatabase : IDatabase
         var drivers = new List<Driver>();
 
         await using var cmd = _dataSource.CreateCommand(
-            @"SELECT driver_number, first_name, last_name, age, nationality, height, team_id, headshot_path, car_image_path, team_image_path
+            @"SELECT driver_number, first_name, last_name, age, nationality, height, team_id, headshot_path, car_image_path, team_image_path, flag_image_path, permanent_number
               FROM driver"
         );
 
@@ -592,8 +593,9 @@ public class PostgresDatabase : IDatabase
                 TeamId = reader.GetInt32(7),
                 HeadshotPath = reader.GetString(8),
                 CarImagePath = reader.GetString(9),
-                TeamImagePath = reader.GetString(10)
-
+                TeamImagePath = reader.GetString(10),
+                FlagImagePath = reader.GetString(11),
+                PermanentNumber = reader.IsDBNull(12) ? null : reader.GetInt32(12)
             };
 
             drivers.Add(driver);
@@ -1102,4 +1104,65 @@ public class PostgresDatabase : IDatabase
         var rowsAffected = await cmd.ExecuteNonQueryAsync();
         return rowsAffected > 0;
     }
+
+    public async Task<int?> GetNextRaceId()
+    {
+        await using var cmd = _dataSource.CreateCommand(
+            @"SELECT race_id
+                FROM race
+                WHERE DATE(start_time AT TIME ZONE 'MST') = DATE(NOW() AT TIME ZONE 'MST')
+                LIMIT 1"
+        );
+
+        await using var reader = await cmd.ExecuteReaderAsync();
+        if (await reader.ReadAsync())
+        {
+            return reader.GetInt32(0); // Get the race_id from the first column
+        }
+
+        return null; // No upcoming race found
+
+    }
+
+    public async Task<List<Ballot>> GetBallotsByRaceIdAsync(int raceId)
+    {
+
+        _logger.LogInformation("Fetching ballots for race_id in GetBallotsByRaceIdAsync: {RaceId}", raceId);
+
+        var ballots = new List<Ballot>();
+
+        await using var cmd = _dataSource.CreateCommand(
+            @"SELECT ballot_id, league_id, user_id, create_time, settle_time, score
+          FROM ballot
+          WHERE race_id = @race_id"
+        );
+
+        cmd.Parameters.AddWithValue("race_id", raceId);
+
+        await using var reader = await cmd.ExecuteReaderAsync();
+        while (await reader.ReadAsync())
+        {
+            var ballotId = reader.GetInt32(0);
+
+            // Fetch driver predictions for this ballot
+            var driverPredictions = await GetBallotContentAsync(ballotId);
+
+            var ballot = new Ballot
+            {
+                BallotId = ballotId,
+                LeagueId = reader.GetInt32(1),
+                RaceId = raceId,
+                UserId = reader.GetInt32(2),
+                CreateTime = reader.GetDateTime(3),
+                SettleTime = reader.IsDBNull(4) ? DateTime.MinValue : reader.GetDateTime(4),
+                Score = reader.IsDBNull(5) ? null : reader.GetInt32(5),
+                DriverPredictions = driverPredictions.ToList()
+            };
+
+            ballots.Add(ballot);
+        }
+
+        return ballots;
+    }
+
 }

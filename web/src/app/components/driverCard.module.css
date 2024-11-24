@@ -1,15 +1,17 @@
 .driverCard {
-    width: 260px; /* Adjust the width as needed */
-    padding: 10px;
+    width: 19%; /* Adjust the width as needed */
+    padding: 20px;
+    margin: 5px;
     border: 3px solid #ccc;
     border-radius: 8px;
     text-align: left;
-    background: #15151E;
-    transition: transform 0.2s ease;
+    background: #0A0A0F;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
     .driverCard:hover {
         transform: translateY(-5px);
+        box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.4);
     }
 
 .driverNames {
@@ -32,7 +34,6 @@
     justify-content: center;
     margin-bottom: 10px;
     margin-top: 10px;
-    background: #0A0A0F;
     border-radius: 15px;
 }
 
@@ -41,7 +42,14 @@
     justify-content: space-between;
     align-items: center;
     padding-bottom: 10px;
-    border-bottom: 3px solid #AA0000;
+    padding-top: 10px;
+}
+
+.driverImage {
+    height: auto;
+    width: 100%;
+    padding-top: 15px;
+    margin-bottom: 10px;
 }
 
 .numContainer {

@@ -2,15 +2,18 @@
   "ExpandedNodes": [
     "",
     "\\server",
-    "\\server\\Models\\Requests",
+    "\\server\\Controllers",
+    "\\server\\Entities",
+    "\\server\\Interfaces",
+    "\\server\\Models",
     "\\server\\Resources",
+    "\\server\\Services",
     "\\web",
     "\\web\\src",
     "\\web\\src\\app",
-    "\\web\\src\\app\\ballot",
     "\\web\\src\\app\\utils",
     "\\web\\src\\app\\utils\\api"
   ],
-  "SelectedNode": "\\server\\Models",
+  "SelectedNode": "\\server\\Entities\\Driver.cs",
   "PreviewInSolutionExplorer": false
 }

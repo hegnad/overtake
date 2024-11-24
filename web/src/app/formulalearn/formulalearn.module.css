@@ -19,18 +19,22 @@
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
-    gap: 6px;
 }
 
 .driverGridContainer {
     display: flex;
     align-items: center;
     justify-content: center;
+    background-color: #0A0A0F;
+    border-radius: 15px;
+    padding: 20px;
+    grid-auto-flow: column; /* Align cards in a row */
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Adjusts card size based on space */
 }
 
 .navButton {
-    width: 30px;
-    height: 350px;
+    width: 50px;
+    height: 400px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -73,10 +77,45 @@
 }
 
 .circuits {
-
+    width: 100%;
+    background: #15151E;
+    border-radius: 15px;
+    width: 100%;
+    margin: 10px;
+    padding: 20px;
+    overflow: hidden;
 }
 
     .circuits h2 {
         color: white;
     }
 
+
+.circuitsGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(25%, 1fr)); /* Four items per row */
+    gap: 10px; /* Add some spacing between items */
+    max-height: 400px; /* Limit height */
+    overflow-y: hidden; /* Disable vertical scrolling */
+    overflow-x: auto; /* Enable horizontal scrolling */
+    scroll-snap-type: x mandatory; /* Enable horizontal scroll snapping */
+    padding: 10px; /* Padding around the grid */
+    scrollbar-width: thin; /* Style scrollbar for Firefox */
+    scrollbar-color: #ffaa00 #42425E; /* Thumb and track colors */
+}
+
+    /* Scrollbar styles for WebKit browsers */
+    .circuitsGrid::-webkit-scrollbar {
+        height: 12px; /* Set height for horizontal scrollbar */
+    }
+
+    .circuitsGrid::-webkit-scrollbar-track {
+        background-color: #310A0A; /* Track background */
+        border-radius: 10px; /* Rounded edges */
+    }
+
+    .circuitsGrid::-webkit-scrollbar-thumb {
+        background-color: #ffaa00; /* Thumb color */
+        border-radius: 10px; /* Rounded edges */
+        border: 3px solid #310A0A; /* Add contrast */
+    }

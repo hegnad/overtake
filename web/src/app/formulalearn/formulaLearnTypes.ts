@@ -1,12 +1,10 @@
 export interface Driver {
     driverId: string;
-    permanentNumber: string;
-    code: string;
     givenName: string;
     familyName: string;
     fullName: string;
-    dateOfBirth: string;
     nationality: string;
+    permanentNumber: number;
     url: string;
 }
 
@@ -27,4 +25,20 @@ export interface Circuit {
         locality: string;
         country: string;
     }
+}
+
+export interface OvertakeDriver {
+    driverId: number;
+    driverNumber: number;
+    firstName: string;
+    lastName: string;
+    age: number;
+    nationality: string;
+    height: number;
+    teamId: number;
+    headshotPath: string;
+    carImagePath: string;
+    teamImagePath: string;
+    flagImagePath: string;
+    permanentNumber: number;
 }

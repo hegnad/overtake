@@ -7,6 +7,7 @@ import { getDrivers, getConstructors, getCircuits } from "../utils/api/ergast";
 import { Driver, Constructor, Circuit } from "./formulaLearnTypes";
 import DriverCard from "../components/driverCard";
 import ConstructorCard from "../components/constructorCard";
+import CircuitCard from "../components/circuitCard";
 
 export default function FormulaLearn() {
 
@@ -42,6 +43,8 @@ export default function FormulaLearn() {
         fetchDrivers();
 
     }, []);
+
+    console.log("driverData in formulaLearn component: ", drivers);
 
     // Constructor fetch
     useEffect(() => {
@@ -83,14 +86,15 @@ export default function FormulaLearn() {
 
     }, []);
 
-    // Function to calculate the number of drivers per page based on window width
-    const calculateDriversPerPage = () => {
-        const windowWidth = window.innerWidth;
-        const driversThatFit = Math.floor((windowWidth - 400) / cardWidth); // Subtract margins and divide by card width
-        setDriversPerPage(driversThatFit);
-    };
-
     useEffect(() => {
+
+        // Function to calculate the number of drivers per page based on window width
+        const calculateDriversPerPage = () => {
+            const windowWidth = window.innerWidth;
+            const driversThatFit = Math.floor((windowWidth - 400) / cardWidth); // Subtract margins and divide by card width
+            setDriversPerPage(driversThatFit);
+        };
+
         // Initial calculation of drivers per page
         calculateDriversPerPage();
 
@@ -101,6 +105,7 @@ export default function FormulaLearn() {
         return () => {
             window.removeEventListener("resize", calculateDriversPerPage);
         };
+
     }, []);
 
     // Calculate the index of the drivers to display on the current page
@@ -161,7 +166,6 @@ export default function FormulaLearn() {
                                         key={driver.driverId}
                                         givenName={driver.givenName}
                                         familyName={driver.familyName}
-                                        driverId={driver.driverId}
                                         permanentNumber={driver.permanentNumber}
                                         nationality={driver.nationality}
                                     />
@@ -198,21 +202,31 @@ export default function FormulaLearn() {
                             />
                         ))}
                     </div>
+
                 </div>
 
                 {/* Circuits Display */}
                 <div className={styles.circuits}>
-                    <h2>Circuits</h2>
+                    <div className={styles.header}>
+                        <h1>CIRCUITS</h1>
+                    </div>
+
                     {loadingCircuits ? (
                         <p>Loading circuits...</p>
                     ) : (
-                        <ul>
-                            {circuits.map((circuit) => (
-                                <li key={circuit.circuitId}>
-                                    {circuit.circuitName} ({circuit.location.country})
-                                </li>
-                            ))}
-                        </ul>
+                            <>
+                                <div className={styles.circuitsGrid}>
+                                    {circuits.map((circuit, index) => (
+                                        <CircuitCard
+                                            key={circuit.circuitId}
+                                            circuitId={circuit.circuitId}
+                                            circuitName={circuit.circuitName}
+                                            location={circuit.location}
+                                            roundNumber={index + 1}
+                                        />
+                                    ))}
+                                </div>
+                            </>
                     )}
                 </div>
 

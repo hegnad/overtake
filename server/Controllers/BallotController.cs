@@ -8,8 +8,6 @@ using Overtake.Entities;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 
-
-[Authorize]
 [Route("api/ballot")]
 [ApiController]
 public class BallotController : ControllerBase
@@ -46,7 +44,14 @@ public class BallotController : ControllerBase
 
         int leagueId = request.LeagueId.Value;
 
-        int raceId = 1;
+        // Get the raceId of the next race
+        int? nextRaceId = await _database.GetNextRaceId();
+        if (!nextRaceId.HasValue)
+        {
+            return new BadRequestObjectResult("No upcoming race found.");
+        }
+
+        int raceId = nextRaceId.Value;
 
         // Create a list of DriverPrediction objects
         var driverPredictions = request.DriverPredictions.Select((name, index) => new DriverPrediction
@@ -109,7 +114,14 @@ public class BallotController : ControllerBase
 
         int leagueId = request.LeagueId.Value;
 
-        int raceId = 1; // Replace with actual race ID retrieval logic
+        // Get the raceId of the next race
+        int? nextRaceId = await _database.GetNextRaceId();
+        if (!nextRaceId.HasValue)
+        {
+            return new BadRequestObjectResult("No upcoming race found.");
+        }
+
+        int raceId = nextRaceId.Value;
 
         // Create a list of DriverPrediction objects
         var driverPredictions = request.DriverPredictions.Select((name, index) => new DriverPrediction
@@ -177,4 +189,67 @@ public class BallotController : ControllerBase
 
         return Ok(ballotContent);
     }
+
+    [HttpGet]
+    [Route("nextRaceId")]
+    [Produces("application/json")]
+    public async Task<ActionResult<int>> GetNextRaceIdAsync()
+    {
+        try
+        {
+            var nextRaceId = await _database.GetNextRaceId();
+            if (nextRaceId.HasValue)
+            {
+                return new OkObjectResult(nextRaceId.Value);
+            }
+            return NotFound("No upcoming race found.");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching next race ID.");
+            return StatusCode(500, "An error occurred while fetching the next race ID.");
+        }
+    }
+
+    [HttpGet]
+    [Route("race/{raceId?}")]
+    [Produces("application/json")]
+    public async Task<ActionResult<List<Ballot>>> GetBallotsForRaceAsync(int? raceId)
+    {
+        try
+        {
+            // If raceId is not provided, fetch the next race ID
+            if (!raceId.HasValue)
+            {
+                _logger.LogInformation("No raceId provided. Fetching the next race ID.");
+                var nextRaceId = await _database.GetNextRaceId();
+
+                if (!nextRaceId.HasValue)
+                {
+                    return NotFound("No upcoming race found.");
+                }
+
+                raceId = nextRaceId.Value;
+            }
+
+            _logger.LogInformation("Fetching ballots for race_id: {RaceId}", raceId.Value);
+
+            // Fetch ballots by raceId
+            var ballots = await _database.GetBallotsByRaceIdAsync(raceId.Value);
+
+            if (ballots == null || ballots.Count == 0)
+            {
+                return NotFound($"No ballots found for race_id: {raceId.Value}.");
+            }
+
+            return Ok(ballots);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching ballots for the race.");
+            return StatusCode(500, "An error occurred while fetching ballots.");
+        }
+    }
+
+
 }

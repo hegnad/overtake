@@ -13,4 +13,6 @@ public class Driver
     public required string HeadshotPath { get; set; }
     public required string CarImagePath { get; set; }
     public required string TeamImagePath { get; set; }
+    public string? FlagImagePath { get; set; }
+    public int? PermanentNumber { get; set; }
 }
