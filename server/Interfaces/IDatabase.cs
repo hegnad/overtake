@@ -79,4 +79,6 @@ public interface IDatabase
     Task<string> getLeagueJoinCode(int leagueId);
 
     Task<bool> UpdateLeagueDetailsAsync(UpdateLeagueRequest request);
+
+    Task<int?> GetNextRaceId();
 }

@@ -537,9 +537,9 @@ public class PostgresDatabase : IDatabase
     public async Task<Driver> GetDriverMetadataByNumberAsync(int driverNumber)
     {
         await using var cmd = _dataSource.CreateCommand(
-            @"SELECT driver_id, driver_number, first_name, last_name, age, nationality, height, team_id, headshot_path, car_image_path, team_image_path
+            @"SELECT driver_id, driver_number, first_name, last_name, age, nationality, height, team_id, headshot_path, car_image_path, team_image_path, flag_image_path
           FROM driver
-          WHERE driver_number=@driver_number"
+          WHERE driver_number=@driver_number OR @driver_number = (SELECT permanent_number FROM driver WHERE permanent_number IS NOT NULL AND permanent_number=@driver_number)"
         );
 
         cmd.Parameters.AddWithValue("driver_number", driverNumber);
@@ -560,7 +560,8 @@ public class PostgresDatabase : IDatabase
                 TeamId = reader.GetInt32(7),
                 HeadshotPath = reader.GetString(8),
                 CarImagePath = reader.GetString(9),
-                TeamImagePath = reader.GetString(10)
+                TeamImagePath = reader.GetString(10),
+                FlagImagePath = reader.GetString(11)
             };
         }
 
@@ -573,7 +574,7 @@ public class PostgresDatabase : IDatabase
         var drivers = new List<Driver>();
 
         await using var cmd = _dataSource.CreateCommand(
-            @"SELECT driver_number, first_name, last_name, age, nationality, height, team_id, headshot_path, car_image_path, team_image_path
+            @"SELECT driver_number, first_name, last_name, age, nationality, height, team_id, headshot_path, car_image_path, team_image_path, flag_image_path, permanent_number
               FROM driver"
         );
 
@@ -592,8 +593,9 @@ public class PostgresDatabase : IDatabase
                 TeamId = reader.GetInt32(7),
                 HeadshotPath = reader.GetString(8),
                 CarImagePath = reader.GetString(9),
-                TeamImagePath = reader.GetString(10)
-
+                TeamImagePath = reader.GetString(10),
+                FlagImagePath = reader.GetString(11),
+                PermanentNumber = reader.IsDBNull(12) ? null : reader.GetInt32(12)
             };
 
             drivers.Add(driver);
@@ -1102,4 +1104,25 @@ public class PostgresDatabase : IDatabase
         var rowsAffected = await cmd.ExecuteNonQueryAsync();
         return rowsAffected > 0;
     }
+
+    public async Task<int?> GetNextRaceId()
+    {
+        await using var cmd = _dataSource.CreateCommand(
+            @"SELECT race_id
+          FROM race
+          WHERE start_time > NOW() AT TIME ZONE 'MST'
+          ORDER BY start_time ASC
+          LIMIT 1"
+        );
+
+        await using var reader = await cmd.ExecuteReaderAsync();
+        if (await reader.ReadAsync())
+        {
+            return reader.GetInt32(0); // Get the race_id from the first column
+        }
+
+        return null; // No upcoming race found
+
+    }
+
 }

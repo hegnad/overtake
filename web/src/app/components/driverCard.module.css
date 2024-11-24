@@ -6,11 +6,12 @@
     border-radius: 8px;
     text-align: left;
     background: #0A0A0F;
-    transition: transform 0.2s ease;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
     .driverCard:hover {
         transform: translateY(-5px);
+        box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.4);
     }
 
 .driverNames {

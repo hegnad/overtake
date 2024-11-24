@@ -28,11 +28,13 @@
     background-color: #0A0A0F;
     border-radius: 15px;
     padding: 20px;
+    grid-auto-flow: column; /* Align cards in a row */
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Adjusts card size based on space */
 }
 
 .navButton {
-    width: 30px;
-    height: 350px;
+    width: 50px;
+    height: 400px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -79,7 +81,8 @@
     background: #15151E;
     border-radius: 15px;
     width: 100%;
-    margin-left: 10px;
+    margin: 10px;
+    padding: 20px;
     overflow: hidden;
 }
 
@@ -90,30 +93,29 @@
 
 .circuitsGrid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr); /* Two columns */
-    max-height: 400px; /* Limit height for scrolling */
-    overflow-y: auto; /* Enable vertical scrolling */
-    padding: 10px; /* Add padding around the grid */
-    scrollbar-width: thin; /* Style scrollbar (Firefox) */
+    grid-template-columns: repeat(auto-fill, minmax(25%, 1fr)); /* Four items per row */
+    gap: 10px; /* Add some spacing between items */
+    max-height: 400px; /* Limit height */
+    overflow-y: hidden; /* Disable vertical scrolling */
+    overflow-x: auto; /* Enable horizontal scrolling */
+    scroll-snap-type: x mandatory; /* Enable horizontal scroll snapping */
+    padding: 10px; /* Padding around the grid */
+    scrollbar-width: thin; /* Style scrollbar for Firefox */
     scrollbar-color: #ffaa00 #42425E; /* Thumb and track colors */
 }
 
-/* Scrollbar styling for WebKit browsers (Chrome, Safari, Edge) */
-.circuitGridContainer::-webkit-scrollbar {
-    width: 12px;
-}
+    /* Scrollbar styles for WebKit browsers */
+    .circuitsGrid::-webkit-scrollbar {
+        height: 12px; /* Set height for horizontal scrollbar */
+    }
 
-.circuitGridContainer::-webkit-scrollbar-track {
-    background-color: #42425E;
-    border-radius: 10px;
-}
+    .circuitsGrid::-webkit-scrollbar-track {
+        background-color: #310A0A; /* Track background */
+        border-radius: 10px; /* Rounded edges */
+    }
 
-.circuitGridContainer::-webkit-scrollbar-thumb {
-    background-color: #ffaa00;
-    border-radius: 10px;
-    border: 3px solid #42425E;
-}
-
-    .circuitGridContainer::-webkit-scrollbar-thumb:hover {
-        background-color: #e69500;
+    .circuitsGrid::-webkit-scrollbar-thumb {
+        background-color: #ffaa00; /* Thumb color */
+        border-radius: 10px; /* Rounded edges */
+        border: 3px solid #310A0A; /* Add contrast */
     }

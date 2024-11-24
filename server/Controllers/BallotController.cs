@@ -46,7 +46,14 @@ public class BallotController : ControllerBase
 
         int leagueId = request.LeagueId.Value;
 
-        int raceId = 1;
+        // Get the raceId of the next race
+        int? nextRaceId = await _database.GetNextRaceId();
+        if (!nextRaceId.HasValue)
+        {
+            return new BadRequestObjectResult("No upcoming race found.");
+        }
+
+        int raceId = nextRaceId.Value;
 
         // Create a list of DriverPrediction objects
         var driverPredictions = request.DriverPredictions.Select((name, index) => new DriverPrediction
@@ -109,7 +116,14 @@ public class BallotController : ControllerBase
 
         int leagueId = request.LeagueId.Value;
 
-        int raceId = 1; // Replace with actual race ID retrieval logic
+        // Get the raceId of the next race
+        int? nextRaceId = await _database.GetNextRaceId();
+        if (!nextRaceId.HasValue)
+        {
+            return new BadRequestObjectResult("No upcoming race found.");
+        }
+
+        int raceId = nextRaceId.Value;
 
         // Create a list of DriverPrediction objects
         var driverPredictions = request.DriverPredictions.Select((name, index) => new DriverPrediction
