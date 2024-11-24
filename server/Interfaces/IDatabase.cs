@@ -81,4 +81,6 @@ public interface IDatabase
     Task<bool> UpdateLeagueDetailsAsync(UpdateLeagueRequest request);
 
     Task<int?> GetNextRaceId();
+
+    Task<List<Ballot>> GetBallotsByRaceIdAsync(int raceId);
 }

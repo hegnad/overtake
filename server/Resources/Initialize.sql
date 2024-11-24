@@ -231,7 +231,10 @@ VALUES
   (1, 4, 1, NOW(), NOW(), 75),
   (1, 4, 2, NOW(), NOW(), 905),
   (1, 5, 1, NOW(), NOW(), 55),
-  (1, 5, 2, NOW(), NOW(), 150);
+  (1, 5, 2, NOW(), NOW(), 150),
+  (1, 22, 1, NOW(), NOW(), 0),
+  (1, 22, 2, NOW(), NOW(), 0),
+  (1, 22, 3, NOW(), NOW(), 0);
 
 
 -- Insert test data for team table

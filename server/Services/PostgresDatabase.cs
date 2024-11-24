@@ -1109,10 +1109,9 @@ public class PostgresDatabase : IDatabase
     {
         await using var cmd = _dataSource.CreateCommand(
             @"SELECT race_id
-          FROM race
-          WHERE start_time > NOW() AT TIME ZONE 'MST'
-          ORDER BY start_time ASC
-          LIMIT 1"
+                FROM race
+                WHERE DATE(start_time AT TIME ZONE 'MST') = DATE(NOW() AT TIME ZONE 'MST')
+                LIMIT 1"
         );
 
         await using var reader = await cmd.ExecuteReaderAsync();
@@ -1123,6 +1122,47 @@ public class PostgresDatabase : IDatabase
 
         return null; // No upcoming race found
 
+    }
+
+    public async Task<List<Ballot>> GetBallotsByRaceIdAsync(int raceId)
+    {
+
+        _logger.LogInformation("Fetching ballots for race_id in GetBallotsByRaceIdAsync: {RaceId}", raceId);
+
+        var ballots = new List<Ballot>();
+
+        await using var cmd = _dataSource.CreateCommand(
+            @"SELECT ballot_id, league_id, user_id, create_time, settle_time, score
+          FROM ballot
+          WHERE race_id = @race_id"
+        );
+
+        cmd.Parameters.AddWithValue("race_id", raceId);
+
+        await using var reader = await cmd.ExecuteReaderAsync();
+        while (await reader.ReadAsync())
+        {
+            var ballotId = reader.GetInt32(0);
+
+            // Fetch driver predictions for this ballot
+            var driverPredictions = await GetBallotContentAsync(ballotId);
+
+            var ballot = new Ballot
+            {
+                BallotId = ballotId,
+                LeagueId = reader.GetInt32(1),
+                RaceId = raceId,
+                UserId = reader.GetInt32(2),
+                CreateTime = reader.GetDateTime(3),
+                SettleTime = reader.IsDBNull(4) ? DateTime.MinValue : reader.GetDateTime(4),
+                Score = reader.IsDBNull(5) ? null : reader.GetInt32(5),
+                DriverPredictions = driverPredictions.ToList()
+            };
+
+            ballots.Add(ballot);
+        }
+
+        return ballots;
     }
 
 }
