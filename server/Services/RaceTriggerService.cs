@@ -16,7 +16,7 @@ public class RaceTriggerService : BackgroundService
     private DateTime? _triggerTime;
 
     // Add a testing flag
-    public bool IsTesting { get; set; } = true;
+    public bool IsTesting { get; set; } = false;
 
     public RaceTriggerService(ILogger<RaceTriggerService> logger, IHttpClientFactory httpClientFactory)
     {
