@@ -1,6 +1,8 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Image from "next/image";
 import styles from "./constructorCard.module.css";
+import { getTeamData } from '../utils/api/overtake';
+import { OvertakeConstructor } from '../formulalearn/formulaLearnTypes';
 
 interface ConstructorCardProps {
     constructorId: string;
@@ -10,8 +12,33 @@ interface ConstructorCardProps {
 
 export default function ConstructorCard({ constructorId, name, nationality }: ConstructorCardProps) {
 
-    const teamLogoPath = `/assets/teamlogos/${constructorId}_mini.png`;
-    const carImagePath = `/assets/cars/${constructorId}.png`;
+    const [teamData, setTeamData] = useState<OvertakeConstructor | null>(null);
+
+    useEffect(() => {
+
+        async function fetchData() {
+
+            try {
+                const data = await getTeamData(constructorId);
+                setTeamData(data);
+            } catch (error) {
+                console.error("Error fetching team data:", error);
+            }
+
+        }
+
+        fetchData();
+
+    }, [constructorId]);
+
+    if (!teamData) {
+        return <p>No Team Data</p>;
+    }
+
+    const teamLogoPath = teamData.teamImagePath;
+    const carImagePath = teamData.carImagePath;
+
+    console.log("Image Paths: ", teamLogoPath, carImagePath);
 
     return (
         <div className={styles.constructorCard}>

@@ -36,3 +36,16 @@ export async function getTrackLayoutImage(round_number) {
         return null;
     }
 }
+
+export async function getTeamData(constructor_id) {
+    const apiUrl = `http://localhost:8080/api/images/team/${constructor_id}`;
+    try {
+        const response = await fetch(apiUrl);
+        const data = await response.json();
+        console.log(data);
+        return data;
+    } catch (error) {
+        console.error("Error fetching team meta data: ", error);
+        return null;
+    }
+}

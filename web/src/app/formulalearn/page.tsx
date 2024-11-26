@@ -44,8 +44,6 @@ export default function FormulaLearn() {
 
     }, []);
 
-    console.log("driverData in formulaLearn component: ", drivers);
-
     // Constructor fetch
     useEffect(() => {
 

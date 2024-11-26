@@ -3,7 +3,7 @@ import Image from 'next/image';
 import styles from './driverCard.module.css';
 import StyledLine from './styledline'
 import { getDriverImages } from '../utils/api/overtake';
-import { Driver, OvertakeDriver } from '../formulalearn/formulaLearnTypes';
+import { OvertakeDriver } from '../formulalearn/formulaLearnTypes';
 
 interface DriverCardProps {
     givenName: string;
@@ -39,11 +39,6 @@ export default function DriverCard({ givenName, familyName, permanentNumber, nat
 
     const driverImagePath = driverData.headshotPath;
     const flagImagePath = driverData.flagImagePath;
-
-    console.log("driverData in DriverCard: ", driverData);
-
-    console.log("Permanent Number in DriverCard: ", permanentNumber);
-    console.log("Driver Number from driverData in DriverCard: ", driverData.driverNumber);
 
     const defaultImgPath = `/assets/driver_headshot/default.png`;
 

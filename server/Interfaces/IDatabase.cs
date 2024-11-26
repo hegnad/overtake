@@ -83,4 +83,6 @@ public interface IDatabase
     Task<int?> GetNextRaceId();
 
     Task<List<Ballot>> GetBallotsByRaceIdAsync(int raceId);
+
+    Task<Team> GetTeamMetadataByIdAsync(string constructorId);
 }
