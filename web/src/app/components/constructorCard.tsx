@@ -8,9 +8,10 @@ interface ConstructorCardProps {
     constructorId: string;
     name: string;
     nationality: string;
+    onClick?: () => void;
 }
 
-export default function ConstructorCard({ constructorId, name, nationality }: ConstructorCardProps) {
+export default function ConstructorCard({ constructorId, name, nationality, onClick }: ConstructorCardProps) {
 
     const [teamData, setTeamData] = useState<OvertakeConstructor | null>(null);
 
@@ -38,10 +39,8 @@ export default function ConstructorCard({ constructorId, name, nationality }: Co
     const teamLogoPath = teamData.teamImagePath;
     const carImagePath = teamData.carImagePath;
 
-    console.log("Image Paths: ", teamLogoPath, carImagePath);
-
     return (
-        <div className={styles.constructorCard}>
+        <div className={styles.constructorCard} onClick={onClick}>
             <div className={styles.imagesContainer}>
                 <div className={styles.teamLogoContainer}>
                     <Image

@@ -10,9 +10,10 @@ interface DriverCardProps {
     familyName: string;
     permanentNumber: number;
     nationality: string;
+    onClick?: () => void;
 }
 
-export default function DriverCard({ givenName, familyName, permanentNumber, nationality }: DriverCardProps) {
+export default function DriverCard({ givenName, familyName, permanentNumber, nationality, onClick }: DriverCardProps) {
 
     const [driverData, setDriverData] = useState<OvertakeDriver | null>(null);
 
@@ -44,7 +45,7 @@ export default function DriverCard({ givenName, familyName, permanentNumber, nat
 
     return (
 
-        <div className={styles.driverCard}>
+        <div className={styles.driverCard} onClick={onClick}>
 
             <div className={styles.driverNames}>
                 <h3>{givenName}</h3>

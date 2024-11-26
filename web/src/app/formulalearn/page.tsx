@@ -2,6 +2,7 @@
 
 import SidebarLayout from "../ui/sidebar-layout";
 import { useEffect, useState } from "react";
+import { useRouter } from 'next/navigation';
 import styles from "./formulalearn.module.css";
 import { getDrivers, getConstructors, getCircuits } from "../utils/api/ergast";
 import { Driver, Constructor, Circuit } from "./formulaLearnTypes";
@@ -23,6 +24,8 @@ export default function FormulaLearn() {
     const [loadingConstructors, setLoadingConstructors] = useState(true);
     const [loadingCircuits, setLoadingCircuits] = useState(true);
     const [error, setError] = useState<string | null>(null);
+
+    const router = useRouter();
 
     // Driver fetch
     useEffect(() => {
@@ -129,6 +132,18 @@ export default function FormulaLearn() {
         }
     };
 
+    const handleDriverClick = (permanentNumber: number) => {
+        sessionStorage.setItem("selectedDriverNumber", permanentNumber.toString());
+        router.push('./driverdetails');
+        console.log(`Driver with permanent number, ${permanentNumber}, clicked!`);
+    };
+
+    const handleConstructorClick = (constructorId: string) => {
+        sessionStorage.setItem("selectedConstructorId", constructorId);
+        router.push('./constructordetails');
+        console.log(`Constructor with constructor id, ${constructorId}, clicked!`);
+    }
+
     return (
 
         <SidebarLayout>
@@ -159,13 +174,14 @@ export default function FormulaLearn() {
 
                             {/* Drivers Grid */}
                             <div className={styles.driverGrid}>
-                                {currentDrivers.map((driver) => (
+                                    {currentDrivers.map((driver) => (
                                     <DriverCard
-                                        key={driver.driverId}
-                                        givenName={driver.givenName}
-                                        familyName={driver.familyName}
-                                        permanentNumber={driver.permanentNumber}
-                                        nationality={driver.nationality}
+                                            key={driver.driverId}
+                                            givenName={driver.givenName}
+                                            familyName={driver.familyName}
+                                            permanentNumber={driver.permanentNumber}
+                                            nationality={driver.nationality}
+                                            onClick={() => handleDriverClick(driver.permanentNumber)}
                                     />
                                 ))}
                             </div>
@@ -197,6 +213,7 @@ export default function FormulaLearn() {
                                 constructorId={constructor.constructorId}
                                 name={constructor.name}
                                 nationality={constructor.nationality}
+                                onClick={() => handleConstructorClick(constructor.constructorId)}
                             />
                         ))}
                     </div>
