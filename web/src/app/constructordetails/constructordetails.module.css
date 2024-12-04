@@ -1,0 +1,21 @@
+.constructorDetailsContainer {
+    padding: 20px;
+    background: #15151E;
+    border-radius: 15px;
+}
+
+    .constructorDetailsContainer h1 {
+        color: white;
+    }
+
+    .constructorDetailsContainer p {
+        color: white;
+    }
+
+.teamLogo {
+    border-radius: 15px;
+}
+
+.flag {
+    border-radius: 15px;
+}

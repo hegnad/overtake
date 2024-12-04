@@ -1165,4 +1165,41 @@ public class PostgresDatabase : IDatabase
         return ballots;
     }
 
+    // Retrieve team metadata by constructor id (from ergast)
+    public async Task<Team> GetTeamMetadataByIdAsync(string constructorId)
+    {
+        await using var cmd = _dataSource.CreateCommand(
+            @"SELECT team_id, name, full_name, nationality, base, team_chief, technical_chief, chassis, power_unit, car_image_path, team_image_path, flag_image_path, first_year, constructor_id
+          FROM team
+          WHERE constructor_id = @constructor_id"
+        );
+
+        cmd.Parameters.AddWithValue("constructor_id", constructorId);
+
+        await using var reader = await cmd.ExecuteReaderAsync();
+
+        if (await reader.ReadAsync())
+        {
+            return new Team
+            {
+                TeamId = reader.GetInt32(0),
+                Name = reader.GetString(1),
+                FullName = reader.GetString(2),
+                Nationality = reader.GetString(3),
+                Base = reader.GetString(4),
+                TeamChief = reader.GetString(5),
+                TechnicalChief = reader.GetString(6),
+                Chassis = reader.GetString(7),
+                PowerUnit = reader.GetString(8),
+                CarImagePath = reader.GetString(9),
+                TeamImagePath = reader.GetString(10),
+                FlagImagePath = reader.GetString(11),
+                FirstYear = reader.GetInt32(12),
+                ConstructorId = reader.GetString(13),
+            };
+        }
+
+        return null; // Return null if no team is found with the given constructor id
+    }
+
 }

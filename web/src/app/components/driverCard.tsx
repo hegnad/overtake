@@ -3,16 +3,17 @@ import Image from 'next/image';
 import styles from './driverCard.module.css';
 import StyledLine from './styledline'
 import { getDriverImages } from '../utils/api/overtake';
-import { Driver, OvertakeDriver } from '../formulalearn/formulaLearnTypes';
+import { OvertakeDriver } from '../formulalearn/formulaLearnTypes';
 
 interface DriverCardProps {
     givenName: string;
     familyName: string;
     permanentNumber: number;
     nationality: string;
+    onClick?: () => void;
 }
 
-export default function DriverCard({ givenName, familyName, permanentNumber, nationality }: DriverCardProps) {
+export default function DriverCard({ givenName, familyName, permanentNumber, nationality, onClick }: DriverCardProps) {
 
     const [driverData, setDriverData] = useState<OvertakeDriver | null>(null);
 
@@ -40,16 +41,11 @@ export default function DriverCard({ givenName, familyName, permanentNumber, nat
     const driverImagePath = driverData.headshotPath;
     const flagImagePath = driverData.flagImagePath;
 
-    console.log("driverData in DriverCard: ", driverData);
-
-    console.log("Permanent Number in DriverCard: ", permanentNumber);
-    console.log("Driver Number from driverData in DriverCard: ", driverData.driverNumber);
-
     const defaultImgPath = `/assets/driver_headshot/default.png`;
 
     return (
 
-        <div className={styles.driverCard}>
+        <div className={styles.driverCard} onClick={onClick}>
 
             <div className={styles.driverNames}>
                 <h3>{givenName}</h3>
