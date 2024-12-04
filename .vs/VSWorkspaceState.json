@@ -3,17 +3,14 @@
     "",
     "\\server",
     "\\server\\Controllers",
-    "\\server\\Entities",
     "\\server\\Interfaces",
-    "\\server\\Models",
     "\\server\\Resources",
     "\\server\\Services",
     "\\web",
     "\\web\\src",
     "\\web\\src\\app",
-    "\\web\\src\\app\\utils",
-    "\\web\\src\\app\\utils\\api"
+    "\\web\\src\\app\\components"
   ],
-  "SelectedNode": "\\server\\Entities\\Driver.cs",
+  "SelectedNode": "\\web\\src\\app\\components\\friendsList.tsx",
   "PreviewInSolutionExplorer": false
 }

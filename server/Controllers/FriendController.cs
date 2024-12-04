@@ -86,9 +86,11 @@ public class FriendController : ControllerBase
     [Produces("application/json")]
     public async Task<ActionResult<UserInfo[]>> PopulateUserAsync()
     {
-        var users = await _database.PopulateUsers();
+        int userId = Convert.ToInt32(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
 
-        if (users == null  | users.Length == 0)
+        var users = await _database.PopulateUsers(userId);
+
+        if (users == null | users.Length == 0)
         {
             return NotFound("No users in database.");
         }
@@ -104,5 +106,17 @@ public class FriendController : ControllerBase
         await _database.UpdateFriendInviteStatus(request.InviteId, request.Status);
 
         return Ok();
+    }
+
+    [HttpGet]
+    [Route("populateLeagues")]
+    [Produces("application/json")]
+    public async Task<ActionResult<RaceLeagueInfo[]>> PopulateInvitableRaceLeaguesAsync([FromQuery] int inviteeId)
+    {
+        int userId = Convert.ToInt32(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+
+        var leagues = await _database.PopulateInvitableRaceLeagues(userId, inviteeId);
+
+        return new OkObjectResult(leagues);
     }
 }

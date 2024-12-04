@@ -56,7 +56,7 @@ public interface IDatabase
 
     Task<FriendRequestInfo[]> GetFriendRequests(int userId);
 
-    Task<UserInfo[]> PopulateUsers();
+    Task<UserInfo[]> PopulateUsers(int userId);
 
     Task UpdateFriendInviteStatus(int inviteId, int status);
 
@@ -83,4 +83,6 @@ public interface IDatabase
     Task<int?> GetNextRaceId();
 
     Task<List<Ballot>> GetBallotsByRaceIdAsync(int raceId);
+
+    Task<RaceLeagueInfo[]> PopulateInvitableRaceLeagues(int userId, int inviteeId);
 }
