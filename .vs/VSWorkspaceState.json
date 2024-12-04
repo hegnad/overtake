@@ -1,16 +1,27 @@
 {
   "ExpandedNodes": [
     "",
-    "\\server",
-    "\\server\\Controllers",
-    "\\server\\Interfaces",
     "\\server\\Resources",
     "\\server\\Services",
+    "\\server\\Resources",
+    "\\server\\Services",
+    "\\server\\Resources",
+    "\\server\\Services",
+    "\\web\\src\\app\\components",
+    "\\web\\src\\app\\formulalearn",
+    "\\web\\src\\app\\utils",
+    "\\web\\src\\app\\utils\\api"
+    "\\server\\Resources",
+  "SelectedNode": "\\server\\Controllers\\BallotController.cs",
     "\\web",
+    "\\web\\public",
+    "\\web\\public\\assets",
+    "\\web\\public\\assets\\driver_headshot",
     "\\web\\src",
     "\\web\\src\\app",
-    "\\web\\src\\app\\components"
+    "\\web\\src\\app\\utils",
+    "\\web\\src\\app\\utils\\api"
   ],
-  "SelectedNode": "\\web\\src\\app\\components\\friendsList.tsx",
+  "SelectedNode": "\\server\\Entities\\Driver.cs",
   "PreviewInSolutionExplorer": false
 }

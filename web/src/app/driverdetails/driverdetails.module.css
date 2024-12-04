@@ -1,0 +1,17 @@
+.driverDetailsContainer {
+    padding: 20px;
+    background: #15151E;
+    border-radius: 15px;
+}
+
+    .driverDetailsContainer h1 {
+        color: white;
+    }
+
+    .driverDetailsContainer p {
+        color: white;
+    }
+
+.flag {
+    border-radius: 15px;
+}

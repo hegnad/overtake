@@ -85,4 +85,6 @@ public interface IDatabase
     Task<List<Ballot>> GetBallotsByRaceIdAsync(int raceId);
 
     Task<RaceLeagueInfo[]> PopulateInvitableRaceLeagues(int userId, int inviteeId);
+
+    Task<Team> GetTeamMetadataByIdAsync(string constructorId);
 }

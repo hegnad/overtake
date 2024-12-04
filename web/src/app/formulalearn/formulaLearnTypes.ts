@@ -42,3 +42,19 @@ export interface OvertakeDriver {
     flagImagePath: string;
     permanentNumber: number;
 }
+
+export interface OvertakeConstructor {
+    teamId: number;
+    name: string;
+    fullName: string;
+    nationality: string;
+    base: string;
+    teamChief: string;
+    technicalChief: string;
+    chassis: string;
+    powerUnit: string;
+    carImagePath: string;
+    teamImagePath: string;
+    flagImagePath: string;
+    firstYear: number;
+}
