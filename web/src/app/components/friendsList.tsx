@@ -22,7 +22,7 @@ interface UserInfo {
 }
 
 interface FriendRequest {
-    inviteeId: number;S
+    inviteeId: number;
     message: string;
 }
 
