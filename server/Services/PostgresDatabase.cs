@@ -809,7 +809,8 @@ public class PostgresDatabase : IDatabase
               FROM friendInvite fi
               WHERE (fi.initiator_id = @user_id AND fi.invitee_id = a.account_id)
                  OR (fi.initiator_id = a.account_id AND fi.invitee_id = @user_id)
-          )"
+          )
+          AND a.account_id != @user_id"
         );
 
         cmd.Parameters.AddWithValue("user_id", userId);
@@ -1272,5 +1273,15 @@ public class PostgresDatabase : IDatabase
         return invitableLeagues.ToArray();
     }
 
+    public async Task<bool> UsernameExistsAsync(string username)
+    {
+        await using var cmd = _dataSource.CreateCommand(
+            @"SELECT EXISTS (SELECT 1 FROM account WHERE username = @username)"
+        );
+
+        cmd.Parameters.AddWithValue("username", username);
+
+        return (bool)await cmd.ExecuteScalarAsync();
+    }
 
 }
