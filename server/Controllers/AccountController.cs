@@ -54,7 +54,11 @@ public class AccountController : ControllerBase
             return new BadRequestResult();
         }
 
-        // TODO: check email/username existence
+        bool usernameExists = await _database.UsernameExistsAsync(request.Username);
+        if (usernameExists)
+        {
+            return Conflict(new { message = $"The username {request.Username} is already taken." });
+        }
 
         using var sha256 = SHA256.Create();
         byte[] passwordHash = sha256.ComputeHash(Encoding.ASCII.GetBytes("overtake|" + request.Password));

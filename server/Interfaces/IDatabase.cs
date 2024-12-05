@@ -87,4 +87,6 @@ public interface IDatabase
     Task<RaceLeagueInfo[]> PopulateInvitableRaceLeagues(int userId, int inviteeId);
 
     Task<Team> GetTeamMetadataByIdAsync(string constructorId);
+
+    Task<bool> UsernameExistsAsync(string username);
 }
