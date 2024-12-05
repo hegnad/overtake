@@ -133,10 +133,10 @@ export default function FriendsList() {
         }
     }, [identity.sessionToken])
 
-    useEffect(() => {
-        const fetchLeagues = async () => {
+    const fetchLeagues = async (inviteeId: number) => {
+        try {
             const response = await fetch(
-                "http://localhost:8080/api/league/populate",
+                `http://localhost:8080/api/friend/populateLeagues?inviteeId=${inviteeId}`,
                 {
                     method: "GET",
                     headers: {
@@ -148,17 +148,21 @@ export default function FriendsList() {
 
             if (response.status === 200) {
                 const data = await response.json();
-
                 setLeagues(data);
             } else {
-                console.error(`non-successful status code: ${response.status}`);
+                console.error(`Non-successful status code: ${response.status}`);
             }
-        };
-
-        if (identity.sessionToken) {
-            fetchLeagues();
+        } catch (error) {
+            console.error("Error fetching leagues:", error);
         }
-    }, [identity.sessionToken]);
+    };
+
+    // Call this method when showLeagues becomes true
+    useEffect(() => {
+        if (showLeagues && selectedFriend?.friendId && identity.sessionToken) {
+            fetchLeagues(selectedFriend.friendId);
+        }
+    }, [showLeagues, selectedFriend?.friendId, identity.sessionToken]);
 
     useEffect(() => {
         const fetchInvites = async () => {

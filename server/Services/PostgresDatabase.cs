@@ -799,12 +799,20 @@ public class PostgresDatabase : IDatabase
         return friendRequests.ToArray();
     }
 
-    public async Task<UserInfo[]> PopulateUsers()
+    public async Task<UserInfo[]> PopulateUsers(int userId)
     {
         await using var cmd = _dataSource.CreateCommand(
-            @"SELECT account_id, username
-                FROM account"
+        @"SELECT account_id, username
+          FROM account a
+          WHERE NOT EXISTS (
+              SELECT 1
+              FROM friendInvite fi
+              WHERE (fi.initiator_id = @user_id AND fi.invitee_id = a.account_id)
+                 OR (fi.initiator_id = a.account_id AND fi.invitee_id = @user_id)
+          )"
         );
+
+        cmd.Parameters.AddWithValue("user_id", userId);
 
         var users = new List<UserInfo>();
 
@@ -1201,5 +1209,68 @@ public class PostgresDatabase : IDatabase
 
         return null; // Return null if no team is found with the given constructor id
     }
+
+    public async Task<RaceLeagueInfo[]> PopulateInvitableRaceLeagues(int userId, int inviteeId)
+    {
+        var leagueIds = new List<int>();
+        var invitableLeagues = new List<RaceLeagueInfo>();
+
+        // Query to get league IDs where userId is a member,
+        // inviteeId is not a member, and no existing invite exists for inviteeId in leagueInvite
+        await using var cmd = _dataSource.CreateCommand(
+            @"SELECT rl.league_id
+              FROM raceLeagueMembership rl
+              WHERE rl.user_id = @userId
+              AND rl.league_id NOT IN (
+                  SELECT league_id 
+                  FROM raceLeagueMembership 
+                  WHERE user_id = @inviteeId
+              )
+              AND rl.league_id NOT IN (
+                  SELECT league_id 
+                  FROM leagueInvite 
+                  WHERE invitee_id = @inviteeId
+              )"
+            );
+
+        cmd.Parameters.AddWithValue("userId", userId);
+        cmd.Parameters.AddWithValue("inviteeId", inviteeId);
+
+        await using var reader = await cmd.ExecuteReaderAsync();
+        while (await reader.ReadAsync())
+        {
+            leagueIds.Add(reader.GetInt32(0));
+        }
+
+        // Fetch details of the leagues where the conditions are met
+        for (int i = 0; i < leagueIds.Count; i++)
+        {
+            await using var cmdLeague = _dataSource.CreateCommand(
+                @"SELECT league_id, owner_id, name, is_public 
+              FROM raceLeague 
+              WHERE league_id = @league_id"
+            );
+
+            cmdLeague.Parameters.AddWithValue("league_id", leagueIds[i]);
+
+            await using var leagueReader = await cmdLeague.ExecuteReaderAsync();
+
+            if (await leagueReader.ReadAsync())
+            {
+                RaceLeagueInfo leagueInfo = new RaceLeagueInfo
+                {
+                    LeagueId = leagueReader.GetInt32(0),
+                    OwnerId = leagueReader.GetInt32(1),
+                    Name = leagueReader.GetString(2),
+                    IsPublic = leagueReader.GetBoolean(3),
+                };
+
+                invitableLeagues.Add(leagueInfo);
+            }
+        }
+
+        return invitableLeagues.ToArray();
+    }
+
 
 }
