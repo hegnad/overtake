@@ -11,12 +11,13 @@ interface UserPoints {
     pointsThisSeason: number;
     highestLeaguePoints: number;
     highestLeagueName: string;
-}
+} 
 
 export default function Profile() {
     const [userPoints, setUserPoints] = useState<UserPoints | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const identity = useContext(IdentityContext);
+    const id = identity.accountInfo?.userId;
 
     useEffect(() => {
         const storedUserId = Number(sessionStorage.getItem("profileUserId"));
