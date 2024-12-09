@@ -44,16 +44,18 @@ export default function SidebarLayout({ children }: SidebarLayoutProps) {
               <p className="z-10">How To Play</p>
             </button>
           )}
-          <Modal
-            isOpen={isOpen}
-            onRequestClose={() => setIsOpen(false)}
-            contentLabel="How to play"
-            className={styles.modalContainer}
-          >
-            <HowToPlay />
+          <div className={styles.modalBackground}>
+              <Modal
+                isOpen={isOpen}
+                onRequestClose={() => setIsOpen(false)}
+                contentLabel="How to play"
+                className={styles.modalContainer}
+              >
+                <HowToPlay />
 
-            <button onClick={() => setIsOpen(false)}>Close</button>
-          </Modal>
+                <button onClick={() => setIsOpen(false)}>Close</button>
+              </Modal>
+          </div>
         </div>
         <nav className={styles.nav}>
           {/* Always visible links */}
@@ -75,6 +77,9 @@ export default function SidebarLayout({ children }: SidebarLayoutProps) {
               </Link>
               <Link href="/lastrace" className={styles.navItem}>
                 LAST RACE
+              </Link>
+              <Link href="/gamecomponent" className={styles.navItem}>
+                CAPSTONE GAME
               </Link>
             </>
           )}

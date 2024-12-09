@@ -1,25 +1,48 @@
 .modal {
-  border: 3px solid #aa0000;
-  border-radius: 25px;
-  padding: 5px;
-  margin: 25px
+    background-color: #1a1a1a; /* Dark background for the modal content */
+    color: #fff; /* White text for better contrast */
+    border: 2px solid #aa0000; /* Red border */
+    border-radius: 10px; /* Rounded corners */
+    padding: 20px; /* Spacing inside the modal */
+    margin: 15px auto; /* Adjust red background margins */
+    max-width: 600px; /* Limit the modal width */
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5); /* Subtle shadow */
 }
 
-.modal h2 {
-  font-size: 1.5rem;
-  font-weight: 700;
-  margin-bottom: 1rem;
-}
+    .modal h2 {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #ff4c4c; /* Bright red for headings */
+        margin-bottom: 15px;
+        text-align: center;
+    }
 
-.modal ol {
-  list-style-type: number;
-  padding: 0;
-}
+    .modal p,
+    .modal ul {
+        margin: 0;
+        padding: 0;
+    }
 
-.modal li {
-  margin-top: 1rem;
-}
-.modal :first-child li {
-  margin-top: 0;
-  font-style: italic;
-}
+    .modal ul {
+        list-style: none; /* Remove default bullet points */
+        margin: 15px 0;
+    }
+
+        .modal ul li {
+            padding: 5px 0;
+            font-size: 1rem;
+        }
+
+            .modal ul li + li {
+                border-top: 1px solid #333; /* Separator between list items */
+            }
+
+        .modal ul ul {
+            margin-left: 20px; /* Indent nested lists */
+            font-size: 0.9rem; /* Smaller font size for sub-items */
+        }
+
+            .modal ul ul li + li {
+                border-top: none; /* No separator for nested items */
+            }
+

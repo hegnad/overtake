@@ -1,0 +1,40 @@
+.container {
+    text-align: center;
+    font-family: Arial, sans-serif;
+}
+
+.raceTrack {
+    margin-top: 20px;
+}
+
+.driverRow {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+    .driverRow span {
+        width: 150px;
+        text-align: left;
+        font-weight: bold;
+    }
+
+.progressBar {
+    flex: 1;
+    height: 20px;
+    background-color: #ddd;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.progress {
+    height: 100%;
+    background-color: #4caf50;
+    transition: width 1s linear; /* Smooth animation */
+}
+
+.results {
+    margin-top: 20px;
+    text-align: left;
+}

@@ -103,7 +103,7 @@ export async function getSeasonRounds(season) {
 }
 
 export async function getDrivers() {
-  const apiUrl = "https://api.jolpi.ca/ergast/f1/current/last/drivers.json";
+  const apiUrl = "https://ergast.com/api/f1/current/last/drivers.json";
 
   try {
     const response = await fetch(apiUrl);
