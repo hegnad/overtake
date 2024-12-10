@@ -1,11 +1,12 @@
 .driverCard {
-    width: 19%; /* Adjust the width as needed */
-    padding: 20px;
-    margin: 5px;
-    border: 3px solid #ccc;
-    border-radius: 8px;
-    text-align: left;
+    width: 250px;
+    flex-shrink: 0;
+    scroll-snap-align: start; /* Snap card to the start of the viewport */
+    border-radius: 15px;
     background: #0A0A0F;
+    margin: 5px;
+    padding: 20px;
+    text-align: left;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
@@ -20,10 +21,6 @@
     text-transform: uppercase;
 }
 
-    .driverNames h3 {
-        
-    }
-
     .driverNames h4 {
         font-size: 22px;
         font-weight: bold;
@@ -35,6 +32,7 @@
     margin-bottom: 10px;
     margin-top: 10px;
     border-radius: 15px;
+    background-color: #15151E;
 }
 
 .driverNumAndFlag {
@@ -47,9 +45,8 @@
 
 .driverImage {
     height: auto;
-    width: 100%;
+    width: 200px;
     padding-top: 15px;
-    margin-bottom: 10px;
 }
 
 .numContainer {
@@ -69,4 +66,11 @@
 
 .flag {
     border-radius: 5px;
+}
+
+.driverTeamName {
+    margin-top: 10px;
+    font-size: 1.1rem;
+    color: white;
+    text-transform: uppercase;
 }

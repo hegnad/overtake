@@ -1,7 +1,7 @@
 "use client";
 
 import SidebarLayout from "../ui/sidebar-layout";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useRouter } from 'next/navigation';
 import styles from "./formulalearn.module.css";
 import { getDrivers, getConstructors, getCircuits } from "../utils/api/ergast";
@@ -16,9 +16,11 @@ export default function FormulaLearn() {
     const [constructors, setConstructors] = useState<Constructor[]>([]);
     const [circuits, setCircuits] = useState<Circuit[]>([]);
 
-    const [currentPage, setCurrentPage] = useState(1);
-    const [driversPerPage, setDriversPerPage] = useState(5);
-    const cardWidth = 300;
+    const [currentBlock, setCurrentBlock] = useState(0); // Tracks current block (5 drivers)
+    const driversPerBlock = 5; // Number of drivers visible at once
+    const totalBlocks = Math.ceil(drivers.length / driversPerBlock); // Total blocks
+
+    const scrollRef = useRef<HTMLDivElement>(null);
 
     const [loadingDrivers, setLoadingDrivers] = useState(true);
     const [loadingConstructors, setLoadingConstructors] = useState(true);
@@ -34,7 +36,7 @@ export default function FormulaLearn() {
 
             try {
                 const driverData = await getDrivers();
-                if (driverData) setDrivers(driverData);
+                if (driverData) setDrivers([...driverData, ...driverData]);
             } catch (error) {
                 setError("Failed to fetch drivers");
             } finally {
@@ -87,49 +89,27 @@ export default function FormulaLearn() {
 
     }, []);
 
-    useEffect(() => {
+    // Dragging logic
+    const isDragging = useRef(false);
+    const startX = useRef(0);
+    const scrollLeft = useRef(0);
 
-        // Function to calculate the number of drivers per page based on window width
-        const calculateDriversPerPage = () => {
-            const windowWidth = window.innerWidth;
-            const driversThatFit = Math.floor((windowWidth - 400) / cardWidth); // Subtract margins and divide by card width
-            setDriversPerPage(driversThatFit);
-        };
-
-        // Initial calculation of drivers per page
-        calculateDriversPerPage();
-
-        // Listen for window resize events to recalculate the number of drivers that can fit
-        window.addEventListener("resize", calculateDriversPerPage);
-
-        // Cleanup listener on unmount
-        return () => {
-            window.removeEventListener("resize", calculateDriversPerPage);
-        };
-
-    }, []);
-
-    // Calculate the index of the drivers to display on the current page
-    const indexOfLastDriver = currentPage * driversPerPage;
-    const indexOfFirstDriver = indexOfLastDriver - driversPerPage;
-    const currentDrivers = drivers.slice(indexOfFirstDriver, indexOfLastDriver);
-
-    // Handle next page
-    const handleNextPage = () => {
-        if (currentPage < Math.ceil(drivers.length / driversPerPage)) {
-            setCurrentPage((prev) => prev + 1);
-        } else {
-            setCurrentPage(1); // Loop back to the first page
-        }
+    const handleMouseDown = (e: React.MouseEvent) => {
+        isDragging.current = true;
+        startX.current = e.pageX - (scrollRef.current?.offsetLeft || 0);
+        scrollLeft.current = scrollRef.current?.scrollLeft || 0;
     };
 
-    // Handle previous page
-    const handlePreviousPage = () => {
-        if (currentPage > 1) {
-            setCurrentPage((prev) => prev - 1);
-        } else {
-            setCurrentPage(Math.ceil(drivers.length / driversPerPage)); // Loop back to the last page
-        }
+    const handleMouseMove = (e: React.MouseEvent) => {
+        if (!isDragging.current || !scrollRef.current) return;
+        e.preventDefault();
+        const x = e.pageX - (scrollRef.current.offsetLeft || 0);
+        const walk = x - startX.current; // Calculate the distance moved
+        scrollRef.current.scrollLeft = scrollLeft.current - walk; // Update the scroll position
+    };
+
+    const handleMouseUpOrLeave = () => {
+        isDragging.current = false; // Stop dragging
     };
 
     const handleDriverClick = (permanentNumber: number) => {
@@ -145,9 +125,7 @@ export default function FormulaLearn() {
     }
 
     return (
-
         <SidebarLayout>
-
             {error && <p className={styles.error}>{error}</p>}
 
             {/* Drivers Display */}
@@ -156,51 +134,34 @@ export default function FormulaLearn() {
                     <h1>DRIVERS</h1>
                 </div>
 
-                {drivers.length === 0 ? (
+                {loadingDrivers ? (
                     <p>Loading drivers...</p>
                 ) : (
                     <>
-                        <div className={styles.driverGridContainer}>
-
-                            {/* Prev Button */}
-                            <button
-                                onClick={handlePreviousPage}
-                                className={styles.navButton}
+                            <div
+                                ref={scrollRef}
+                                className={styles.driverGrid}
+                                onMouseDown={handleMouseDown}
+                                onMouseMove={handleMouseMove}
+                                onMouseUp={handleMouseUpOrLeave}
+                                onMouseLeave={handleMouseUpOrLeave} // Handle case where mouse leaves container
                             >
-                                {"<"}
-                            </button>
-                            
-                        
-
-                            {/* Drivers Grid */}
-                            <div className={styles.driverGrid}>
-                                    {currentDrivers.map((driver) => (
-                                    <DriverCard
-                                            key={driver.driverId}
-                                            givenName={driver.givenName}
-                                            familyName={driver.familyName}
-                                            permanentNumber={driver.permanentNumber}
-                                            nationality={driver.nationality}
-                                            onClick={() => handleDriverClick(driver.permanentNumber)}
-                                    />
-                                ))}
-                            </div>
-
-                            {/* Next Button */}
-                            <button
-                                onClick={handleNextPage}
-                                className={styles.navButton}
-                            >
-                                {">"}
-                            </button>
-
+                            {drivers.map((driver, index) => (
+                                <DriverCard
+                                    key={`${driver.driverId}-${index}`}
+                                    givenName={driver.givenName}
+                                    familyName={driver.familyName}
+                                    permanentNumber={driver.permanentNumber}
+                                    nationality={driver.nationality}
+                                    onClick={() => handleDriverClick(driver.permanentNumber)}
+                                />
+                            ))}
                         </div>
                     </>
                 )}
             </div>
 
             <div className={styles.constructorsAndCircuitsContainer}>
-
                 {/* Constructors Display */}
                 <div className={styles.constructors}>
                     <div className={styles.header}>
@@ -217,7 +178,6 @@ export default function FormulaLearn() {
                             />
                         ))}
                     </div>
-
                 </div>
 
                 {/* Circuits Display */}
@@ -229,25 +189,21 @@ export default function FormulaLearn() {
                     {loadingCircuits ? (
                         <p>Loading circuits...</p>
                     ) : (
-                            <>
-                                <div className={styles.circuitsGrid}>
-                                    {circuits.map((circuit, index) => (
-                                        <CircuitCard
-                                            key={circuit.circuitId}
-                                            circuitId={circuit.circuitId}
-                                            circuitName={circuit.circuitName}
-                                            location={circuit.location}
-                                            roundNumber={index + 1}
-                                        />
-                                    ))}
-                                </div>
-                            </>
+                        <div className={styles.circuitsGrid}>
+                            {circuits.map((circuit, index) => (
+                                <CircuitCard
+                                    key={circuit.circuitId}
+                                    circuitId={circuit.circuitId}
+                                    circuitName={circuit.circuitName}
+                                    location={circuit.location}
+                                    roundNumber={index + 1}
+                                />
+                            ))}
+                        </div>
                     )}
                 </div>
-
             </div>
-
         </SidebarLayout>
-
     );
+
 }

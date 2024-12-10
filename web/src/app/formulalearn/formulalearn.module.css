@@ -17,40 +17,37 @@
 
 .driverGrid {
     display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-}
-
-.driverGridContainer {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: #0A0A0F;
-    border-radius: 15px;
+    gap: 20px;
     padding: 20px;
-    grid-auto-flow: column; /* Align cards in a row */
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Adjusts card size based on space */
+    overflow-x: hidden; /* Hide scrollbar for drag-to-scroll */
+    white-space: nowrap;
+    cursor: grab; /* Show grab cursor */
+    user-select: none; /* Prevent text selection */
 }
 
-.navButton {
-    width: 50px;
-    height: 400px;
+    .driverGrid:active {
+        cursor: grabbing; /* Change cursor to grabbing during drag */
+    }
+
+
+.indicatorContainer {
     display: flex;
-    align-items: center;
     justify-content: center;
-    background-color: #0A0A0F;
-    color: white;
-    border: none;
-    cursor: pointer;
-    border-radius: 15px;
-    font-size: 20px;
-    margin: 10px;
-    transition: transform 0.3s ease, background-color 0.3s ease;
+    margin-top: 10px;
 }
 
-    .navButton:hover {
-        background-color: #FF8A00;
-        transform: scale(1.05);
+.indicator {
+    width: 10px;
+    height: 10px;
+    background-color: #AAA;
+    border-radius: 50%;
+    margin: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+    .indicator.active {
+        background-color: #FF8A00; /* Highlight active indicator */
     }
 
 .constructorsAndCircuitsContainer {

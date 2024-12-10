@@ -45,7 +45,20 @@ export async function getTeamData(constructor_id) {
         console.log(data);
         return data;
     } catch (error) {
-        console.error("Error fetching team meta data: ", error);
+        console.error("Error fetching team meta data using constructorId: ", error);
+        return null;
+    }
+}
+
+export async function getTeamDataByTeamId(team_id) {
+    const apiUrl = `http://localhost:8080/api/images/driver/team/${team_id}`;
+    try {
+        const response = await fetch(apiUrl);
+        const data = await response.json();
+        console.log(data);
+        return data;
+    } catch (error) {
+        console.error("Error fetching team meta data using driver's teamId: ", error);
         return null;
     }
 }

@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import styles from './driverCard.module.css';
 import StyledLine from './styledline'
-import { getDriverImages } from '../utils/api/overtake';
-import { OvertakeDriver } from '../formulalearn/formulaLearnTypes';
+import { getDriverImages, getTeamDataByTeamId } from '../utils/api/overtake';
+import { OvertakeDriver, OvertakeConstructor } from '../formulalearn/formulaLearnTypes';
 
 interface DriverCardProps {
     givenName: string;
@@ -16,20 +16,30 @@ interface DriverCardProps {
 export default function DriverCard({ givenName, familyName, permanentNumber, nationality, onClick }: DriverCardProps) {
 
     const [driverData, setDriverData] = useState<OvertakeDriver | null>(null);
+    const [teamData, setTeamData] = useState<OvertakeConstructor | null>(null);
 
     useEffect(() => {
 
         async function fetchData() {
 
             try {
-                const data = await getDriverImages(permanentNumber);
-                setDriverData(data);
+
+                const fetchedDriverData = await getDriverImages(permanentNumber);
+                setDriverData(fetchedDriverData);
+
+                if (fetchedDriverData && fetchedDriverData.teamId) {
+                    const fetchedTeamData = await getTeamDataByTeamId(fetchedDriverData.teamId);
+                    setTeamData(fetchedTeamData);
+                }
+
             } catch (error) {
-                console.error("Error fetching driver data:", error);
+
+                console.error("Error fetching driver or team data:", error);
+
             }
 
         }
-
+        
         fetchData();
 
     }, [permanentNumber]);
@@ -78,6 +88,10 @@ export default function DriverCard({ givenName, familyName, permanentNumber, nat
             </div>
 
             <StyledLine color='red' size='thin' />
+
+            <div className={styles.driverTeamName}>
+                <h5>{teamData?.name}</h5>
+            </div>
 
         </div>
 
