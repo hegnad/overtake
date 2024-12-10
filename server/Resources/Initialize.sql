@@ -235,8 +235,8 @@ VALUES
   (1, 1, 1, NOW(), NOW(), 15),
   (1, 1, 2, NOW(), NOW(), 85),
   (1, 2, 1, NOW(), NOW(), 125),
-  (1, 2, 2, NOW(), NOW(), 0),
   (1, 3, 1, NOW(), NOW(), 25),
+  (1, 2, 2, NOW(), NOW(), 0),
   (1, 3, 2, NOW(), NOW(), 55),
   (1, 4, 1, NOW(), NOW(), 75),
   (1, 4, 2, NOW(), NOW(), 905),
@@ -265,26 +265,27 @@ VALUES
 INSERT INTO driver (driver_number, first_name, last_name, age, nationality, height, team_id, headshot_path, car_image_path, team_image_path, flag_image_path)
 VALUES 
   (1, 'Max', 'Verstappen', 26, 'Netherlands', 1.81, 3, './assets/driver_headshot/verstappen.png', './assets/cars/red_bull.png', './assets/teamlogos/red_bull_mini.png', './assets/country_flags/ne.svg'),  
-  (11, 'Sergio', 'Perez', 31, 'Mexico', 1.73, 3, './assets/driver_headshot/perez.png', './assets/cars/red_bull.png', './assets/teamlogos/red_bull_mini.png', './assets/country_flags/mx.svg'),
+  (11, 'Sergio', 'Pérez', 31, 'Mexico', 1.73, 3, './assets/driver_headshot/perez.png', './assets/cars/red_bull.png', './assets/teamlogos/red_bull_mini.png', './assets/country_flags/mx.svg'),
   (44, 'Lewis', 'Hamilton', 37, 'UK', 1.74, 2, './assets/driver_headshot/hamilton.png', './assets/cars/mercedes.png', './assets/teamlogos/mercedes_mini.png', './assets/country_flags/uk.svg'),
   (63, 'George', 'Russell', 24, 'UK', 1.85, 2, './assets/driver_headshot/russell.png', './assets/cars/mercedes.png', './assets/teamlogos/mercedes_mini.png', './assets/country_flags/uk.svg'),
   (77, 'Valtteri', 'Bottas', 32, 'Finland', 1.73, 2, './assets/driver_headshot/bottas.png', './assets/cars/sauber.png', './assets/teamlogos/sauber_mini.png', './assets/country_flags/fi.svg'),
   (24, 'Guanyu', 'Zhou', 22, 'China', 1.80, 5, './assets/driver_headshot/zhou.png', './assets/cars/sauber.png', './assets/teamlogos/sauber_mini.png', './assets/country_flags/ch.svg'),
   (4, 'Lando', 'Norris', 24, 'UK', 1.77, 4, './assets/driver_headshot/norris.png', './assets/cars/mclaren.png', './assets/teamlogos/mclaren_mini.png', './assets/country_flags/uk.svg'),
-  (81, 'Oscar', 'Piastri', 20, 'Australia', 1.80, 4, './assets/driver_headshot/piastri.png', './assets/cars/mcLaren.png', './assets/teamlogos/mclaren_mini.png', './assets/country_flags/au.svg'),
+  (81, 'Oscar', 'Piastri', 20, 'Australia', 1.80, 4, './assets/driver_headshot/piastri.png', './assets/cars/mclaren.png', './assets/teamlogos/mclaren_mini.png', './assets/country_flags/au.svg'),
   (14, 'Fernando', 'Alonso', 40, 'Spain', 1.71, 4, './assets/driver_headshot/alonso.png', './assets/cars/aston_martin.png', './assets/teamlogos/aston_martin_mini.png', './assets/country_flags/sp.svg'),
   (18, 'Lance', 'Stroll', 23, 'Canada', 1.85, 4, './assets/driver_headshot/stroll.png', './assets/cars/aston_martin.png', './assets/teamlogos/aston_martin_mini.png', './assets/country_flags/ca.svg'),
   (55, 'Carlos', 'Sainz', 27, 'Spain', 1.75, 1, './assets/driver_headshot/sainz.png', './assets/cars/ferrari.png', './assets/teamlogos/ferrari_mini.png', './assets/country_flags/sp.svg'),
   (16, 'Charles', 'Leclerc', 24, 'Monaco', 1.80, 1, './assets/driver_headshot/leclerc.png', './assets/cars/ferrari.png', './assets/teamlogos/ferrari_mini.png', './assets/country_flags/mn.svg'),
   (10, 'Pierre', 'Gasly', 25, 'France', 1.74, 5, './assets/driver_headshot/gasly.png', './assets/cars/alpine.png', './assets/teamlogos/alpine_mini.png', './assets/country_flags/fr.svg'),
   (31, 'Esteban', 'Ocon', 25, 'France', 1.86, 5, './assets/driver_headshot/ocon.png', './assets/cars/alpine.png', './assets/teamlogos/alpine_mini.png', './assets/country_flags/fr.svg'),
-  (27, 'Nico', 'Hulkenberg', 34, 'Germany', 1.84, 5, './assets/driver_headshot/hulkenberg.png', './assets/cars/haas.png', './assets/teamlogos/haas_mini.png', './assets/country_flags/ger.svg'),
+  (27, 'Nico', 'Hülkenberg', 34, 'Germany', 1.84, 5, './assets/driver_headshot/hulkenberg.png', './assets/cars/haas.png', './assets/teamlogos/haas_mini.png', './assets/country_flags/ger.svg'),
   (20, 'Kevin', 'Magnussen', 29, 'Denmark', 1.74, 5, './assets/driver_headshot/kevin_magnussen.png', './assets/cars/haas.png', './assets/teamlogos/haas_mini.png', './assets/country_flags/de.svg'),
   (22, 'Yuki', 'Tsunoda', 21, 'Japan', 1.59, 5, './assets/driver_headshot/tsunoda.png', './assets/cars/rb.png', './assets/teamlogos/rb_mini.png', './assets/country_flags/jp.svg'),
   (30, 'Liam', 'Lawson', 19, 'New Zealand', 1.75, 5, './assets/driver_headshot/lawson.png', './assets/cars/rb.png', './assets/teamlogos/rb_mini.png', './assets/country_flags/nz.svg'),
   (23, 'Alex', 'Albon', 25, 'Thailand', 1.86, 5, './assets/driver_headshot/albon.png', './assets/cars/williams.png', './assets/teamlogos/williams_mini.png', './assets/country_flags/th.svg'),
   (43, 'Franco', 'Colapinto', 18, 'Argentina', 1.75, 5, './assets/driver_headshot/colapinto.png', './assets/cars/williams.png', './assets/teamlogos/williams_mini.png', './assets/country_flags/ar.svg'),
-  (38, 'Oliver', 'Bearman', 19, 'UK', 1.85, 5, './assets/driver_headshot/bearman.png', './assets/cars/haas.png', './assets/teamlogos/haas_mini.png', './assets/country_flags/uk.svg');
+  (38, 'Oliver', 'Bearman', 19, 'UK', 1.85, 5, './assets/driver_headshot/bearman.png', './assets/cars/haas.png', './assets/teamlogos/haas_mini.png', './assets/country_flags/uk.svg'),
+  (7, 'Jack', 'Doohan', 21, 'Australia', 1.80, 5, './assets/driver_headshot/doohan.png', './assets/cars/alpine.png', './assets/teamlogos/alpine_mini.png', './assets/country_flags/au.svg');
 
 -- Insert test data for driver table (permanent numbers)
 UPDATE driver
