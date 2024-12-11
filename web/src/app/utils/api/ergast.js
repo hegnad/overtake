@@ -103,7 +103,7 @@ export async function getSeasonRounds(season) {
 }
 
 export async function getDrivers() {
-  const apiUrl = "https://ergast.com/api/f1/current/last/drivers.json";
+    const apiUrl = "https://api.jolpi.ca/ergast/f1/current/last/drivers.json";
 
   try {
     const response = await fetch(apiUrl);
@@ -211,3 +211,156 @@ export async function overtakerOfTheRace() {
     return null;
   }
 }
+
+export async function getWinsOfDriver(driverId) {
+    const apiUrl = `https://api.jolpi.ca/ergast/f1/drivers/${driverId}/results/1.json`;
+
+    try {
+        const response = await fetch(apiUrl);
+        if (!response.ok) {
+            throw new Error("Failed to fetch");
+        }
+        const data = await response.json();
+        const total = data.MRData.total;
+        console.log("Fetched total:", total);
+        return total;
+    } catch (error) {
+        console.error("Error fetching total wins of driver: ", error);
+        return null;
+    }
+}
+
+export async function getPodiumsOfDriver(driverId) {
+    const urls = [
+        `https://api.jolpi.ca/ergast/f1/drivers/${driverId}/results/1.json`, // Position 1
+        `https://api.jolpi.ca/ergast/f1/drivers/${driverId}/results/2.json`, // Position 2
+        `https://api.jolpi.ca/ergast/f1/drivers/${driverId}/results/3.json`, // Position 3
+    ];
+
+    try {
+        // Fetch all URLs concurrently
+        const responses = await Promise.all(urls.map(url => fetch(url)));
+
+        // Check if any fetch failed
+        if (responses.some(response => !response.ok)) {
+            throw new Error("Failed to fetch podium data");
+        }
+
+        // Parse all responses
+        const data = await Promise.all(responses.map(response => response.json()));
+
+        // Extract and sum up totals
+        const totalPodiums = data.reduce((sum, result) => sum + Number(result.MRData.total), 0);
+
+        console.log("Total podiums:", totalPodiums);
+        return totalPodiums;
+    } catch (error) {
+        console.error("Error fetching total podium finishes of driver:", error);
+        return null;
+    }
+}
+
+export async function getDriverStanding(driverId) {
+    const apiUrl = `https://api.jolpi.ca/ergast/f1/current/drivers/${driverId}/driverStandings.json`;
+
+    try {
+        const response = await fetch(apiUrl);
+        if (!response.ok) {
+            throw new Error("Failed to fetch driver standings");
+        }
+
+        const data = await response.json();
+        const position =
+            data.MRData?.StandingsTable?.StandingsLists[0]?.DriverStandings[0]?.position;
+
+        if (position) {
+            console.log(`Fetched position for driver ${driverId}:`, position);
+            return position;
+        } else {
+            console.warn("No position data available for driver:", driverId);
+            return null;
+        }
+    } catch (error) {
+        console.error("Error fetching driver standings:", error);
+        return null;
+    }
+}
+
+export async function getDriverSeasonResults(driverId) {
+    const currentYear = new Date().getFullYear();
+    const seasons = [currentYear, currentYear - 1, currentYear - 2]; // Current and past two seasons
+    const results = [];
+
+    // Exponential backoff function
+    async function fetchWithBackoff(url, maxRetries = 5, delay = 500) {
+        let retries = 0;
+
+        while (retries < maxRetries) {
+            try {
+                const response = await fetch(url);
+                if (response.ok) {
+                    return await response.json();
+                } else if (response.status === 429) {
+                    // Handle rate limit with exponential backoff
+                    retries++;
+                    const backoffDelay = delay * 2 ** retries; // Exponential increase
+                    console.warn(`Too many requests. Retrying in ${backoffDelay} ms...`);
+                    await new Promise((resolve) => setTimeout(resolve, backoffDelay));
+                } else {
+                    throw new Error(`Failed to fetch: ${response.status}`);
+                }
+            } catch (error) {
+                console.error(`Error fetching ${url} on attempt ${retries + 1}:`, error);
+                retries++;
+                const backoffDelay = delay * 2 ** retries;
+                await new Promise((resolve) => setTimeout(resolve, backoffDelay));
+            }
+        }
+
+        throw new Error(`Failed to fetch ${url} after ${maxRetries} retries`);
+    }
+
+    for (const season of seasons) {
+        const standingsUrl = `https://api.jolpi.ca/ergast/f1/${season}/drivers/${driverId}/driverStandings.json`;
+        const polesUrl = `https://api.jolpi.ca/ergast/f1/${season}/drivers/${driverId}/qualifying/1.json`;
+
+        let seasonData = {
+            season: season.toString(),
+            position: "N/A",
+            points: "0",
+            wins: "0",
+            polePositions: "0",
+        };
+
+        try {
+            // Fetch driver standings with backoff
+            const standingsData = await fetchWithBackoff(standingsUrl);
+            const standingsList = standingsData?.MRData?.StandingsTable?.StandingsLists?.[0];
+
+            if (standingsList) {
+                const driverStanding = standingsList.DriverStandings?.[0];
+                if (driverStanding) {
+                    seasonData.position = driverStanding.position || "N/A";
+                    seasonData.points = driverStanding.points || "0";
+                    seasonData.wins = driverStanding.wins || "0";
+                }
+            }
+        } catch (error) {
+            console.error(`Error fetching standings data for season ${season}:`, error);
+        }
+
+        try {
+            // Fetch pole positions with backoff
+            const polesData = await fetchWithBackoff(polesUrl);
+            seasonData.polePositions = polesData?.MRData?.total || "0"; // Default to 0 if no data
+        } catch (error) {
+            console.error(`Error fetching poles data for season ${season}:`, error);
+        }
+
+        // Add season data to results
+        results.push(seasonData);
+    }
+
+    return results;
+}
+

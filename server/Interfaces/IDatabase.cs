@@ -88,6 +88,8 @@ public interface IDatabase
 
     Task<Team> GetTeamMetadataByIdAsync(string constructorId);
 
+    Task<Team> GetTeamMetadataByTeamIdAsync(int teamId);
+
     Task<bool> UsernameExistsAsync(string username);
 
     Task<string> GetUserEmail(int userId);

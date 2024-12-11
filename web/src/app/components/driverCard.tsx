@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import styles from './driverCard.module.css';
 import StyledLine from './styledline'
-import { getDriverImages } from '../utils/api/overtake';
-import { OvertakeDriver } from '../formulalearn/formulaLearnTypes';
+import { getDriverImages, getTeamDataByTeamId } from '../utils/api/overtake';
+import { OvertakeDriver, OvertakeConstructor } from '../formulalearn/formulaLearnTypes';
 
 interface DriverCardProps {
     givenName: string;
@@ -11,25 +11,36 @@ interface DriverCardProps {
     permanentNumber: number;
     nationality: string;
     onClick?: () => void;
+    highlight?: boolean;
 }
 
-export default function DriverCard({ givenName, familyName, permanentNumber, nationality, onClick }: DriverCardProps) {
+export default function DriverCard({ givenName, familyName, permanentNumber, nationality, onClick, highlight = false }: DriverCardProps) {
 
     const [driverData, setDriverData] = useState<OvertakeDriver | null>(null);
+    const [teamData, setTeamData] = useState<OvertakeConstructor | null>(null);
 
     useEffect(() => {
 
         async function fetchData() {
 
             try {
-                const data = await getDriverImages(permanentNumber);
-                setDriverData(data);
+
+                const fetchedDriverData = await getDriverImages(permanentNumber);
+                setDriverData(fetchedDriverData);
+
+                if (fetchedDriverData && fetchedDriverData.teamId) {
+                    const fetchedTeamData = await getTeamDataByTeamId(fetchedDriverData.teamId);
+                    setTeamData(fetchedTeamData);
+                }
+
             } catch (error) {
-                console.error("Error fetching driver data:", error);
+
+                console.error("Error fetching driver or team data:", error);
+
             }
 
         }
-
+        
         fetchData();
 
     }, [permanentNumber]);
@@ -45,7 +56,7 @@ export default function DriverCard({ givenName, familyName, permanentNumber, nat
 
     return (
 
-        <div className={styles.driverCard} onClick={onClick}>
+        <div className={`${styles.driverCard} ${highlight ? styles.highlight : ""}`} onClick={onClick}>
 
             <div className={styles.driverNames}>
                 <h3>{givenName}</h3>
@@ -59,6 +70,7 @@ export default function DriverCard({ givenName, familyName, permanentNumber, nat
                     width={220}
                     height={220}
                     className={styles.driverImage}
+                    draggable="false"
                 />
             </div>
 
@@ -74,10 +86,15 @@ export default function DriverCard({ givenName, familyName, permanentNumber, nat
                     width={40}
                     height={40}
                     className={styles.flag}
+                    draggable="false"
                 />
             </div>
 
             <StyledLine color='red' size='thin' />
+
+            <div className={styles.driverTeamName}>
+                <h5>{teamData?.name}</h5>
+            </div>
 
         </div>
 

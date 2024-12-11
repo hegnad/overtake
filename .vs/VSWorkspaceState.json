@@ -1,27 +1,17 @@
 {
   "ExpandedNodes": [
     "",
-    "\\server\\Resources",
-    "\\server\\Services",
-    "\\server\\Resources",
-    "\\server\\Services",
-    "\\server\\Resources",
-    "\\server\\Services",
-    "\\web\\src\\app\\components",
-    "\\web\\src\\app\\formulalearn",
-    "\\web\\src\\app\\utils",
-    "\\web\\src\\app\\utils\\api"
-    "\\server\\Resources",
-  "SelectedNode": "\\server\\Controllers\\BallotController.cs",
+    "\\server",
+    "\\server\\Interfaces",
     "\\web",
-    "\\web\\public",
-    "\\web\\public\\assets",
-    "\\web\\public\\assets\\driver_headshot",
     "\\web\\src",
     "\\web\\src\\app",
+    "\\web\\src\\app\\ballot",
+    "\\web\\src\\app\\driverdetails",
+    "\\web\\src\\app\\raceleague",
     "\\web\\src\\app\\utils",
     "\\web\\src\\app\\utils\\api"
   ],
-  "SelectedNode": "\\server\\Entities\\Driver.cs",
+  "SelectedNode": "\\web\\src\\app\\components\\styledline.module.css",
   "PreviewInSolutionExplorer": false
 }
