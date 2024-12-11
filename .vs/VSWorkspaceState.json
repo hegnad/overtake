@@ -2,15 +2,16 @@
   "ExpandedNodes": [
     "",
     "\\server",
-    "\\server\\Controllers",
-    "\\server\\Entities",
-    "\\server\\Services",
+    "\\server\\Interfaces",
     "\\web",
     "\\web\\src",
     "\\web\\src\\app",
-    "\\web\\src\\app\\components",
-    "\\web\\src\\app\\formulalearn"
+    "\\web\\src\\app\\ballot",
+    "\\web\\src\\app\\driverdetails",
+    "\\web\\src\\app\\raceleague",
+    "\\web\\src\\app\\utils",
+    "\\web\\src\\app\\utils\\api"
   ],
-  "SelectedNode": "\\server\\Controllers\\DriverImageController.cs",
+  "SelectedNode": "\\web\\src\\app\\components\\styledline.module.css",
   "PreviewInSolutionExplorer": false
 }

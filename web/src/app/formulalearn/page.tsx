@@ -35,7 +35,7 @@ export default function FormulaLearn() {
 
             try {
                 const driverData = await getDrivers();
-                if (driverData) setDrivers([...driverData, ...driverData]);
+                if (driverData) setDrivers(driverData);
             } catch (error) {
                 setError("Failed to fetch drivers");
             } finally {
@@ -180,12 +180,12 @@ export default function FormulaLearn() {
 
     };
 
-    const handleDriverClick = (permanentNumber: number) => {
+    const handleDriverClick = (permanentNumber: number, driverId: string) => {
         if (!isDragMovement.current) {
-            // Only fire click if it wasn't a drag
             sessionStorage.setItem("selectedDriverNumber", permanentNumber.toString());
+            sessionStorage.setItem("selectedDriverId", driverId);
             router.push('./driverdetails');
-            console.log(`Driver with permanent number, ${permanentNumber}, clicked!`);
+            console.log(`Driver clicked: Permanent Number: ${permanentNumber}, Driver ID: ${driverId}`);
         }
     };
 
@@ -241,7 +241,7 @@ export default function FormulaLearn() {
                                     familyName={driver.familyName}
                                     permanentNumber={driver.permanentNumber}
                                     nationality={driver.nationality}
-                                    onClick={() => handleDriverClick(driver.permanentNumber)}
+                                    onClick={() => handleDriverClick(driver.permanentNumber, driver.driverId)}
                                     highlight={driver.driverId === highlightedDriver}
                                 />
                             ))}
