@@ -38,4 +38,49 @@ public class SimController : ControllerBase
 
         return new OkObjectResult(newSimBallotId);
     }
+
+    [HttpGet]
+    [Route("populateunscored")]
+    [Produces("application/json")]
+    public async Task<ActionResult<SimBallotContent[]>> PopulateUnscoredBallotsAsync()
+    {
+        var pendingSimBallots = await _database.PopulateUnscoredBallots();
+
+        if (pendingSimBallots.Length == 0)
+        {
+            return NoContent(); // Return HTTP 204 if no data is found
+        }
+
+        return new OkObjectResult(pendingSimBallots);
+    }
+
+    [HttpPut]
+    [Route("updatescores")]
+    public async Task<IActionResult> UpdateScores([FromBody] UpdateSimScoreRequest request)
+    {
+        if (request == null || request.BallotId <= 0 || request.Score < 0)
+        {
+            return BadRequest("Invalid request payload.");
+        }
+
+        // Process the update logic here
+        var success = await _database.UpdateSimBallotScoresAsync(request.BallotId, request.Score);
+
+        if (!success)
+        {
+            return BadRequest("Failed to update the score.");
+        }
+
+        return Ok("Score updated successfully.");
+    }
+
+    [HttpGet]
+    [Route("leaderboard")]
+    [Produces("application/json")]
+    public async Task<ActionResult<SimLeaderboard[]>> GetLeaderboardAsync()
+    {
+       var leaderboard = await _database.GetSimLeaderboard();
+
+        return new OkObjectResult(leaderboard);
+    }
 }

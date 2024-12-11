@@ -1,0 +1,50 @@
+.pageContainer {
+    padding: 20px;
+    max-width: 600px;
+    margin: 0 auto;
+    font-family: Arial, sans-serif;
+}
+
+.pageTitle {
+    font-size: 24px;
+    text-align: center;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.loadingText,
+.errorText,
+.noDataText {
+    text-align: center;
+    font-size: 18px;
+    color: #666;
+}
+
+.leaderboardList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.leaderboardItem {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+.rank {
+    font-weight: bold;
+    margin-right: 10px;
+}
+
+.username {
+    flex-grow: 1;
+    text-align: left;
+}
+
+.score {
+    font-weight: bold;
+    color: #555;
+}
