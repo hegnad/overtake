@@ -203,7 +203,7 @@ export default function DriverDetailsComponent() {
 
                                 <div className={styles.nationalityContainer}>
                                     <p>
-                                        NATIONALITY: {driverData.nationality}
+                                        COUNTRY: {driverData.nationality}
                                     </p>
                                 </div>
 
