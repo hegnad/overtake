@@ -5,6 +5,9 @@
 }
 
 .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     margin-bottom: 15px;
 }
 
@@ -15,42 +18,85 @@
         border-bottom: 3px solid #AA0000;
     }
 
-.driverGrid {
+.searchContainer {
     display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
+    gap: 10px;
+    align-items: center;
 }
 
-.driverGridContainer {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: #0A0A0F;
-    border-radius: 15px;
-    padding: 20px;
-    grid-auto-flow: column; /* Align cards in a row */
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Adjusts card size based on space */
+.searchInput {
+    padding: 5px 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    outline: none;
+    font-size: 14px;
+    width: 200px;
 }
 
-.navButton {
-    width: 50px;
-    height: 400px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: #0A0A0F;
+    .searchInput:focus {
+        border-color: #ff8a00;
+    }
+
+.searchButton {
+    padding: 5px 10px;
+    background-color: #ff8a00;
     color: white;
     border: none;
+    border-radius: 5px;
     cursor: pointer;
-    border-radius: 15px;
-    font-size: 20px;
-    margin: 10px;
-    transition: transform 0.3s ease, background-color 0.3s ease;
+    transition: background-color 0.3s ease;
 }
 
-    .navButton:hover {
-        background-color: #FF8A00;
-        transform: scale(1.05);
+    .searchButton:hover {
+        background-color: #d96d00;
+    }
+
+.clearButton {
+    padding: 5px 10px;
+    background-color: #ff8a00;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+    .clearButton:hover {
+        background-color: #d96d00;
+    }
+
+.driverGrid {
+    display: flex;
+    overflow-x: hidden;
+    white-space: nowrap;
+    align-items: flex-start;
+    cursor: grab; /* Grab cursor for drag */
+    user-select: none; /* Prevent text selection during drag */
+}
+
+    .driverGrid:active {
+        cursor: grabbing; /* Change cursor to grabbing during drag */
+    }
+
+
+.indicatorContainer {
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+}
+
+.indicator {
+    width: 10px;
+    height: 10px;
+    background-color: #AAA;
+    border-radius: 50%;
+    margin: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+    .indicator.active {
+        background-color: #FF8A00; /* Highlight active indicator */
     }
 
 .constructorsAndCircuitsContainer {

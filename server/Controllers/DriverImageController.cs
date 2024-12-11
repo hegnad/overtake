@@ -90,4 +90,19 @@ public class DriverImageController : ControllerBase
         return new OkObjectResult(teamMetadata);
     }
 
+    [HttpGet]
+    [Route("driver/team/{teamId}")]
+    [Produces("application/json")]
+    public async Task<ActionResult<Team>> GetTeamMetadataByTeamIdAsync(int teamId)
+    {
+        var teamMetadata = await _database.GetTeamMetadataByTeamIdAsync(teamId);
+
+        if (teamMetadata == null)
+        {
+            return NotFound();
+        }
+
+        return new OkObjectResult(teamMetadata);
+    }
+
 }

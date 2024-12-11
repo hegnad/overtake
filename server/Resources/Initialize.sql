@@ -301,7 +301,7 @@ VALUES
   (23, 'Alex', 'Albon', 25, 'Thailand', 1.86, 5, './assets/driver_headshot/albon.png', './assets/cars/williams.png', './assets/teamlogos/williams_mini.png', './assets/country_flags/th.svg'),
   (43, 'Franco', 'Colapinto', 18, 'Argentina', 1.75, 5, './assets/driver_headshot/colapinto.png', './assets/cars/williams.png', './assets/teamlogos/williams_mini.png', './assets/country_flags/ar.svg'),
   (38, 'Oliver', 'Bearman', 19, 'UK', 1.85, 5, './assets/driver_headshot/bearman.png', './assets/cars/haas.png', './assets/teamlogos/haas_mini.png', './assets/country_flags/uk.svg'),
-  (7, 'Jack', 'Doohan', 21, 'Australia', 1.80, 5, './assets/driver_headshot/doohan.png', './assets/cars/alpine.png', './assets/teamlogos/alpine_mini.png', './assets/country_flags/au.svg');
+  (61, 'Jack', 'Doohan', 21, 'Australia', 1.80, 5, './assets/driver_headshot/doohan.png', './assets/cars/alpine.png', './assets/teamlogos/alpine_mini.png', './assets/country_flags/au.svg');
 
 -- Insert test data for driver table (permanent numbers)
 UPDATE driver

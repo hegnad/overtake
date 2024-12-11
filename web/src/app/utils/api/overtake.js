@@ -38,16 +38,29 @@ export async function getTrackLayoutImage(round_number) {
 }
 
 export async function getTeamData(constructor_id) {
-  const apiUrl = `http://localhost:8080/api/images/team/${constructor_id}`;
-  try {
-    const response = await fetch(apiUrl);
-    const data = await response.json();
-    console.log(data);
-    return data;
-  } catch (error) {
-    console.error("Error fetching team meta data: ", error);
-    return null;
-  }
+    const apiUrl = `http://localhost:8080/api/images/team/${constructor_id}`;
+    try {
+        const response = await fetch(apiUrl);
+        const data = await response.json();
+        console.log(data);
+        return data;
+    } catch (error) {
+        console.error("Error fetching team meta data using constructorId: ", error);
+        return null;
+    }
+}
+
+export async function getTeamDataByTeamId(team_id) {
+    const apiUrl = `http://localhost:8080/api/images/driver/team/${team_id}`;
+    try {
+        const response = await fetch(apiUrl);
+        const data = await response.json();
+        console.log(data);
+        return data;
+    } catch (error) {
+        console.error("Error fetching team meta data using driver's teamId: ", error);
+        return null;
+    }
 }
 
 export async function getNext2025() {

@@ -1,17 +1,200 @@
 .driverDetailsContainer {
+    display: flex;
+    align-items: stretch;
+    gap: 20px;
     padding: 20px;
     background: #15151E;
     border-radius: 15px;
 }
 
-    .driverDetailsContainer h1 {
-        color: white;
+.returnButton {
+    background-color: #0A0A0F;
+    color: white;
+    border: none;
+    cursor: pointer;
+    width: 30px; /* Fixed width */
+    height: auto; /* Remove fixed height */
+    align-self: stretch; /* Ensure the button spans the height of the container */
+    font-size: 2rem; /* Larger font size for visibility */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 15px;
+    transition: transform 0.3s, background-color 0.3s;
+}
+
+    .returnButton:hover {
+        background-color: #FF8A00; /* Hover effect */
+        transform: scale(1.02); /* Slight scale on hover */
     }
 
-    .driverDetailsContainer p {
+.driverDetails {
+    flex: 1;
+}
+
+.topContainer {
+    display: flex;
+    gap: 20px;
+}
+
+/* Right Column */
+
+.driverTextContainer {
+    flex: 1;
+    max-width: 50%;
+}
+
+    .driverTextContainer h1 {
+        font-size: 3.5rem;
+        text-align: center;
         color: white;
+        text-transform: uppercase;
+        border-bottom: 4px solid #AA0000;
+        margin-bottom: 10px;
     }
+
+.numTeamFlagContainer {
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 4px solid #AA0000;
+    padding-bottom: 20px;
+}
+
+.numContainer {
+    background-color: white;
+    border-radius: 15px;
+    width: 160px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+}
+
+    .numContainer p {
+        margin: 0; /* Remove default margins */
+        color: #AA0000;
+        font-size: 6rem;
+        line-height: 1; /* Prevent extra height caused by line height */
+        text-align: center;
+        padding-top: 10px;
+    }
+
+.teamLogoContainer {
+
+}
+
+.teamLogo {
+    height: 100px;
+    width: auto;
+}
+
+.flagContainer {
+}
 
 .flag {
     border-radius: 15px;
+    height: 120px;
+    width: auto;
 }
+
+.ageAndNationalityContainer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: white;
+    margin-top: 10px;
+}
+
+    .ageAndNationalityContainer p {
+        font-size: 2.3rem;
+        text-transform: uppercase;
+    }
+
+.raceFinishContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 50px;
+    margin-top: 20px;
+}
+
+    .raceFinishContainer p {
+        color: white;
+        font-size: 1.8rem;
+    }
+
+.raceWinsContainer {
+    background-color: #AA0000;
+    border-radius: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 5px 20px 5px 20px;
+}
+
+.driverStandingContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+    color: white;
+}
+
+    .driverStandingContainer p {
+        font-size: 2.3rem;
+    }
+
+.driverStanding {
+    background-color: #AA0000;
+    border-radius: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0 20px;
+    margin-left: 20px;
+    font-size: 3rem;
+}
+
+/* Left Column */
+
+.driverHeadshotContainer {
+    display: flex;
+    flex: 2;
+    background-color: #0A0A0F;
+    border-radius: 15px;
+    max-width: 50%;
+    justify-content: center;
+}
+
+.headshot {
+    height: 500px;
+    width: auto;
+    align-items: center;
+}
+
+.resultsTableContainer {
+    margin-top: 20px;
+    padding: 20px;
+    background-color: #0A0A0F;
+    border-radius: 15px;
+}
+
+.resultsTable {
+    color: white;
+    border-spacing: 0 10px; /* Adds spacing between rows */
+    width: 100%; /* Optional: make table take full width */
+    border-collapse: separate;
+}
+
+    .resultsTable thead th {
+        padding-bottom: 10px;
+        text-align: left;
+        border-bottom: 3px solid #FF8A00;
+        font-size: 1.6rem;
+    }
+
+    .resultsTable tbody td {
+        font-size: 1.4rem;
+    }
