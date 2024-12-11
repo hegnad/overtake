@@ -9,12 +9,12 @@ import { Driver, Constructor, Circuit } from "./formulaLearnTypes";
 import DriverCard from "../components/driverCard";
 import ConstructorCard from "../components/constructorCard";
 import CircuitCard from "../components/circuitCard";
+import HamsterLoader from "../components/loaders/hamsterloader";
 
 export default function FormulaLearn() {
-
-    const [drivers, setDrivers] = useState<Driver[]>([]);
-    const [constructors, setConstructors] = useState<Constructor[]>([]);
-    const [circuits, setCircuits] = useState<Circuit[]>([]);
+  const [drivers, setDrivers] = useState<Driver[]>([]);
+  const [constructors, setConstructors] = useState<Constructor[]>([]);
+  const [circuits, setCircuits] = useState<Circuit[]>([]);
 
     const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -26,67 +26,55 @@ export default function FormulaLearn() {
     const [loadingCircuits, setLoadingCircuits] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
-    const router = useRouter();
+  const router = useRouter();
 
-    // Driver fetch
-    useEffect(() => {
+  // Driver fetch
+  useEffect(() => {
+    async function fetchDrivers() {
+      try {
+        const driverData = await getDrivers();
+        if (driverData) setDrivers(driverData);
+      } catch (error) {
+        setError("Failed to fetch drivers");
+      } finally {
+        setLoadingDrivers(false);
+      }
+    }
 
-        async function fetchDrivers() {
+    fetchDrivers();
+  }, []);
 
-            try {
-                const driverData = await getDrivers();
-                if (driverData) setDrivers(driverData);
-            } catch (error) {
-                setError("Failed to fetch drivers");
-            } finally {
-                setLoadingDrivers(false);
-            }
+  // Constructor fetch
+  useEffect(() => {
+    async function fetchConstructors() {
+      try {
+        const constructorData = await getConstructors();
+        if (constructorData) setConstructors(constructorData);
+      } catch (error) {
+        setError("Failed to fetch constructors");
+      } finally {
+        setLoadingConstructors(false);
+      }
+    }
 
-        }
+    fetchConstructors();
+  }, []);
 
-        fetchDrivers();
+  // Circuit fetch
+  useEffect(() => {
+    async function fetchCircuits() {
+      try {
+        const circuitData = await getCircuits();
+        if (circuitData) setCircuits(circuitData);
+      } catch (error) {
+        setError("Failed to fetch circuits");
+      } finally {
+        setLoadingCircuits(false);
+      }
+    }
 
-    }, []);
-
-    // Constructor fetch
-    useEffect(() => {
-
-        async function fetchConstructors() {
-
-            try {
-                const constructorData = await getConstructors();
-                if (constructorData) setConstructors(constructorData);
-            } catch (error) {
-                setError("Failed to fetch constructors");
-            } finally {
-                setLoadingConstructors(false);
-            }
-
-        }
-
-        fetchConstructors();
-
-    }, []);
-
-    // Circuit fetch
-    useEffect(() => {
-
-        async function fetchCircuits() {
-
-            try {
-                const circuitData = await getCircuits();
-                if (circuitData) setCircuits(circuitData);
-            } catch (error) {
-                setError("Failed to fetch circuits");
-            } finally {
-                setLoadingCircuits(false);
-            }
-
-        }
-
-        fetchCircuits();
-
-    }, []);
+    fetchCircuits();
+  }, []);
 
     // Search Functionality
     const handleSearch = () => {
@@ -189,11 +177,11 @@ export default function FormulaLearn() {
         }
     };
 
-    const handleConstructorClick = (constructorId: string) => {
-        sessionStorage.setItem("selectedConstructorId", constructorId);
-        router.push('./constructordetails');
-        console.log(`Constructor with constructor id, ${constructorId}, clicked!`);
-    }
+  const handleConstructorClick = (constructorId: string) => {
+    sessionStorage.setItem("selectedConstructorId", constructorId);
+    router.push("./constructordetails");
+    console.log(`Constructor with constructor id, ${constructorId}, clicked!`);
+  };
 
     return (
         <SidebarLayout>
