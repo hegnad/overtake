@@ -1400,4 +1400,104 @@ public class PostgresDatabase : IDatabase
 
         return ballotId;
     }
+
+    public async Task<SimBallotContent[]> PopulateUnscoredBallots()
+    {
+        var simBallotContents = new List<SimBallotContent>();
+
+        // Step 1: Get all simballot_id where score is NULL
+        using var cmdGetSimBallots = _dataSource.CreateCommand(
+            @"SELECT simballot_id FROM simBallot WHERE score IS NULL"
+        );
+
+        var simBallotIds = new List<int>();
+
+        await using (var reader = await cmdGetSimBallots.ExecuteReaderAsync())
+        {
+            while (await reader.ReadAsync())
+            {
+                simBallotIds.Add(reader.GetInt32(0));
+            }
+        }
+
+        // Step 2: For each simballot_id, get simBallotContent entries
+        foreach (var ballotId in simBallotIds)
+        {
+            using var cmdGetSimBallotContents = _dataSource.CreateCommand(
+                @"SELECT driver_name, position FROM simballotContent WHERE simballot_id = @ballot_id"
+            );
+
+            cmdGetSimBallotContents.Parameters.AddWithValue("ballot_id", ballotId);
+
+            var driverPredictions = new List<DriverPrediction>();
+
+            await using (var contentReader = await cmdGetSimBallotContents.ExecuteReaderAsync())
+            {
+                while (await contentReader.ReadAsync())
+                {
+                    driverPredictions.Add(new DriverPrediction
+                    {
+                        DriverName = contentReader.IsDBNull(0) ? string.Empty : contentReader.GetString(0),
+                        Position = contentReader.GetInt32(1)
+                    });
+                }
+            }
+
+            // Add the ballot contents to the result list
+            simBallotContents.Add(new SimBallotContent
+            {
+                BallotId = ballotId,
+                predictions = driverPredictions.ToArray()
+            });
+        }
+
+        // Return the result as an array
+        return simBallotContents.ToArray();
+    }
+
+
+    public async Task<bool> UpdateSimBallotScoresAsync(int ballotId, int score)
+    {
+        try
+        {
+            using var command = _dataSource.CreateCommand(
+                @"UPDATE simBallot SET score = @score WHERE simballot_id = @ballotId"
+            );
+
+            command.Parameters.AddWithValue("ballotId", ballotId);
+            command.Parameters.AddWithValue("score", score);
+
+            int rowsAffected = await command.ExecuteNonQueryAsync();
+            return rowsAffected > 0; // Return true if at least one row was updated
+        }
+        catch (Exception ex)
+        {
+            // Log the exception (if necessary)
+            Console.Error.WriteLine($"Error updating scores: {ex.Message}");
+            return false;
+        }
+    }
+
+    public async Task<SimLeaderboard[]> GetSimLeaderboard()
+    {
+        using var command = _dataSource.CreateCommand(
+            @"SELECT username, score FROM simBallot ORDER BY score DESC"
+        );
+
+        var leaderboard = new List<SimLeaderboard>();
+
+        await using (var reader = await command.ExecuteReaderAsync())
+        {
+            while (await reader.ReadAsync())
+            {
+                leaderboard.Add(new SimLeaderboard
+                {
+                    Username = reader.GetString(0),
+                    Score = reader.GetInt32(1),
+                });
+            }
+        }
+
+        return leaderboard.ToArray();
+    }
 }
