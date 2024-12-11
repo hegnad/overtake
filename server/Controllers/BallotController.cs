@@ -44,6 +44,7 @@ public class BallotController : ControllerBase
 
         int leagueId = request.LeagueId.Value;
 
+        /*
         // Get the raceId of the next race
         int? nextRaceId = await _database.GetNextRaceId();
         if (!nextRaceId.HasValue)
@@ -52,6 +53,10 @@ public class BallotController : ControllerBase
         }
 
         int raceId = nextRaceId.Value;
+        */
+
+        // Hardcode to assign raceId to Abu Dhabi 2024
+        int raceId = 24;
 
         // Create a list of DriverPrediction objects
         var driverPredictions = request.DriverPredictions.Select((name, index) => new DriverPrediction

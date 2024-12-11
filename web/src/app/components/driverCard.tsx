@@ -11,9 +11,10 @@ interface DriverCardProps {
     permanentNumber: number;
     nationality: string;
     onClick?: () => void;
+    highlight?: boolean;
 }
 
-export default function DriverCard({ givenName, familyName, permanentNumber, nationality, onClick }: DriverCardProps) {
+export default function DriverCard({ givenName, familyName, permanentNumber, nationality, onClick, highlight = false }: DriverCardProps) {
 
     const [driverData, setDriverData] = useState<OvertakeDriver | null>(null);
     const [teamData, setTeamData] = useState<OvertakeConstructor | null>(null);
@@ -55,7 +56,7 @@ export default function DriverCard({ givenName, familyName, permanentNumber, nat
 
     return (
 
-        <div className={styles.driverCard} onClick={onClick}>
+        <div className={`${styles.driverCard} ${highlight ? styles.highlight : ""}`} onClick={onClick}>
 
             <div className={styles.driverNames}>
                 <h3>{givenName}</h3>
@@ -69,6 +70,7 @@ export default function DriverCard({ givenName, familyName, permanentNumber, nat
                     width={220}
                     height={220}
                     className={styles.driverImage}
+                    draggable="false"
                 />
             </div>
 
@@ -84,6 +86,7 @@ export default function DriverCard({ givenName, familyName, permanentNumber, nat
                     width={40}
                     height={40}
                     className={styles.flag}
+                    draggable="false"
                 />
             </div>
 

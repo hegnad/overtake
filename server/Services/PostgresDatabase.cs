@@ -539,7 +539,8 @@ public class PostgresDatabase : IDatabase
         await using var cmd = _dataSource.CreateCommand(
             @"SELECT driver_id, driver_number, first_name, last_name, age, nationality, height, team_id, headshot_path, car_image_path, team_image_path, flag_image_path
           FROM driver
-          WHERE driver_number=@driver_number OR @driver_number = (SELECT permanent_number FROM driver WHERE permanent_number IS NOT NULL AND permanent_number=@driver_number)"
+          WHERE driver_number = @driver_number
+            OR permanent_number = @driver_number"
         );
 
         cmd.Parameters.AddWithValue("driver_number", driverNumber);

@@ -5,6 +5,9 @@
 }
 
 .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     margin-bottom: 15px;
 }
 
@@ -15,14 +18,60 @@
         border-bottom: 3px solid #AA0000;
     }
 
+.searchContainer {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.searchInput {
+    padding: 5px 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    outline: none;
+    font-size: 14px;
+    width: 200px;
+}
+
+    .searchInput:focus {
+        border-color: #ff8a00;
+    }
+
+.searchButton {
+    padding: 5px 10px;
+    background-color: #ff8a00;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+    .searchButton:hover {
+        background-color: #d96d00;
+    }
+
+.clearButton {
+    padding: 5px 10px;
+    background-color: #ff8a00;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+    .clearButton:hover {
+        background-color: #d96d00;
+    }
+
 .driverGrid {
     display: flex;
-    gap: 20px;
-    padding: 20px;
-    overflow-x: hidden; /* Hide scrollbar for drag-to-scroll */
+    overflow-x: hidden;
     white-space: nowrap;
-    cursor: grab; /* Show grab cursor */
-    user-select: none; /* Prevent text selection */
+    align-items: flex-start;
+    cursor: grab; /* Grab cursor for drag */
+    user-select: none; /* Prevent text selection during drag */
 }
 
     .driverGrid:active {

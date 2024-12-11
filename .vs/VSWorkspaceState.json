@@ -1,27 +1,16 @@
 {
   "ExpandedNodes": [
     "",
-    "\\server\\Resources",
+    "\\server",
+    "\\server\\Controllers",
+    "\\server\\Entities",
     "\\server\\Services",
-    "\\server\\Resources",
-    "\\server\\Services",
-    "\\server\\Resources",
-    "\\server\\Services",
-    "\\web\\src\\app\\components",
-    "\\web\\src\\app\\formulalearn",
-    "\\web\\src\\app\\utils",
-    "\\web\\src\\app\\utils\\api"
-    "\\server\\Resources",
-  "SelectedNode": "\\server\\Controllers\\BallotController.cs",
     "\\web",
-    "\\web\\public",
-    "\\web\\public\\assets",
-    "\\web\\public\\assets\\driver_headshot",
     "\\web\\src",
     "\\web\\src\\app",
-    "\\web\\src\\app\\utils",
-    "\\web\\src\\app\\utils\\api"
+    "\\web\\src\\app\\components",
+    "\\web\\src\\app\\formulalearn"
   ],
-  "SelectedNode": "\\server\\Entities\\Driver.cs",
+  "SelectedNode": "\\server\\Controllers\\DriverImageController.cs",
   "PreviewInSolutionExplorer": false
 }
