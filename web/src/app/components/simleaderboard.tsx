@@ -2,6 +2,20 @@
 
 import { useState, useEffect } from "react";
 import styles from "./simleaderboard.module.css";
+import Image from "next/image";
+
+const teamLogos = [
+    './assets/teamlogos/mclaren_mini.png',       // 1st position
+    './assets/teamlogos/ferrari_mini.png',       // 2nd position
+    './assets/teamlogos/red_bull_mini.png',      // 3rd position
+    './assets/teamlogos/mercedes_mini.png',      // 4th position
+    './assets/teamlogos/aston_martin_mini.png',  // 5th position
+    './assets/teamlogos/alpine_mini.png',        // 6th position
+    './assets/teamlogos/haas_mini.png',          // 7th position
+    './assets/teamlogos/rb_mini.png',            // 8th position
+    './assets/teamlogos/williams_mini.png',      // 9th position
+    './assets/teamlogos/sauber_mini.png'         // 10th position
+];
 
 interface LeaderboardEntry {
     username: string;
@@ -41,6 +55,21 @@ export default function SimLeaderboard() {
         fetchLeaderboard();
     }, []);
 
+    const getPositionClass = (index: any) => {
+        switch (index) {
+            case 0:
+                return styles.gold;
+            case 1:
+                return styles.silver;
+            case 2:
+                return styles.bronze;
+            default:
+                return '';
+        }
+    };
+
+    const sortedLeaderboard = leaderboard.sort((a, b) => b.score - a.score);
+
     return (
         <div className={styles.pageContainer}>
             <h1 className={styles.pageTitle}>Leaderboard</h1>
@@ -55,9 +84,18 @@ export default function SimLeaderboard() {
                 <ul className={styles.leaderboardList}>
                     {leaderboard.map((entry, index) => (
                         <li key={index} className={styles.leaderboardItem}>
-                            <span className={styles.rank}>{index + 1}.</span>
-                            <span className={styles.username}>{entry.username}</span>
-                            <span className={styles.score}>{entry.score}</span>
+                            <span className={`${styles.rank} ${getPositionClass(index)}`}>{index + 1}.</span>
+                            {index < teamLogos.length && (
+                                <Image
+                                    src={teamLogos[index]}
+                                    alt={`Team logo for position ${index + 1}`}
+                                    width={20}
+                                    height={20}
+                                    className={styles.teamLogo}
+                                />
+                            )}
+                            <span className={`${styles.username} ${getPositionClass(index)}`}>{entry.username}</span>
+                            <span className={`${styles.score} ${getPositionClass(index)}`}>{entry.score}</span>
                         </li>
                     ))}
                 </ul>

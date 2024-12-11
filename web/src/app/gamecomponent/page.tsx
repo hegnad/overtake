@@ -135,7 +135,7 @@ export default function GameComponent() {
                 position: index + 1,
                 finished: false,
                 finishTime: null,
-                speedBoost: 1 - (index / 19), // Calculate speed boost (1st gets 1 km/h, 20th gets 0 km/h)
+                speedBoost: 20 - (index / 19), // Calculate speed boost (1st gets 1 km/h, 20th gets 0 km/h)
             }));
         setDrivers(shuffledDrivers);
         setRaceStarted(false);
@@ -290,21 +290,19 @@ export default function GameComponent() {
     }
 
     const resetRace = () => {
-        // Reset the race state to its initial values
         setDrivers([]);
         setRaceStarted(false);
         setRaceFinished(false);
         setRaceResults([]);
-        setShowLeaderboard(true); // Show the leaderboard after resetting the race
+        setShowLeaderboard(true);
 
-        // Re-fetch drivers to reset the starting grid
         async function fetchDrivers() {
             try {
                 const fetchedDrivers = await getDrivers();
-
                 const formattedDrivers = fetchedDrivers.map((driver: any) => ({
                     ...driver,
                     fullName: `${driver.givenName} ${driver.familyName}`,
+                    team: driverTeams[driver.driverId] || "Unknown", // Ensure team assignment here
                     imageUrl: `/assets/driver_headshot/${driver.driverId}.png`,
                     progress: 0,
                     speed: 0,
@@ -313,7 +311,6 @@ export default function GameComponent() {
                     finishTime: null,
                     speedBoost: 0,
                 }));
-
                 setDrivers(formattedDrivers);
             } catch (error) {
                 setError("Failed to fetch drivers");
