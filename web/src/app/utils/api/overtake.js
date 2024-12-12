@@ -16,7 +16,6 @@ export async function getDriverImages(driver_number) {
   try {
     const response = await fetch(apiUrl);
     const data = await response.json();
-    console.log(data);
     return data;
   } catch (error) {
     console.error("Error fetching driver image url: ", error);
@@ -29,7 +28,6 @@ export async function getTrackLayoutImage(round_number) {
   try {
     const response = await fetch(apiUrl);
     const data = await response.json();
-    console.log(data);
     return data;
   } catch (error) {
     console.error("Error fetching track layout image url: ", error);
@@ -42,7 +40,6 @@ export async function getTeamData(constructor_id) {
     try {
         const response = await fetch(apiUrl);
         const data = await response.json();
-        console.log(data);
         return data;
     } catch (error) {
         console.error("Error fetching team meta data using constructorId: ", error);
@@ -55,7 +52,6 @@ export async function getTeamDataByTeamId(team_id) {
     try {
         const response = await fetch(apiUrl);
         const data = await response.json();
-        console.log(data);
         return data;
     } catch (error) {
         console.error("Error fetching team meta data using driver's teamId: ", error);

@@ -23,8 +23,11 @@ interface ConstructorFinalResult {
 export default function ConstructorDetailsComponent() {
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
+    const [sessionLoading, setSessionLoading] = useState<boolean>(true);
 
     const router = useRouter();
+
+    const [storedConstructorId, setStoredConstructorId] = useState<string | null>(null);
 
     const [teamData, setTeamData] = useState<OvertakeConstructor | null>(null);
 
@@ -37,14 +40,22 @@ export default function ConstructorDetailsComponent() {
     const [constructorPodiums, setConstructorPodiums] = useState<number | null>(null);
     const [constructorSeasonResults, setConstructorSeasonResults] = useState<ConstructorFinalResult[]>([]);
 
-    const storedConstructorId = sessionStorage.getItem("selectedConstructorId");
 
     useEffect(() => {
-        if (!storedConstructorId) {
-            setError("No constructor selected.");
-            setLoading(false);
-            return;
+        if (typeof window !== "undefined") {
+            const constructorId = sessionStorage.getItem("selectedConstructorId");
+            if (constructorId) {
+                setStoredConstructorId(constructorId);
+            } else {
+                setError("No constructor selected.");
+            }
+            setSessionLoading(false); // Mark session loading as complete
         }
+    }, []);
+
+    useEffect(() => {
+
+        if (sessionLoading || !storedConstructorId) return;
 
         async function fetchAllData() {
             try {
@@ -108,7 +119,7 @@ export default function ConstructorDetailsComponent() {
         }
 
         fetchAllData();
-    }, [storedConstructorId]);
+    }, [storedConstructorId, sessionLoading]);
 
     if (loading) {
         return <SidebarLayout><HamsterLoader /></SidebarLayout>;

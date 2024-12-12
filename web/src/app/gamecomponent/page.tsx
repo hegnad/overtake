@@ -117,7 +117,7 @@ export default function GameComponent() {
                 position: index + 1,
                 finished: false,
                 finishTime: null,
-                speedBoost: 1 - (index / 19), // Calculate speed boost (1st gets 1 km/h, 20th gets 0 km/h)
+                speedBoost: 1 - (index / 40), // Calculate speed boost (1st gets 1 km/h, 20th gets 0 km/h)
             }));
         setDrivers(shuffledDrivers);
         setRaceStarted(false);
