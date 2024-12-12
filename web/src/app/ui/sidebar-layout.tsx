@@ -8,85 +8,127 @@ import { IdentityContext } from "../lib/context/identity";
 import { useContext } from "react";
 import Modal from "react-modal";
 import HowToPlay from "../components/howto";
+import Image from 'next/image';
+import StyledLine from '../components/styledline';
+import { useRouter } from 'next/navigation';
 
 interface SidebarLayoutProps {
   children: ReactNode;
 }
 
 export default function SidebarLayout({ children }: SidebarLayoutProps) {
-  const identity = useContext(IdentityContext);
-  const [isOpen, setIsOpen] = useState(false);
+    const identity = useContext(IdentityContext);
+    const [isOpen, setIsOpen] = useState(false);
 
-  return (
-    <div className={styles.container}>
-      <div className={styles.sidebar}>
-        <div className={styles.logoContainer}>
-          <img
-            src="/images/logo.svg"
-            alt="Overtake Logo"
-            className={styles.logoImage}
-          />
-          <Link href="/" className={styles.logoLink}>
-            Overtake
-          </Link>
+    const router = useRouter();
+
+    const handleReturnClick = () => {
+        router.push('/');
+    };
+
+    return (
+
+        <div className={styles.container}>
+
+            <div className={styles.sidebar}>
+
+                <div className={styles.logoWithLine}>
+
+                    <div className={styles.logoContainer} onClick={handleReturnClick}>
+                        <Image
+                            src="/images/logo.svg"
+                            alt="Overtake Logo"
+                            width={50}
+                            height={50}
+                            className={styles.logoImage}
+                            onClick={handleReturnClick}
+                        />
+
+                        <Link href="/" className={styles.logoLink}>
+                            Overtake
+                        </Link>
+                    </div>
+
+                    <StyledLine color='yellow' size='sidebar' />
+
+                </div>
+
+                <nav className={styles.nav}>
+
+                    {/* Always visible links */}
+
+                    <div className={styles.howToPlayButtonContainer}>
+
+                        {!isOpen && (
+
+                            <button
+                                onClick={() => setIsOpen(true)}
+                                className={styles.howToPlayButton}
+                            >
+                                <div className={styles.circle}></div>
+                                <div className={styles.circle}></div>
+                                <div className={styles.circle}></div>
+                                <div className={styles.circle}></div>
+                                <p>How To Play</p>
+                            </button>
+
+                        )}
+
+                        <div className={styles.modalBackground}>
+
+                            <Modal
+                                isOpen={isOpen}
+                                onRequestClose={() => setIsOpen(false)}
+                                contentLabel="How to play"
+                                className={styles.modalContainer}
+                            >
+                                <HowToPlay />
+                                <button onClick={() => setIsOpen(false)}>Close</button>
+                            </Modal>
+
+                        </div>
+
+                    </div>
+
+                    <Link href="/races" className={styles.navItem}>
+                        <span>RACES</span>
+                    </Link>
+                    <Link href="/livepos" className={styles.navItem}>
+                        <span>LIVE POSITIONS</span>
+                    </Link>
+
+
+                    {/* Links visible only if the user is logged in */}
+
+                    {identity?.sessionToken && (
+                        <>
+                            <Link href="/raceleague" className={styles.navItem}>
+                                <span>RACE LEAGUE</span>
+                            </Link>
+                            <Link href="/formulalearn" className={styles.navItem}>
+                                <span>FORMULALEARN</span>
+                            </Link>
+                            <Link href="/lastrace" className={styles.navItem}>
+                                <span>LAST RACE</span>
+                            </Link>
+                            <Link href="/gamecomponent" className={styles.navItem}>
+                                <span>CAPSTONE GAME</span>
+                            </Link>
+                        </>
+                    )}
+
+                </nav>
+
+                <div className={styles.profileContainer}>
+                    <ProfileButton />
+                </div>
+
+            </div>
+
+            <div className="overflow-scroll bg-background w-4/5 p-4">{children}</div>
+
         </div>
-        <div>
-          {!isOpen && (
-            <button
-              onClick={() => setIsOpen(true)}
-              className="relative border hover:border-sky-600 duration-500 group cursor-pointer text-sky-50 overflow-hidden h-14 w-56 rounded-md bg-sky-800 p-2 flex justify-center items-center font-extrabold"
-            >
-              <div className="absolute z-10 w-48 h-48 rounded-full group-hover:scale-150 transition-all duration-500 ease-in-out bg-sky-900 delay-150 group-hover:delay-75"></div>
-              <div className="absolute z-10 w-40 h-40 rounded-full group-hover:scale-150 transition-all duration-500 ease-in-out bg-sky-800 delay-150 group-hover:delay-100"></div>
-              <div className="absolute z-10 w-32 h-32 rounded-full group-hover:scale-150 transition-all duration-500 ease-in-out bg-sky-700 delay-150 group-hover:delay-150"></div>
-              <div className="absolute z-10 w-24 h-24 rounded-full group-hover:scale-150 transition-all duration-500 ease-in-out bg-sky-600 delay-150 group-hover:delay-200"></div>
-              <div className="absolute z-10 w-16 h-16 rounded-full group-hover:scale-150 transition-all duration-500 ease-in-out bg-sky-500 delay-150 group-hover:delay-300"></div>
-              <p className="z-10">How To Play</p>
-            </button>
-          )}
-          <div className={styles.modalBackground}>
-              <Modal
-                isOpen={isOpen}
-                onRequestClose={() => setIsOpen(false)}
-                contentLabel="How to play"
-                className={styles.modalContainer}
-              >
-                <HowToPlay />
 
-                <button onClick={() => setIsOpen(false)}>Close</button>
-              </Modal>
-          </div>
-        </div>
-        <nav className={styles.nav}>
-          {/* Always visible links */}
-          <Link href="/races" className={styles.navItem}>
-            RACES
-          </Link>
-          <Link href="/livepos" className={styles.navItem}>
-            LIVE POSITIONS
-          </Link>
+    );
 
-          {/* Links visible only if the user is logged in */}
-          {identity?.sessionToken && (
-            <>
-              <Link href="/raceleague" className={styles.navItem}>
-                RACE LEAGUE
-              </Link>
-              <Link href="/formulalearn" className={styles.navItem}>
-                FORMULALEARN
-              </Link>
-              <Link href="/lastrace" className={styles.navItem}>
-                LAST RACE
-              </Link>
-              <Link href="/gamecomponent" className={styles.navItem}>
-                CAPSTONE GAME
-              </Link>
-            </>
-          )}
-        </nav>
-        <ProfileButton />
-      </div>
-      <div className="overflow-scroll bg-background w-4/5 p-4">{children}</div>
-    </div>
-  );
 }

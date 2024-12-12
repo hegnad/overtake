@@ -11,6 +11,7 @@
 .user {
     position: relative; /* Set the user container as the relative position */
     text-align: center; /* Center the username itself */
+    z-index: 1;
 }
 
 .buttonList {
@@ -22,9 +23,21 @@
     flex-direction: column;
     gap: 10px;
     padding: 10px;
-    border-radius: 5px;
+    border-radius: 15px;
     justify-content: center;
+    background-color: #15151E;
+    width: 100%;
+    opacity: 0; /* Start invisible */
+    visibility: hidden; /* Ensure it's hidden when not active */
+    transition: bottom 0.3s ease, opacity 0.3s ease, visibility 0.3s ease;
 }
+
+    .buttonList.show {
+        bottom: 110%; /* Moves slightly up when shown */
+        transform: translate(-50%, -5px); /* Smooth upward movement */
+        opacity: 1; /* Fully visible */
+        visibility: visible; /* Ensure it's visible when active */
+    }
 
 .actionButton {
     padding: 10px 15px;
@@ -32,10 +45,16 @@
     cursor: pointer;
     color: white; /* Default white color */
     border: none;
+    text-transform: uppercase;
+    border-radius: 15px;
+    background-color: none;
+    transition: color 0.5s ease, transform 0.5s ease, background-color 0.5s ease;
 }
 
     .actionButton:hover {
         color: #FFAA00; /* Slightly darker than white */
+        transform: scale(1.02);
+        background-color: #42425E;
     }
 
 .login {
@@ -43,5 +62,39 @@
 }
 
 .friendsListContainer {
-    width: 300px;
+    position: absolute; /* Position it relative to the parent container */
+    bottom: 100%; /* Place it above the username */
+    left: 50%; /* Center align horizontally */
+    transform: translateX(-50%); /* Offset horizontally for centering */
+    width: 300px; /* Set a fixed width for the container */
+    background-color: #15151E; /* Match the theme */
+    border-radius: 15px; /* Add rounded corners */
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5); /* Optional shadow for better visibility */
+    z-index: 2; /* Ensure it stays above other elements */
+    padding: 10px; /* Add padding inside the container */
+    opacity: 0; /* Start invisible */
+    visibility: hidden; /* Ensure it's hidden when not active */
+    transition: bottom 0.3s ease, opacity 0.3s ease, visibility 0.3s ease;
 }
+
+    .friendsListContainer.show {
+        bottom: 110%;
+        transform: translate(-50%, -5px); /* Smooth upward movement */
+        opacity: 1;
+        visibility: visible;
+    }
+
+.username {
+    padding: 15px 0;
+    border-radius: 5px;
+    cursor: pointer;
+    color: white; /* Default white color */
+    border: none;
+    text-transform: uppercase;
+    transition: color 0.5s ease, transform 0.5s ease;
+}
+
+    .username:hover {
+        color: #FF8A00;
+        transform: scale(1.02);
+    }

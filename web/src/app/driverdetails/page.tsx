@@ -137,7 +137,7 @@ export default function DriverDetailsComponent() {
     const headshotImagePath = driverData.headshotPath;
     const flagImagePath = driverData.flagImagePath;
     const miniTeamLogoPath = driverData.teamImagePath;
-    const defaultImgPath = `/assets/driver_headshot/default.png`;
+    const defaultImgPath = '/assets/driver_headshot/default.png';
 
     return (
 

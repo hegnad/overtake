@@ -6,7 +6,7 @@
 
 /* Main content area styling */
 .main {
-    padding: 2rem;
+    padding: 1rem;
     overflow-y: auto;
 }
 
@@ -23,6 +23,7 @@
     padding: 1rem;
     border-radius: 15px;
     color: white;
+    text-align: center;
 }
 
 /* Title styling */

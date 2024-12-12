@@ -237,25 +237,48 @@ export async function getPodiumsOfDriver(driverId) {
         `https://api.jolpi.ca/ergast/f1/drivers/${driverId}/results/3.json`, // Position 3
     ];
 
-    try {
-        // Fetch all URLs concurrently
-        const responses = await Promise.all(urls.map(url => fetch(url)));
+    // Exponential backoff function
+    async function fetchWithBackoff(url, maxRetries = 5, delay = 500) {
+        let retries = 0;
 
-        // Check if any fetch failed
-        if (responses.some(response => !response.ok)) {
-            throw new Error("Failed to fetch podium data");
+        while (retries < maxRetries) {
+            try {
+                const response = await fetch(url);
+                if (response.ok) {
+                    return await response.json();
+                } else if (response.status === 429) {
+                    // Handle rate limit with exponential backoff
+                    retries++;
+                    const backoffDelay = delay * 2 ** retries; // Exponential increase
+                    console.warn(`Too many requests. Retrying in ${backoffDelay} ms...`);
+                    await new Promise((resolve) => setTimeout(resolve, backoffDelay));
+                } else {
+                    throw new Error(`Failed to fetch: ${response.status}`);
+                }
+            } catch (error) {
+                console.error(`Error fetching ${url} on attempt ${retries + 1}:`, error);
+                retries++;
+                const backoffDelay = delay * 2 ** retries;
+                await new Promise((resolve) => setTimeout(resolve, backoffDelay));
+            }
         }
 
-        // Parse all responses
-        const data = await Promise.all(responses.map(response => response.json()));
+        throw new Error(`Failed to fetch ${url} after ${maxRetries} retries`);
+    }
+
+    try {
+        // Fetch all URLs concurrently with backoff
+        const data = await Promise.all(
+            urls.map((url) => fetchWithBackoff(url))
+        );
 
         // Extract and sum up totals
-        const totalPodiums = data.reduce((sum, result) => sum + Number(result.MRData.total), 0);
+        const totalPodiums = data.reduce((sum, result) => sum + Number(result.MRData.total || 0), 0);
 
         console.log("Total podiums:", totalPodiums);
         return totalPodiums;
     } catch (error) {
-        console.error("Error fetching total podium finishes of driver:", error);
+        console.error("Error fetching total podium finishes of driver with backoff:", error);
         return null;
     }
 }

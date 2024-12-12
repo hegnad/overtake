@@ -10,68 +10,81 @@ export default function ProfileButton() {
     const identity = useContext(IdentityContext);
     const [showButtons, setShowButtons] = useState(false);
     const [showFriends, setShowFriends] = useState(false);
+    const [isButtonsVisible, setIsButtonsVisible] = useState(false); // Control for smooth close
+    const [isFriendsVisible, setIsFriendsVisible] = useState(false);
+
     const router = useRouter();
 
     const handleLogout = () => {
         identity.setSessionToken(undefined);
-        window.location.href = '/'; // Redirect after logout
+        window.location.href = '/';
     };
 
     const handleLoginClick = () => {
-        console.log('Login button clicked!'); // Debugging
-        router.push('/login'); // Programmatic navigation
+        router.push('/login');
     };
 
     const handleUsernameClick = () => {
-        setShowButtons((prevShowButtons) => !prevShowButtons); // Toggle the buttons
-        setShowFriends(false);
+        if (!showButtons) {
+            setIsButtonsVisible(true); // Make visible before opening
+            setTimeout(() => setShowButtons(true), 10); // Add slight delay for smooth open
+        } else {
+            setShowButtons(false);
+            setTimeout(() => setIsButtonsVisible(false), 300); // Wait for transition to complete
+        }
+        if (showFriends) {
+            setShowFriends(false);
+            setTimeout(() => setIsFriendsVisible(false), 300);
+        }
     };
 
     const handleFriendsClick = () => {
-        setShowFriends((prevShowFriends) => !prevShowFriends);
-        setShowButtons((prevShowButtons) => !prevShowButtons);
-    }
+        if (!showFriends) {
+            setIsFriendsVisible(true);
+            setTimeout(() => setShowFriends(true), 10);
+        } else {
+            setShowFriends(false);
+            setTimeout(() => setIsFriendsVisible(false), 300);
+        }
+        if (showButtons) {
+            setShowButtons(false);
+            setTimeout(() => setIsButtonsVisible(false), 300);
+        }
+    };
 
     const handleProfileClick = () => {
         const currentUserId = identity.accountInfo?.userId;
         if (currentUserId) {
             sessionStorage.setItem("profileUserId", currentUserId.toString());
         }
-        router.push('/profile')
-    }
+        router.push('/profile');
+    };
 
     return (
         <>
             {identity.sessionToken ? (
                 <div className={styles.user}>
-                    {showButtons && (
-                        <div className={styles.buttonList}>
+                    {isButtonsVisible && (
+                        <div className={`${styles.buttonList} ${showButtons ? styles.show : ''}`}>
                             <button onClick={handleProfileClick} className={styles.actionButton}>
                                 Profile
                             </button>
                             <button onClick={handleFriendsClick} className={styles.actionButton}>
                                 Friends
                             </button>
-                            <button className={styles.actionButton}>
-                                Settings
-                            </button>
                             <button onClick={handleLogout} className={styles.actionButton}>
                                 Logout
                             </button>
                         </div>
                     )}
-                    {showFriends && (
-                        <div className={styles.friendsListContainer}>
+                    {isFriendsVisible && (
+                        <div className={`${styles.friendsListContainer} ${showFriends ? styles.show : ''}`}>
                             <FriendsList />
                         </div>
                     )}
-                    {identity.accountInfo ? (
-                        <button onClick={handleUsernameClick} className={styles.actionButton}>
-                            {identity.accountInfo.username}
-                        </button>
-                    ) : (
-                        <span>Loading...</span>
-                    )}
+                    <button onClick={handleUsernameClick} className={styles.username}>
+                        {identity.accountInfo?.username || 'Loading...'}
+                    </button>
                 </div>
             ) : (
                 <div className={styles.login}>
