@@ -47,44 +47,66 @@ export default function EditProfile() {
     };
 
     return (
-        <div className="container">
-            <h1>Edit Profile</h1>
-            <form onSubmit={handleSubmit}>
-                <div>
-                    <label>First Name:</label>
-                    <input
-                        type="text"
-                        value={firstName}
-                        onChange={(e) => setFirstName(e.target.value)}
-                    />
+
+        <SidebarLayout>
+
+            <div className={styles.editProfileContainer}>
+
+                <h1>EDIT PROFILE</h1>
+
+                <div className={styles.formContainer}>
+
+                    <form onSubmit={handleSubmit}>
+
+                        <div>
+                            <label className={styles.formHeader}>First Name:</label>
+                            <input
+                                type="text"
+                                value={firstName}
+                                onChange={(e) => setFirstName(e.target.value)}
+                                className={styles.inputContainer}
+                            />
+                        </div>
+                        <div>
+                            <label className={styles.formHeader}>Last Name:</label>
+                            <input
+                                type="text"
+                                value={lastName}
+                                onChange={(e) => setLastName(e.target.value)}
+                                className={styles.inputContainer}
+                            />
+                        </div>
+                        <div>
+                            <label className={styles.formHeader}>Username:</label>
+                            <input
+                                type="text"
+                                value={username}
+                                onChange={(e) => setUsername(e.target.value)}
+                                className={styles.inputContainer}
+                            />
+                        </div>
+                        <div>
+                            <label className={styles.formHeader}>Password:</label>
+                            <input
+                                type="password"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                className={styles.inputContainer}
+                            />
+                        </div>
+
+                        <button type="submit" className={styles.updateButton}>Update Profile</button>
+
+                    </form>
+
                 </div>
-                <div>
-                    <label>Last Name:</label>
-                    <input
-                        type="text"
-                        value={lastName}
-                        onChange={(e) => setLastName(e.target.value)}
-                    />
-                </div>
-                <div>
-                    <label>Username:</label>
-                    <input
-                        type="text"
-                        value={username}
-                        onChange={(e) => setUsername(e.target.value)}
-                    />
-                </div>
-                <div>
-                    <label>Password:</label>
-                    <input
-                        type="password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                    />
-                </div>
-                <button type="submit">Update Profile</button>
-            </form>
-            {message && <p>{message}</p>}
-        </div>
+
+                {message && <p>{message}</p>}
+
+            </div>
+
+        </SidebarLayout>
+
     );
+
 }

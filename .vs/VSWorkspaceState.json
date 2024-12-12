@@ -2,15 +2,15 @@
   "ExpandedNodes": [
     "",
     "\\server",
-    "\\server\\Interfaces",
     "\\server\\Resources",
     "\\server\\Services",
     "\\web",
     "\\web\\src",
     "\\web\\src\\app",
-    "\\web\\src\\app\\components",
-    "\\web\\src\\app\\gamecomponent"
+    "\\web\\src\\app\\ui",
+    "\\web\\src\\app\\utils",
+    "\\web\\src\\app\\utils\\api"
   ],
-  "SelectedNode": "\\web\\src\\app\\components\\simballot.tsx",
+  "SelectedNode": "\\web\\src\\app\\ui\\sidebar-layout.tsx",
   "PreviewInSolutionExplorer": false
 }

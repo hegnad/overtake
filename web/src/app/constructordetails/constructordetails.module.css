@@ -1,21 +1,228 @@
 .constructorDetailsContainer {
+    display: flex;
+    align-items: stretch;
+    gap: 20px;
     padding: 20px;
     background: #15151E;
     border-radius: 15px;
 }
 
-    .constructorDetailsContainer h1 {
-        color: white;
+.returnButton {
+    background-color: #0A0A0F;
+    color: white;
+    border: none;
+    cursor: pointer;
+    width: 30px; /* Fixed width */
+    height: auto; /* Remove fixed height */
+    align-self: stretch; /* Ensure the button spans the height of the container */
+    font-size: 2rem; /* Larger font size for visibility */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 15px;
+    transition: transform 0.3s, background-color 0.3s;
+}
+
+    .returnButton:hover {
+        background-color: #FF8A00; /* Hover effect */
+        transform: scale(1.02); /* Slight scale on hover */
     }
 
-    .constructorDetailsContainer p {
-        color: white;
-    }
+.constructorContainer {
+    flex: 1;
+}
+
+.topContainer {
+    display: flex;
+    justify-content: space-between;
+    align-items: stretch;
+    gap: 20px;
+    height: auto;
+}
+
+.textContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex: 1; /* Ensures it takes up the same space as the sibling container */
+    border-radius: 15px;
+    background: #15151E;
+    height: 100%; /* Matches the height of the sibling container */
+    box-sizing: border-box; /* Ensures padding is included in the total height */
+}
 
 .teamLogo {
     border-radius: 15px;
+    width: 100%;
+    height: auto;
+    max-height: 300px;
+    margin-bottom: 20px;
 }
 
-.flag {
+.constructorDetails {
+    margin-top: 20px;
+}
+
+    .constructorDetails h2 {
+        color: white;
+        font-size: 1.2rem;
+    }
+
+.standingAndPointsContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+}
+
+    .standingAndPointsContainer h1 {
+        font-size: 1.8rem;
+        font-weight: bold;
+    }
+
+.standing {
+    background-color: #FF8A00;
+    border-radius: 15px;
+    padding: 10px;
+    margin: 10px;
+    color: white;
+    font-size: 2rem;
+}
+
+.driverCardContainer {
+    display: flex;
+    justify-content: center;
+    align-items: stretch;
+    flex: 1;
+}
+
+.driverCard {
+    height: 100%;
+    width: 80%;
+    border-radius: 15px;
+    background: #0A0A0F;
+    margin-right: 10px;
+    padding: 20px;
+    text-align: left;
+    scroll-snap-align: center;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.driverNames {
+    text-align: left;
+    color: white;
+    text-transform: uppercase;
+}
+
+    .driverNames h4 {
+        font-size: 3rem;
+        font-weight: bold;
+    }
+
+.driverImageContainer {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 10px;
+    margin-top: 10px;
+    border-radius: 15px;
+    background-color: #15151E;
+}
+
+.driverNumAndFlag {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 10px;
+    padding-top: 10px;
+}
+
+.driverImage {
+    height: auto;
+    width: 400px;
+    padding-top: 15px;
+    user-select: none;
+}
+
+.numContainer {
+    background: white;
+    width: 6rem;
+    height: 5rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     border-radius: 15px;
 }
+
+    .numContainer h2 {
+        font-size: 4rem;
+        color: #FF8A00;
+    }
+
+.flag {
+    border-radius: 5px;
+    width: auto;
+    height: 5rem;
+}
+
+.driverTeamName {
+    margin-top: 10px;
+    font-size: 1.1rem;
+    color: white;
+    text-transform: uppercase;
+}
+
+.constructorStatsContainer {
+    display: flex;
+    justify-content: space-between;
+    align-items: stretch;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.carContainer {
+    flex: 0 0 50%;
+    border-radius: 15px;
+    background: #0A0A0F;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-sizing: border-box;
+}
+
+.car {
+    width: 100%;
+    height: auto;
+}
+
+.resultsTableContainer {
+    flex: 1;
+    margin-top: 0;
+    padding: 20px;
+    background-color: #0A0A0F;
+    border-radius: 15px;
+    box-sizing: border-box;
+    margin-right: 10px;
+}
+
+.resultsTable {
+    color: white;
+    border-spacing: 0 5px;
+    width: 100%;
+    border-collapse: separate;
+}
+
+    .resultsTable thead th {
+        padding-bottom: 5px;
+        text-align: left;
+        border-bottom: 5px solid #FF8A00;
+        font-size: 1.4rem;
+        margin-bottom: 5px;
+    }
+
+    .resultsTable tbody td {
+        font-size: 1.2rem;
+        padding: 5px 0;
+    }
+

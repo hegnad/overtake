@@ -132,7 +132,7 @@ export async function getDrivers() {
 }
 
 export async function getConstructors() {
-    const apiUrl = "https://api.jolpi.ca/ergast/f1/current/constructors.json";
+    const apiUrl = "https://api.jolpi.ca/ergast/f1/current/last/constructors.json";
 
   try {
     const response = await fetch(apiUrl);
@@ -230,6 +230,77 @@ export async function getWinsOfDriver(driverId) {
     }
 }
 
+export async function getWinsOfConstructor(constructorId) {
+    const apiUrl = `https://api.jolpi.ca/ergast/f1/current/constructors/${constructorId}/results/1.json`;
+
+    try {
+        const response = await fetch(apiUrl);
+        if (!response.ok) {
+            throw new Error("Failed to fetch");
+        }
+        const data = await response.json();
+        const total = data.MRData.total;
+        console.log("Fetched total:", total);
+        return total;
+    } catch (error) {
+        console.error("Error fetching total wins of constructor: ", error);
+        return null;
+    }
+}
+
+export async function getPodiumsOfConstructor(constructorId) {
+    const urls = [
+        `https://api.jolpi.ca/ergast/f1/current/constructors/${constructorId}/results/1.json`, // Position 1
+        `https://api.jolpi.ca/ergast/f1/current/constructors/${constructorId}/results/2.json`, // Position 2
+        `https://api.jolpi.ca/ergast/f1/current/constructors/${constructorId}/results/3.json`, // Position 3
+    ];
+
+    // Exponential backoff function
+    async function fetchWithBackoff(url, maxRetries = 5, delay = 500) {
+        let retries = 0;
+
+        while (retries < maxRetries) {
+            try {
+                const response = await fetch(url);
+                if (response.ok) {
+                    return await response.json();
+                } else if (response.status === 429) {
+                    // Handle rate limit with exponential backoff
+                    retries++;
+                    const backoffDelay = delay * 2 ** retries; // Exponential increase
+                    console.warn(`Too many requests. Retrying in ${backoffDelay} ms...`);
+                    await new Promise((resolve) => setTimeout(resolve, backoffDelay));
+                } else {
+                    throw new Error(`Failed to fetch: ${response.status}`);
+                }
+            } catch (error) {
+                console.error(`Error fetching ${url} on attempt ${retries + 1}:`, error);
+                retries++;
+                const backoffDelay = delay * 2 ** retries;
+                await new Promise((resolve) => setTimeout(resolve, backoffDelay));
+            }
+        }
+
+        throw new Error(`Failed to fetch ${url} after ${maxRetries} retries`);
+    }
+
+    try {
+        // Fetch all URLs concurrently with backoff
+        const data = await Promise.all(
+            urls.map((url) => fetchWithBackoff(url))
+        );
+
+        // Extract and sum up totals
+        const totalPodiums = data.reduce((sum, result) => sum + Number(result.MRData.total || 0), 0);
+
+        console.log("Total podiums:", totalPodiums);
+        return totalPodiums;
+    } catch (error) {
+        console.error("Error fetching total podium finishes of constructor with backoff:", error);
+        return null;
+    }
+}
+
 export async function getPodiumsOfDriver(driverId) {
     const urls = [
         `https://api.jolpi.ca/ergast/f1/drivers/${driverId}/results/1.json`, // Position 1
@@ -237,25 +308,48 @@ export async function getPodiumsOfDriver(driverId) {
         `https://api.jolpi.ca/ergast/f1/drivers/${driverId}/results/3.json`, // Position 3
     ];
 
-    try {
-        // Fetch all URLs concurrently
-        const responses = await Promise.all(urls.map(url => fetch(url)));
+    // Exponential backoff function
+    async function fetchWithBackoff(url, maxRetries = 5, delay = 500) {
+        let retries = 0;
 
-        // Check if any fetch failed
-        if (responses.some(response => !response.ok)) {
-            throw new Error("Failed to fetch podium data");
+        while (retries < maxRetries) {
+            try {
+                const response = await fetch(url);
+                if (response.ok) {
+                    return await response.json();
+                } else if (response.status === 429) {
+                    // Handle rate limit with exponential backoff
+                    retries++;
+                    const backoffDelay = delay * 2 ** retries; // Exponential increase
+                    console.warn(`Too many requests. Retrying in ${backoffDelay} ms...`);
+                    await new Promise((resolve) => setTimeout(resolve, backoffDelay));
+                } else {
+                    throw new Error(`Failed to fetch: ${response.status}`);
+                }
+            } catch (error) {
+                console.error(`Error fetching ${url} on attempt ${retries + 1}:`, error);
+                retries++;
+                const backoffDelay = delay * 2 ** retries;
+                await new Promise((resolve) => setTimeout(resolve, backoffDelay));
+            }
         }
 
-        // Parse all responses
-        const data = await Promise.all(responses.map(response => response.json()));
+        throw new Error(`Failed to fetch ${url} after ${maxRetries} retries`);
+    }
+
+    try {
+        // Fetch all URLs concurrently with backoff
+        const data = await Promise.all(
+            urls.map((url) => fetchWithBackoff(url))
+        );
 
         // Extract and sum up totals
-        const totalPodiums = data.reduce((sum, result) => sum + Number(result.MRData.total), 0);
+        const totalPodiums = data.reduce((sum, result) => sum + Number(result.MRData.total || 0), 0);
 
         console.log("Total podiums:", totalPodiums);
         return totalPodiums;
     } catch (error) {
-        console.error("Error fetching total podium finishes of driver:", error);
+        console.error("Error fetching total podium finishes of driver with backoff:", error);
         return null;
     }
 }
@@ -282,6 +376,58 @@ export async function getDriverStanding(driverId) {
         }
     } catch (error) {
         console.error("Error fetching driver standings:", error);
+        return null;
+    }
+}
+
+export async function getConstructorStanding(constructorId) {
+    const apiUrl = `https://api.jolpi.ca/ergast/f1/current/constructors/${constructorId}/constructorStandings.json`;
+
+    try {
+        const response = await fetch(apiUrl);
+        if (!response.ok) {
+            throw new Error("Failed to fetch constructor standings");
+        }
+
+        const data = await response.json();
+        const position =
+            data.MRData?.StandingsTable?.StandingsLists[0]?.ConstructorStandings[0]?.position;
+
+        if (position) {
+            console.log(`Fetched position for constructor ${constructorId}:`, position);
+            return position;
+        } else {
+            console.warn("No position data available for constructor:", constructorId);
+            return null;
+        }
+    } catch (error) {
+        console.error("Error fetching driver standings:", error);
+        return null;
+    }
+}
+
+export async function getConstructorPoints(constructorId) {
+    const apiUrl = `https://api.jolpi.ca/ergast/f1/current/constructors/${constructorId}/constructorStandings.json`;
+
+    try {
+        const response = await fetch(apiUrl);
+        if (!response.ok) {
+            throw new Error("Failed to fetch constructor points");
+        }
+
+        const data = await response.json();
+        const points =
+            data.MRData?.StandingsTable?.StandingsLists[0]?.ConstructorStandings[0]?.points;
+
+        if (points) {
+            console.log(`Fetched points for constructor ${constructorId}:`, points);
+            return points;
+        } else {
+            console.warn("No points data available for constructor:", constructorId);
+            return null;
+        }
+    } catch (error) {
+        console.error("Error fetching driver points:", error);
         return null;
     }
 }
@@ -364,3 +510,108 @@ export async function getDriverSeasonResults(driverId) {
     return results;
 }
 
+export async function getConstructorSeasonResults(constructorId) {
+    const currentYear = new Date().getFullYear();
+    const seasons = [currentYear, currentYear - 1, currentYear - 2]; // Current and past two seasons
+    const results = [];
+
+    // Exponential backoff function
+    async function fetchWithBackoff(url, maxRetries = 5, delay = 500) {
+        let retries = 0;
+
+        while (retries < maxRetries) {
+            try {
+                const response = await fetch(url);
+                if (response.ok) {
+                    return await response.json();
+                } else if (response.status === 429) {
+                    // Handle rate limit with exponential backoff
+                    retries++;
+                    const backoffDelay = delay * 2 ** retries; // Exponential increase
+                    console.warn(`Too many requests. Retrying in ${backoffDelay} ms...`);
+                    await new Promise((resolve) => setTimeout(resolve, backoffDelay));
+                } else {
+                    throw new Error(`Failed to fetch: ${response.status}`);
+                }
+            } catch (error) {
+                console.error(`Error fetching ${url} on attempt ${retries + 1}:`, error);
+                retries++;
+                const backoffDelay = delay * 2 ** retries;
+                await new Promise((resolve) => setTimeout(resolve, backoffDelay));
+            }
+        }
+
+        throw new Error(`Failed to fetch ${url} after ${maxRetries} retries`);
+    }
+
+    for (const season of seasons) {
+        const standingsUrl = `https://api.jolpi.ca/ergast/f1/${season}/constructors/${constructorId}/constructorStandings.json`;
+        const polesUrl = `https://api.jolpi.ca/ergast/f1/${season}/constructors/${constructorId}/qualifying/1.json`;
+
+        let seasonData = {
+            season: season.toString(),
+            position: "N/A",
+            points: "0",
+            wins: "0",
+            polePositions: "0",
+        };
+
+        try {
+            // Fetch driver standings with backoff
+            const standingsData = await fetchWithBackoff(standingsUrl);
+            const standingsList = standingsData?.MRData?.StandingsTable?.StandingsLists?.[0];
+
+            if (standingsList) {
+                const constructorStanding = standingsList.ConstructorStandings?.[0];
+                if (constructorStanding) {
+                    seasonData.position = constructorStanding.position || "N/A";
+                    seasonData.points = constructorStanding.points || "0";
+                    seasonData.wins = constructorStanding.wins || "0";
+                }
+            }
+        } catch (error) {
+            console.error(`Error fetching standings data for season ${season}:`, error);
+        }
+
+        try {
+            // Fetch pole positions with backoff
+            const polesData = await fetchWithBackoff(polesUrl);
+            seasonData.polePositions = polesData?.MRData?.total || "0"; // Default to 0 if no data
+        } catch (error) {
+            console.error(`Error fetching poles data for season ${season}:`, error);
+        }
+
+        // Add season data to results
+        results.push(seasonData);
+    }
+
+    return results;
+}
+
+export async function getCurrentDriversByConstructor(constructorId) {
+    const apiUrl = `https://api.jolpi.ca/ergast/f1/current/last/constructors/${constructorId}/drivers.json`;
+
+    try {
+        const response = await fetch(apiUrl);
+
+        if (!response.ok) {
+            throw new Error(`Failed to fetch drivers for constructor: ${constructorId}`);
+        }
+
+        const data = await response.json();
+        const drivers = data?.MRData?.DriverTable?.Drivers || [];
+
+        // Extract driverId and permanentNumber
+        const driverDetails = drivers.map(driver => ({
+            driverId: driver.driverId,
+            permanentNumber: driver.permanentNumber
+        }));
+
+        console.log(`Drivers for constructor ${constructorId}:`, driverDetails);
+
+        return driverDetails;
+    } catch (error) {
+        console.error(`Error fetching drivers for constructor ${constructorId}:`, error);
+        return [];
+    }
+}

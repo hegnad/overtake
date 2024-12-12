@@ -1,0 +1,73 @@
+.editProfileContainer {
+    padding: 20px;
+    background: #15151E;
+    border-radius: 15px;
+}
+
+    .editProfileContainer h1 {
+        color: white;
+        font-size: 2rem;
+    }
+
+.formContainer {
+    border-radius: 15px;
+    border: 2px solid #AA0000;
+    padding: 20px;
+}
+
+.formHeader {
+    color: white;
+    margin-right: 20px;
+    font-size: 1.4rem;
+    text-transform: uppercase;
+}
+
+.inputContainer {
+    width: 100%;
+    padding: 8px 12px;
+    font-size: 1rem;
+    color: #ffffff;
+    background-color: #0A0A0F;
+    border: 2px solid #42425E;
+    border-radius: 15px;
+    appearance: none;
+    transition: border-color 0.3s ease, background-color 0.3s ease;
+    cursor: pointer;
+}
+
+    .inputContainer:focus {
+        border-color: #FF8A00;
+        outline: none;
+    }
+
+    .inputContainer option {
+        background-color: #2E2E3A;
+        color: #FFFFFF;
+        padding: 10px;
+    }
+
+    .inputContainer:hover {
+        background-color: #42425E;
+    }
+
+    .inputContainer option[value=""][disabled] {
+        color: #AAAAAA;
+    }
+
+.updateButton {
+    padding: 10px 20px;
+    background-color: #FF8A00;
+    color: white;
+    width: 33%;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 20px;
+    font-size: 16px;
+    transition: background-color 0.3s, transform 0.3s ease;
+}
+
+    .updateButton:hover {
+        background-color: #4CAF50;
+        transform: scale(1.05);
+    }

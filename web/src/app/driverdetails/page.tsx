@@ -9,6 +9,7 @@ import SidebarLayout from "../ui/sidebar-layout";
 import { getDriverImages } from '../utils/api/overtake';
 import { getWinsOfDriver, getPodiumsOfDriver, getDriverStanding, getDriverSeasonResults } from '../utils/api/ergast';
 import { OvertakeDriver } from '../formulalearn/formulaLearnTypes';
+import HamsterLoader from "../components/loaders/hamsterloader";
 
 interface DriverFinalResult {
     season: string;
@@ -21,6 +22,8 @@ interface DriverFinalResult {
 export default function DriverDetailsComponent() {
 
     const [error, setError] = useState<string | null>(null);
+    const [loading, setLoading] = useState<boolean>(true);
+
     const router = useRouter();
 
     const [driverData, setDriverData] = useState<OvertakeDriver | null>(null);
@@ -30,104 +33,74 @@ export default function DriverDetailsComponent() {
     const [driverSeasonResults, setDriverSeasonResults] = useState<DriverFinalResult[]>([]);
 
     useEffect(() => {
-
         const storedDriverNumber = sessionStorage.getItem("selectedDriverNumber");
         const storedDriverId = sessionStorage.getItem("selectedDriverId");
 
-        if (!storedDriverNumber) {
+        if (!storedDriverNumber || !storedDriverId) {
             setError("No driver selected.");
+            setLoading(false);
             return;
         }
 
-        if (!storedDriverId) {
-            setError("No driver selected.");
-            return;
-        }
-
-        async function fetchDriverData() {
+        async function fetchAllData() {
             try {
-                const data = await getDriverImages(Number(storedDriverNumber));
-                if (data) {
-                    setDriverData(data);
+                setLoading(true);
+
+                // Execute all fetch calls in parallel
+                const [
+                    fetchedDriverData,
+                    fetchedWins,
+                    fetchedPodiums,
+                    fetchedStanding,
+                    fetchedSeasonResults,
+                ] = await Promise.all([
+                    getDriverImages(Number(storedDriverNumber)),
+                    getWinsOfDriver(storedDriverId),
+                    getPodiumsOfDriver(storedDriverId),
+                    getDriverStanding(storedDriverId),
+                    getDriverSeasonResults(storedDriverId),
+                ]);
+
+                // Set driver data
+                if (fetchedDriverData) {
+                    setDriverData(fetchedDriverData);
                 } else {
                     setError("Driver data not found.");
                 }
+
+                // Set wins, podiums, and standing
+                setDriverWins(fetchedWins || 0);
+                setDriverPodiums(fetchedPodiums || 0);
+                setDriverStanding(fetchedStanding || null);
+
+                // Set season results
+                setDriverSeasonResults(fetchedSeasonResults || []);
             } catch (error) {
-                console.error("Error fetching driver data:", error);
+                console.error("Error fetching driver details:", error);
                 setError("Failed to load driver details.");
+            } finally {
+                setLoading(false);
             }
         }
 
-        async function fetchDriverWins() {
-            try {
-                const wins = await getWinsOfDriver(storedDriverId);
-                if (wins !== null && wins !== undefined) { 
-                    setDriverWins(Number(wins));
-                } else {
-                    setDriverWins(0);
-                }
-            } catch (error) {
-                console.error("Error fetching driver wins:", error);
-                setDriverWins(0);
-            }
-        }
-
-        async function fetchDriverPodiums() {
-            try {
-                const podiums = await getPodiumsOfDriver(storedDriverId);
-                if (podiums !== null && podiums !== undefined) { 
-                    setDriverPodiums(Number(podiums));
-                } else {
-                    setDriverPodiums(0);
-                }
-            } catch (error) {
-                console.error("Error fetching driver podiums:", error);
-                setDriverPodiums(0);
-            }
-        }
-
-        async function fetchDriverStanding() {
-            try {
-                const standing = await getDriverStanding(storedDriverId);
-                if (standing !== null) {
-                    setDriverStanding(Number(standing));
-                } else {
-                    setError("No driver standings data found.");
-                }
-            } catch (error) {
-                console.error("Error fetching driver standing:", error);
-                setError("Failed to load driver standing.");
-            }
-        }
-
-        async function fetchDriverSeasonResults() {
-            try {
-                const results: DriverFinalResult[] = await getDriverSeasonResults(storedDriverId);
-                if (results !== null) {
-                    setDriverSeasonResults(results);
-                } else {
-                    setError("No driver season result data found.");
-                }
-            } catch (error) {
-                console.error("Error fetching driver season results:", error);
-                setError("Failed to load driver season results.");
-            }
-        }
-
-        fetchDriverData();
-        fetchDriverWins();
-        fetchDriverPodiums();
-        fetchDriverStanding();
-        fetchDriverSeasonResults();
+        fetchAllData();
 
     }, []);
 
+    if (loading) {
+        return (
+            <SidebarLayout>
+                <HamsterLoader />
+            </SidebarLayout>
+        );
+    }
+
     if (error) {
-        return <p>{error}</p>;
+        return <SidebarLayout><p>{error}</p></SidebarLayout>;
     }
 
     if (!driverData) {
-        return <p>No Driver Data</p>;
+        return <SidebarLayout><p>No Driver Data</p></SidebarLayout>;
     }
 
     const handleReturnClick = () => {
@@ -137,7 +110,7 @@ export default function DriverDetailsComponent() {
     const headshotImagePath = driverData.headshotPath;
     const flagImagePath = driverData.flagImagePath;
     const miniTeamLogoPath = driverData.teamImagePath;
-    const defaultImgPath = `/assets/driver_headshot/default.png`;
+    const defaultImgPath = '/assets/driver_headshot/default.png';
 
     return (
 

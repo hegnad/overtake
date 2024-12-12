@@ -1,0 +1,107 @@
+/* Container for the race countdown */
+.raceCountdownContainer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    text-align: center;
+    height: 236px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+/* Section for race details */
+.raceDetails {
+    text-align: center;
+    text-transform: uppercase;
+    padding: 10px;
+}
+
+    .raceDetails h1 {
+        font-size: 2.5rem;
+        font-weight: bold;
+        text-align: left;
+    }
+
+    .raceDetails h2 {
+        font-size: 0.6rem;
+    }
+
+    .raceDetails h3 {
+        font-size: 1.2rem;
+        text-align: left;
+    }
+
+.flagAndDate {
+    display: flex;
+    align-items: center;
+    justify-content: left;
+}
+
+/* Grid layout for countdown */
+.countdownGrid {
+    display: grid;
+    grid-auto-flow: column;
+    gap: 0.25rem;
+    text-align: center;
+    justify-content: center;
+}
+
+/* Styling for each countdown box */
+.countdownBox {
+    display: flex;
+    flex-direction: column;
+    padding: 0.5rem;
+    background-color: #0A0A0A;
+    border-radius: 1rem;
+    margin: 0.5rem;
+    width: 5rem;
+}
+
+/* Countdown number styling */
+.countdownNumber {
+    font-size: 1.4rem;
+    text-align: center;
+    color: #FF8A00;
+}
+
+/* Countdown label styling (e.g., days, hours) */
+.countdownLabel {
+    font-size: 0.6rem;
+    text-align: center;
+}
+
+.imagesContainer {
+    display: flex;
+    align-items: center; /* Center images horizontally */
+    justify-content: center; /* Center images vertically */
+    gap: 10px;
+    border-radius: 15px;
+    background-color: #0A0A0A;
+    height: 100%;
+    width: auto;
+    padding: 10px;
+}
+
+/* Text Container */
+.textContainer {
+    flex: 1; /* Allow it to grow and take the remaining space */
+    margin-left: 20px; /* Add spacing from imagesContainer */
+    border-radius: 15px;
+    background-color: #15151E;
+    display: flex;
+    flex-direction: column; /* Stack content vertically */
+    justify-content: center; /* Center content vertically */
+    padding: 1rem;
+    padding-bottom: 1.5rem;
+    height: 100%; /* Stretch to match parent's height */
+}
+
+.trackImage {
+    width: 400px;
+    height: auto;
+}
+
+.flagImage {
+    border-radius: 15px;
+    margin-right: 15px;
+}
