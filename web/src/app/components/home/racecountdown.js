@@ -87,9 +87,7 @@ export default function RaceCountdown() {
                                 />
 
                                 <h3>
-                                    March 13 - 16
-                                    <br />
-                                    2025
+                                    March 13 - 16 2025
                                     <br />
                                     <h2>{raceData.circuitName} at {raceData.circuitLocation}</h2>
                                 </h3>

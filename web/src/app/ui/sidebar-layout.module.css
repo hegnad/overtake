@@ -1,6 +1,6 @@
 .container {
-  display: flex;
-  height: 100vh;
+    display: flex;
+    height: 100vh;
 }
 
 .sidebar {
@@ -11,6 +11,7 @@
     flex-direction: column;
     align-items: center;
     position: relative;
+    box-shadow: 10px 20px 30px rgba(0, 0, 0, 0.4);
 }
 
 .logoWithLine {
@@ -86,9 +87,8 @@
     align-items: center;
     justify-content: center;
     overflow: hidden;
-    transition:
-        transform 0.3s ease,
-        background-color 0.5s ease;
+    box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.4);
+    transition: transform 0.3s ease, background-color 0.5s ease;
 }
 
     .navItem:hover {
@@ -128,7 +128,7 @@
     color: #f1f5f9;
     overflow: hidden;
     height: 3rem;
-    width: 20rem;
+    width: 18rem;
     margin: 2rem 1rem 0.5rem 1rem;
     border-radius: 15px;
     background-color: #470000;
@@ -207,5 +207,4 @@
     align-items: center;
     border-top-left-radius: 15px;
     border-top-right-radius: 15px;
-    z-index: 3;
 }

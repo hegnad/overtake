@@ -4,6 +4,7 @@ import { useEffect, useState, useContext } from "react";
 import { IdentityContext } from "../lib/context/identity";
 import SidebarLayout from "../ui/sidebar-layout";
 import styles from "./profile.module.css";
+import { useRouter } from 'next/navigation';
 
 interface UserPoints {
     username: string;
@@ -19,6 +20,8 @@ export default function Profile() {
     const [showEdit, setShowEdit] = useState(false);
     const [profileUserId, setProfileUserId] = useState<string | null>(null);
     const identity = useContext(IdentityContext);
+
+    const router = useRouter();
 
     // Fetch profileUserId from sessionStorage on the client side
     useEffect(() => {
@@ -104,27 +107,68 @@ export default function Profile() {
         }
     };
 
+    const handleReturnClick = () => {
+        if (window.history.length > 1) {
+            router.back();
+        } else {
+            router.push('./'); // Fallback to home page
+        }
+    };
+
     return (
+
         <SidebarLayout>
+
             {isLoading ? (
+
                 <p>Loading...</p>
+
             ) : userPoints ? (
-                <div className={styles.container}>
-                    <div className={styles.header}>
-                        <h1>{userPoints.username}</h1>
-                        {showEdit && (
-                                <button onClick={handleEditClick}>EDIT</button>
-                        )}
+
+                    <>
+
+                        <div className={styles.profileContainer}>
+
+                            <button onClick={handleReturnClick} className={styles.returnButton}>
+                                {'<'}
+                            </button>
+
+                            <div className={styles.container}>
+
+                                <div className={styles.header}>
+
+                                    <h1>{userPoints.username}</h1>
+
+                                    {showEdit && (
+
+                                        <button onClick={handleEditClick} className={styles.editButton}>EDIT</button>
+
+                                    )}
+
+                                </div>
+
+                                <div className={styles.userInfoContainer}>
+                                    <h2>Lifetime Points: <p>{userPoints.totalPoints}</p></h2>
+                                    <h2>Points this season: <p>{userPoints.pointsThisSeason}</p></h2>
+                                    <h2>Highest Individual League Points this season: <p>{userPoints.highestLeaguePoints} ({userPoints.highestLeagueName})</p></h2>
+                                </div>
+
+                            </div>
+
                     </div>
-                    <h2>Lifetime Points: {userPoints.totalPoints}</h2>
-                    <h2>Points this season: {userPoints.pointsThisSeason}</h2>
-                    <h2>Highest Individual League Points this season: {userPoints.highestLeaguePoints} ({userPoints.highestLeagueName})</h2>
-                </div>
-            ) : (
-                <p>Failed to load profile data.</p>
+
+                    </>
+
+                ) : (
+
+                        <p>Failed to load profile data.</p>
+
             )}
+
         </SidebarLayout>
+
     );
+
 }
 
 

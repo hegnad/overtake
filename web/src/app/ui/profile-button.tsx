@@ -88,7 +88,7 @@ export default function ProfileButton() {
                 </div>
             ) : (
                 <div className={styles.login}>
-                    <button className={styles.actionButton} onClick={handleLoginClick}>
+                    <button className={styles.username} onClick={handleLoginClick}>
                         Signup/Login
                     </button>
                 </div>

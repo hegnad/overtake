@@ -1,9 +1,35 @@
-.container {
-    background: #15151e;
-    padding: 25px;
+.profileContainer {
+    display: flex;
+    align-items: stretch;
+    gap: 20px;
+    padding: 20px;
+    background: #15151E;
     border-radius: 15px;
-    width: 80%;
-    margin: 0 auto;
+}
+
+.returnButton {
+    background-color: #0A0A0F;
+    color: white;
+    border: none;
+    cursor: pointer;
+    width: 30px; /* Fixed width */
+    height: auto; /* Remove fixed height */
+    align-self: stretch; /* Ensure the button spans the height of the container */
+    font-size: 2rem; /* Larger font size for visibility */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 15px;
+    transition: transform 0.3s, background-color 0.3s;
+}
+
+    .returnButton:hover {
+        background-color: #FF8A00; /* Hover effect */
+        transform: scale(1.02); /* Slight scale on hover */
+    }
+
+.container {
+    flex: 1;
 }
 
 .header {
@@ -17,19 +43,22 @@
 
 .container h1 {
     color: white;
-    font-size: x-large;
+    font-size: 4rem;
     text-align: center;
 }
 
-.container h2 {
-    color: white;
-    font-size: large;
-    margin: 10px 0;
-    text-align: center;
+.userInfoContainer {
+    text-align: left;
 }
 
-.container p {
-    color: white;
-    font-size: large;
-    text-align: center;
-}
+    .userInfoContainer h2 {
+        text-transform: uppercase;
+        color: white;
+        font-size: 1.5rem;
+        margin: 10px 0;
+    }
+
+    .userInfoContainer p {
+        color: #FF8A00;
+        font-size: 2rem;
+    }
