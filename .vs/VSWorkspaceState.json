@@ -3,15 +3,14 @@
     "",
     "\\server",
     "\\server\\Interfaces",
+    "\\server\\Resources",
+    "\\server\\Services",
     "\\web",
     "\\web\\src",
     "\\web\\src\\app",
-    "\\web\\src\\app\\ballot",
-    "\\web\\src\\app\\driverdetails",
-    "\\web\\src\\app\\raceleague",
-    "\\web\\src\\app\\utils",
-    "\\web\\src\\app\\utils\\api"
+    "\\web\\src\\app\\components",
+    "\\web\\src\\app\\gamecomponent"
   ],
-  "SelectedNode": "\\web\\src\\app\\components\\styledline.module.css",
+  "SelectedNode": "\\web\\src\\app\\components\\simballot.tsx",
   "PreviewInSolutionExplorer": false
 }

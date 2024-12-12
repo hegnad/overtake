@@ -113,7 +113,7 @@ export default function SimBallot() {
     };
 
     const handleClearBallot = () => {
-        setCreatorName(null);
+        setCreatorName("");
         setGridPredictions(Array(10).fill(null));
     };
 

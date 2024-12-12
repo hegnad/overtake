@@ -135,7 +135,7 @@ export default function GameComponent() {
                 position: index + 1,
                 finished: false,
                 finishTime: null,
-                speedBoost: 20 - (index / 19), // Calculate speed boost (1st gets 1 km/h, 20th gets 0 km/h)
+                speedBoost: 1 - (index / 40),
             }));
         setDrivers(shuffledDrivers);
         setRaceStarted(false);
@@ -153,14 +153,18 @@ export default function GameComponent() {
     useEffect(() => {
         if (!raceStarted || raceFinished) return;
 
+        const totalRaceDuration = 15000; // Total race duration in milliseconds (~15 seconds)
+        const updateInterval = 50; // Update every 50ms (smooth updates)
+        const totalUpdates = totalRaceDuration / updateInterval; // Total number of updates over the race duration
+        const maxRandomSpeed = 1.5; // Max random speed multiplier for variation
+
         const progressInterval = setInterval(() => {
             setDrivers((prevDrivers) =>
                 prevDrivers.map((driver) => {
                     if (driver.finished) return driver;
 
-                    const randomSpeed = Math.random() * (4 - 2.5) + 2.5; // Randomized speed (2.5 km/h to 4 km/h)
-                    const newSpeed = randomSpeed + driver.speedBoost; // Add the speed boost
-                    const newProgress = driver.progress + newSpeed;
+                    const progressIncrement = (100 / totalUpdates) * (Math.random() * maxRandomSpeed + 0.5); // Scaled for smooth progression
+                    const newProgress = driver.progress + progressIncrement;
 
                     if (newProgress >= 100) {
                         return {
@@ -171,13 +175,15 @@ export default function GameComponent() {
                         };
                     }
 
-                    return { ...driver, progress: newProgress, speed: newSpeed };
+                    return { ...driver, progress: newProgress };
                 })
             );
-        }, 1000);
+        }, updateInterval);
 
         return () => clearInterval(progressInterval);
     }, [raceStarted, raceFinished]);
+
+
 
     const getUnscoredBallots = async () => {
         const response = await fetch("http://localhost:8080/api/sim/populateunscored", {
@@ -193,6 +199,23 @@ export default function GameComponent() {
         } else {
             console.error(`Non-successful status code: ${response.status}`);
         }
+    };
+
+    const getCarImagePath = (team: string) => {
+        const teamFileMap: { [key: string]: string } = {
+            "Mercedes": "mercedes.png",
+            "Red Bull Racing": "rb.png",
+            "Ferrari": "ferrari.png",
+            "McLaren": "mclaren.png",
+            "Alpine": "alpine.png",
+            "RB": "rb.png",
+            "Aston Martin": "aston_martin.png",
+            "Williams": "williams.png",
+            "Kick Sauber": "sauber.png",
+            "Haas": "haas.png",
+        };
+
+        return `/assets/cars/${teamFileMap[team] || "default.png"}`;
     };
 
     const scoreBallots = () => {
@@ -435,12 +458,21 @@ export default function GameComponent() {
                                                     width: `${driver.progress}%`,
                                                     backgroundColor: teamColors[driver.team] || "#444444",
                                                 }}
-                                            ></div>
+                                            >
+                                                {driver.progress > 0 && (
+                                                    <img
+                                                        src={getCarImagePath(driver.team)}
+                                                        alt={`${driver.team} car`}
+                                                        className={styles.carImage}
+                                                    />
+                                                )}
+                                            </div>
                                         </div>
                                     </div>
                                 ))}
                             </div>
                         )}
+
 
                         {raceFinished && (
                             <div className={styles.raceresults}>
