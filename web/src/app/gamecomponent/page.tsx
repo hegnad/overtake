@@ -5,7 +5,8 @@ import Image from "next/image";
 import styles from "./gamecomponent.module.css";
 import { getDrivers } from "../utils/api/ergast";
 import SidebarLayout from "../ui/sidebar-layout";
-import SimBallot from "../components/simballot"
+import SimBallot from "../components/simballot";
+import SimLeaderboard from "../components/simleaderboard";
 
 interface Driver {
     driverId: string;
@@ -19,16 +20,33 @@ interface Driver {
     finished: boolean;
     finishTime: number | null;
     team: string;
-    speedBoost: number; // New property for the speed boost
+    speedBoost: number;
+}
+
+interface DriverPrediction {
+    driverName: string;
+    position: number;
+}
+
+interface BallotContent {
+    ballotId: number;
+    predictions: DriverPrediction[];
+}
+
+interface BallotScores {
+    ballotId: number;
+    ballotScore: number;
 }
 
 export default function GameComponent() {
     const [drivers, setDrivers] = useState<Driver[]>([]);
     const [raceStarted, setRaceStarted] = useState(false);
     const [raceFinished, setRaceFinished] = useState(false);
+    const [showLeaderboard, setShowLeaderboard] = useState(false);
     const [raceResults, setRaceResults] = useState<Driver[]>([]);
     const [loadingDrivers, setLoadingDrivers] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [unscoredBallots, setUnscoredBallots] = useState<BallotContent[] | null>(null);
 
     const teamColors: { [key: string]: string } = {
         Mercedes: "#27F4D2",
@@ -117,12 +135,13 @@ export default function GameComponent() {
                 position: index + 1,
                 finished: false,
                 finishTime: null,
-                speedBoost: 1 - (index / 40), // Calculate speed boost (1st gets 1 km/h, 20th gets 0 km/h)
+                speedBoost: 1 - (index / 40),
             }));
         setDrivers(shuffledDrivers);
         setRaceStarted(false);
         setRaceFinished(false);
         setRaceResults([]);
+        setShowLeaderboard(false);
     };
 
     // Start race
@@ -134,14 +153,18 @@ export default function GameComponent() {
     useEffect(() => {
         if (!raceStarted || raceFinished) return;
 
+        const totalRaceDuration = 15000; // Total race duration in milliseconds (~15 seconds)
+        const updateInterval = 50; // Update every 50ms (smooth updates)
+        const totalUpdates = totalRaceDuration / updateInterval; // Total number of updates over the race duration
+        const maxRandomSpeed = 1.5; // Max random speed multiplier for variation
+
         const progressInterval = setInterval(() => {
             setDrivers((prevDrivers) =>
                 prevDrivers.map((driver) => {
                     if (driver.finished) return driver;
 
-                    const randomSpeed = Math.random() * (4 - 2.5) + 2.5; // Randomized speed (2.5 km/h to 4 km/h)
-                    const newSpeed = randomSpeed + driver.speedBoost; // Add the speed boost
-                    const newProgress = driver.progress + newSpeed;
+                    const progressIncrement = (100 / totalUpdates) * (Math.random() * maxRandomSpeed + 0.5); // Scaled for smooth progression
+                    const newProgress = driver.progress + progressIncrement;
 
                     if (newProgress >= 100) {
                         return {
@@ -152,13 +175,173 @@ export default function GameComponent() {
                         };
                     }
 
-                    return { ...driver, progress: newProgress, speed: newSpeed };
+                    return { ...driver, progress: newProgress };
                 })
             );
-        }, 1000);
+        }, updateInterval);
 
         return () => clearInterval(progressInterval);
     }, [raceStarted, raceFinished]);
+
+
+
+    const getUnscoredBallots = async () => {
+        const response = await fetch("http://localhost:8080/api/sim/populateunscored", {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+
+        if (response.status === 200) {
+            const data: BallotContent[] = await response.json();
+            setUnscoredBallots(data);
+        } else {
+            console.error(`Non-successful status code: ${response.status}`);
+        }
+    };
+
+    const getCarImagePath = (team: string) => {
+        const teamFileMap: { [key: string]: string } = {
+            "Mercedes": "mercedes.png",
+            "Red Bull Racing": "rb.png",
+            "Ferrari": "ferrari.png",
+            "McLaren": "mclaren.png",
+            "Alpine": "alpine.png",
+            "RB": "rb.png",
+            "Aston Martin": "aston_martin.png",
+            "Williams": "williams.png",
+            "Kick Sauber": "sauber.png",
+            "Haas": "haas.png",
+        };
+
+        return `/assets/cars/${teamFileMap[team] || "default.png"}`;
+    };
+
+    const scoreBallots = () => {
+        if (!unscoredBallots || raceResults.length === 0) return;
+
+        // Mapping full driver names to driver IDs
+        const driverNameToId: { [key: string]: string } = {
+            "Alexander Albon": "albon",
+            "George Russell": "russell",
+            "Lewis Hamilton": "hamilton",
+            "Carlos Sainz": "sainz",
+            "Kevin Magnussen": "kevin_magnussen",
+            "Sergio Perez": "perez",
+            "Guanyu Zhou": "zhou",
+            "Max Verstappen": "max_verstappen",
+            "Lance Stroll": "stroll",
+            "Franco Colapinto": "colapinto",
+            "Oscar Piastri": "piastri",
+            "Logan Sargeant": "sargeant",
+            "Valtteri Bottas": "bottas",
+            "Charles Leclerc": "leclerc",
+            "Lando Norris": "norris",
+            "Esteban Ocon": "ocon",
+            "Pierre Gasly": "gasly",
+            "Yuki Tsunoda": "tsunoda",
+            "Daniel Ricciardo": "ricciardo",
+            "Liam Lawson": "lawson",
+            "Fernando Alonso": "alonso",
+            "Nico Hulkenberg": "hulkenberg",
+            "Jack Doohan": "doohan",
+        };
+
+        unscoredBallots.forEach((ballot) => {
+            // Normalize predictions by converting driverName to driverId
+            const sortedPredictions = ballot.predictions
+                .sort((a, b) => a.position - b.position) // Sort by position
+                .map((prediction) => driverNameToId[prediction.driverName] || prediction.driverName.toLowerCase().trim());
+
+            console.log("Normalized Predictions (sorted):", sortedPredictions);
+
+            // Normalize race results to use driver IDs
+            const normalizedResults = raceResults.map((driver) => driver.driverId);
+
+            console.log("Normalized Race Results:", normalizedResults);
+
+            // Calculate the total score for the ballot
+            const { totalScore } = calculateBallotScore(sortedPredictions, normalizedResults);
+
+            console.log(`Score for Ballot ${ballot.ballotId}:`, totalScore);
+
+            // Send the calculated score to the backend
+            fetch("http://localhost:8080/api/sim/updatescores", {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ ballotId: ballot.ballotId, score: totalScore }),
+            })
+                .then((response) => {
+                    if (!response.ok) {
+                        return response.text().then((error) => {
+                            console.error(`Failed to update score for Ballot ${ballot.ballotId}: ${error}`);
+                        });
+                    }
+                    console.log(`Score successfully updated for Ballot ${ballot.ballotId}`);
+                })
+                .catch((err) => console.error(`Failed to update score: ${err.message}`));
+        });
+    };
+
+    // Call `scoreBallots` after unscoredBallots is populated
+    useEffect(() => {
+        if (unscoredBallots && raceResults.length > 0) {
+            scoreBallots();
+        }
+    }, [unscoredBallots, raceResults]);
+
+    function calculateBallotScore(predictions: string[], results: string[]) {
+        let totalScore = 0;
+
+        predictions.forEach((predictedDriver, predictedPosition) => {
+            const actualPosition = results.indexOf(predictedDriver);
+
+            if (actualPosition === -1) return;
+
+            // Points logic remains unchanged
+            if (actualPosition === predictedPosition) {
+                if (predictedPosition === 0) totalScore += 25;
+                else if (predictedPosition === 1) totalScore += 20;
+                else if (predictedPosition === 2) totalScore += 15;
+                else totalScore += 10;
+            } else if (Math.abs(actualPosition - predictedPosition) === 1) totalScore += 5;
+            else if (Math.abs(actualPosition - predictedPosition) === 2) totalScore += 3;
+        });
+
+        return { totalScore };
+    }
+
+    const resetRace = () => {
+        setDrivers([]);
+        setRaceStarted(false);
+        setRaceFinished(false);
+        setRaceResults([]);
+        setShowLeaderboard(true);
+
+        async function fetchDrivers() {
+            try {
+                const fetchedDrivers = await getDrivers();
+                const formattedDrivers = fetchedDrivers.map((driver: any) => ({
+                    ...driver,
+                    fullName: `${driver.givenName} ${driver.familyName}`,
+                    team: driverTeams[driver.driverId] || "Unknown", // Ensure team assignment here
+                    imageUrl: `/assets/driver_headshot/${driver.driverId}.png`,
+                    progress: 0,
+                    speed: 0,
+                    position: 0,
+                    finished: false,
+                    finishTime: null,
+                    speedBoost: 0,
+                }));
+                setDrivers(formattedDrivers);
+            } catch (error) {
+                setError("Failed to fetch drivers");
+            }
+        }
+
+        fetchDrivers();
+    };
 
     // Check if all drivers have finished
     useEffect(() => {
@@ -169,10 +352,17 @@ export default function GameComponent() {
         }
     }, [drivers, raceStarted]);
 
-    // Reset the race
-    const resetRace = () => {
-        shuffleDrivers();
-    };
+    useEffect(() => {
+        if (raceFinished) {
+            getUnscoredBallots();
+        }
+    }, [raceFinished]);
+
+    useEffect(() => {
+        if (unscoredBallots && raceResults.length > 0) {
+            scoreBallots();
+        }
+    }, [unscoredBallots, raceResults]);
 
     return (
         <SidebarLayout>
@@ -194,124 +384,137 @@ export default function GameComponent() {
                     )}
                 </div>
 
-                <div className={styles.gridContainer}>
-                    {!raceStarted && drivers.length > 0 && drivers.some((driver) => driver.position > 0) && (
-                        <div className={styles.startingGrid}>
-                            {/* Top row - Odd positions */}
-                            <div className={styles.topRow}>
-                                {oddDrivers.map((driver) => (
-                                    <div
-                                        key={driver.driverId}
-                                        className={`${styles.gridPosition}`}
-                                        style={{ backgroundColor: teamColors[driver.team] || "#444444" }}
-                                    >
-                                        <span className={styles.positionNumber}>{driver.position}</span>
-                                        <div className={styles.driver}>
-                                            <Image
-                                                src={driver.imageUrl}
-                                                alt={driver.fullName}
-                                                className={styles.driverImage}
-                                                width={50}
-                                                height={50}
-                                                onError={(e) => (e.currentTarget.src = "/assets/driver_headshot/default.png")}
-                                            />
-                                            <p>
-                                                {driver.givenName[0]}. {driver.familyName}
-                                            </p>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-
-                            {/* Bottom row - Even positions */}
-                            <div className={styles.bottomRow}>
-                                {evenDrivers.map((driver) => (
-                                    <div
-                                        key={driver.driverId}
-                                        className={`${styles.gridPosition}`}
-                                        style={{ backgroundColor: teamColors[driver.team] || "#444444" }}
-                                    >
-                                        <span className={styles.positionNumber}>{driver.position}</span>
-                                        <div className={styles.driver}>
-                                            <Image
-                                                src={driver.imageUrl}
-                                                alt={driver.fullName}
-                                                className={styles.driverImage}
-                                                width={50}
-                                                height={50}
-                                                onError={(e) => (e.currentTarget.src = "/assets/driver_headshot/default.png")}
-                                            />
-                                            <p>
-                                                {driver.givenName[0]}. {driver.familyName}
-                                            </p>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                    )}
-
-                    {raceStarted && !raceFinished && (
-                        <div className={styles.track}>
-                            {drivers.map((driver) => (
-                                <div key={driver.driverId} className={styles.progressRow}>
-                                    <p>
-                                        {driver.givenName[0]}. {driver.familyName}
-                                    </p>
-                                    <div className={styles.progressBar}>
+                {showLeaderboard ? (
+                    <SimLeaderboard />
+                ) : (
+                    <div className={styles.gridContainer}>
+                        {!raceStarted && drivers.length > 0 && drivers.some((driver) => driver.position > 0) && (
+                            <div className={styles.startingGrid}>
+                                {/* Top row - Odd positions */}
+                                <div className={styles.topRow}>
+                                    {oddDrivers.map((driver) => (
                                         <div
-                                            className={styles.progress}
-                                            style={{
-                                                width: `${driver.progress}%`,
-                                                backgroundColor: teamColors[driver.team] || "#444444",
-                                            }}
-                                        ></div>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    )}
-
-                    {raceFinished && (
-                        <div className={styles.raceresults}>
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th>Position</th>
-                                        <th>Driver</th>
-                                        <th>Team</th>
-                                        <th>Finish Time</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {raceResults.map((driver, index) => (
-                                        <tr key={index}>
-                                            <td>{index + 1}</td>
-                                            <td>
-                                                {driver.givenName[0]}. {driver.familyName}
-                                            </td>
-                                            <td>{driver.team}</td>
-                                            <td>
-                                                {driver.finishTime
-                                                    ? new Date(driver.finishTime).toLocaleTimeString()
-                                                    : "Still racing"}
-                                            </td>
-                                        </tr>
+                                            key={driver.driverId}
+                                            className={`${styles.gridPosition}`}
+                                            style={{ backgroundColor: teamColors[driver.team] || "#444444" }}
+                                        >
+                                            <span className={styles.positionNumber}>{driver.position}</span>
+                                            <div className={styles.driver}>
+                                                <Image
+                                                    src={driver.imageUrl}
+                                                    alt={driver.fullName}
+                                                    className={styles.driverImage}
+                                                    width={50}
+                                                    height={50}
+                                                    onError={(e) => (e.currentTarget.src = "/assets/driver_headshot/default.png")}
+                                                />
+                                                <p>
+                                                    {driver.givenName[0]}. {driver.familyName}
+                                                </p>
+                                            </div>
+                                        </div>
                                     ))}
-                                </tbody>
-                            </table>
-                            <button className={styles.button} onClick={resetRace}>
-                                Reset the Race
-                            </button>
-                        </div>
-                    )}
+                                </div>
 
-                    {!raceStarted && !raceFinished && drivers.length > 0 && drivers.some((driver) => driver.position > 0) && (
-                        <div>
-                            <SimBallot/>
-                        </div>
-                    )}
-                </div>
+                                {/* Bottom row - Even positions */}
+                                <div className={styles.bottomRow}>
+                                    {evenDrivers.map((driver) => (
+                                        <div
+                                            key={driver.driverId}
+                                            className={`${styles.gridPosition}`}
+                                            style={{ backgroundColor: teamColors[driver.team] || "#444444" }}
+                                        >
+                                            <span className={styles.positionNumber}>{driver.position}</span>
+                                            <div className={styles.driver}>
+                                                <Image
+                                                    src={driver.imageUrl}
+                                                    alt={driver.fullName}
+                                                    className={styles.driverImage}
+                                                    width={50}
+                                                    height={50}
+                                                    onError={(e) => (e.currentTarget.src = "/assets/driver_headshot/default.png")}
+                                                />
+                                                <p>
+                                                    {driver.givenName[0]}. {driver.familyName}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
+                        {raceStarted && !raceFinished && (
+                            <div className={styles.track}>
+                                {drivers.map((driver) => (
+                                    <div key={driver.driverId} className={styles.progressRow}>
+                                        <p>
+                                            {driver.givenName[0]}. {driver.familyName}
+                                        </p>
+                                        <div className={styles.progressBar}>
+                                            <div
+                                                className={styles.progress}
+                                                style={{
+                                                    width: `${driver.progress}%`,
+                                                    backgroundColor: teamColors[driver.team] || "#444444",
+                                                }}
+                                            >
+                                                {driver.progress > 0 && (
+                                                    <img
+                                                        src={getCarImagePath(driver.team)}
+                                                        alt={`${driver.team} car`}
+                                                        className={styles.carImage}
+                                                    />
+                                                )}
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+
+
+                        {raceFinished && (
+                            <div className={styles.raceresults}>
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Position</th>
+                                            <th>Driver</th>
+                                            <th>Team</th>
+                                            <th>Finish Time</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {raceResults.map((driver, index) => (
+                                            <tr key={index}>
+                                                <td>{index + 1}</td>
+                                                <td>
+                                                    {driver.givenName[0]}. {driver.familyName}
+                                                </td>
+                                                <td>{driver.team}</td>
+                                                <td>
+                                                    {driver.finishTime
+                                                        ? new Date(driver.finishTime).toLocaleTimeString()
+                                                        : "Still racing"}
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                                <button className={styles.button} onClick={resetRace}>
+                                    View Leaderboard
+                                </button>
+                            </div>
+                        )}
+
+                        {!raceStarted && !raceFinished && drivers.length > 0 && drivers.some((driver) => driver.position > 0) && (
+                            <div>
+                                <SimBallot />
+                            </div>
+                        )}
+                    </div>
+                )}
             </div>
         </SidebarLayout>
 

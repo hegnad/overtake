@@ -18,21 +18,13 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 
 export default function SimBallot() {
-
     const [drivers, setDrivers] = useState<Driver[]>([]);
-
     const [creatorName, setCreatorName] = useState<string | null>(null);
-
     const [selectedBox, setSelectedBox] = useState<number | null>(null);
-    const [isEditing, setIsEditing] = useState(false);
-
     const [gridPredictions, setGridPredictions] = useState<(string | null)[]>(Array(10).fill(null));
-
     const [submissionSuccess, setSubmissionSuccess] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [loadingDrivers, setLoadingDrivers] = useState(true);
-
-    const router = useRouter();
 
     // Driver fetch
     useEffect(() => {
@@ -79,6 +71,8 @@ export default function SimBallot() {
         if (response.status !== 200) {
             console.error(`Non-successful status code: ${response.status}`);
         } else {
+            setCreatorName(null);
+            setGridPredictions(Array(10).fill(null));
             return;
         }
     };
@@ -118,6 +112,11 @@ export default function SimBallot() {
         return `/images/loading.svg`;
     };
 
+    const handleClearBallot = () => {
+        setCreatorName("");
+        setGridPredictions(Array(10).fill(null));
+    };
+
     return (
         <div className={styles.pageContainer}>
 
@@ -133,6 +132,12 @@ export default function SimBallot() {
                     submissionSuccess={submissionSuccess}
                 />
                 <div className={styles.submissionContainer}>
+                    <button
+                        onClick={handleClearBallot}
+                        className={styles.submitButton}
+                    >
+                        Clear Ballot
+                    </button>
                     <button
                         onClick={handleSubmit}
                         className={styles.submitButton}

@@ -97,4 +97,10 @@ public interface IDatabase
     Task<bool> UpdateField(int userId, string fieldName, object fieldValue);
 
     Task<int> InsertSimBallotAsync(string username, List<DriverPrediction> driverPredictions);
+
+    Task<SimBallotContent[]> PopulateUnscoredBallots();
+
+    Task<bool> UpdateSimBallotScoresAsync(int ballotId, int score);
+
+    Task<SimLeaderboard[]> GetSimLeaderboard();
 }

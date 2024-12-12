@@ -238,12 +238,36 @@ export default function LeagueDetailsComponent() {
         }
     };
 
+    const driverImageMap: { [key: string]: string } = {
+        "Max Verstappen": "max_verstappen",
+        "Sergio Perez": "perez",
+        "Charles Leclerc": "leclerc",
+        "Carlos Sainz": "sainz",
+        "George Russell": "russell",
+        "Lewis Hamilton": "hamilton",
+        "Oscar Piastri": "piastri",
+        "Lando Norris": "norris",
+        "Esteban Ocon": "ocon",
+        "Pierre Gasly": "gasly",
+        "Lance Stroll": "stroll",
+        "Fernando Alonso": "alonso",
+        "Valtteri Bottas": "bottas",
+        "Guanyu Zhou": "zhou",
+        "Kevin Magnussen": "kevin_magnussen",
+        "Nico Hulkenberg": "hulkenberg",
+        "Yuki Tsunoda": "tsunoda",
+        "Daniel Ricciardo": "riccardo",
+        "Logan Sargeant": "sargeant",
+        "Liam Lawson": "lawson",
+    };
+
     const getDriverIdByName = (driverFullName: string | null | undefined) => {
         if (typeof driverFullName !== "string" || !driverFullName) {
             return "default";
         }
-        return driverFullName.toLowerCase().replace(/\s+/g, "_");
+        return driverImageMap[driverFullName] || "default";
     };
+
 
     const getBallotComparisonClass = (driverName: string, position: number) => {
         const predictedPosition = ballotContent?.indexOf(driverName) ?? -1;
