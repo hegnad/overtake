@@ -103,7 +103,7 @@ export async function getSeasonRounds(season) {
 }
 
 export async function getDrivers() {
-    const apiUrl = "https://api.jolpi.ca/ergast/f1/current/last/drivers.json";
+    const apiUrl = "https://api.jolpi.ca/ergast/f1/current/drivers.json";
 
   try {
     const response = await fetch(apiUrl);
@@ -132,7 +132,7 @@ export async function getDrivers() {
 }
 
 export async function getConstructors() {
-    const apiUrl = "https://api.jolpi.ca/ergast/f1/current/last/constructors.json";
+    const apiUrl = "https://api.jolpi.ca/ergast/f1/current/constructors.json";
 
   try {
     const response = await fetch(apiUrl);
@@ -589,7 +589,7 @@ export async function getConstructorSeasonResults(constructorId) {
 }
 
 export async function getCurrentDriversByConstructor(constructorId) {
-    const apiUrl = `https://api.jolpi.ca/ergast/f1/current/last/constructors/${constructorId}/drivers.json`;
+    const apiUrl = `https://api.jolpi.ca/ergast/f1/current/constructors/${constructorId}/drivers.json`;
 
     try {
         const response = await fetch(apiUrl);

@@ -379,9 +379,9 @@ VALUES
   ('Red Bull Racing', 'Oracle Red Bull Racing', 'Austrian', 'Milton Keynes, United Kingdom', 'Christian Horner', 'Pierre Wach�', 'RB20', 'Honda RBPT', './assets/cars/red_bull.png', './assets/teamlogos/red_bull_mini.png', './assets/country_flags/aus.svg', 1997, 'red_bull'),
   ('McLaren', 'McLaren Formula 1 Team', 'British', 'Woking, United Kingdom', 'Andrea Stella', 'Peter Prodromou / Neil Houldey', 'MCL38', 'Mercedes', './assets/cars/mclaren.png', './assets/teamlogos/mclaren_mini.png', './assets/country_flags/uk.svg', 1966, 'mclaren'),
   ('Alpine', 'BWT Alpine F1 Team', 'French', 'Enstone, United Kingdom', 'Oliver Oakes', 'David Sanchez', 'A524', 'Renault', './assets/cars/alpine.png', './assets/teamlogos/alpine_mini.png', './assets/country_flags/fr.svg', 1986, 'alpine'),
-  ('Aston Martin', 'Aston Martin Aramco F1 Team', 'British', 'Silverstone, United Kingdom', 'Mike Krack', 'Bob Bell', 'AMR24', 'Mercedes', './assets/cars/aston_martin.png', './assets/teamlogos/aston_martin_mini.png', './assets/country_flags/uk.svg', 2018, 'aston_martin'),
+  ('Aston Martin', 'Aston Martin Aramco F1 Team', 'British', 'Silverstone, United Kingdom', 'Andy Cowell', 'Enrico Cardile', 'AMR24', 'Mercedes', './assets/cars/aston_martin.png', './assets/teamlogos/aston_martin_mini.png', './assets/country_flags/uk.svg', 2018, 'aston_martin'),
   ('Haas', 'MoneyGram Haas F1 Team', 'American', 'Kannapolis, United States', 'Ayao Komatsu', 'Andrea De Zordo', 'VF-24', 'Ferrari','./assets/cars/haas.png', './assets/teamlogos/haas_mini.png', './assets/country_flags/us.svg', 2016, 'haas'),
-  ('RB', 'Visa Cash App RB Formula One Team', 'Italian', 'Faenza, Italy', 'Laurent Mekies', 'Jody Egginton', 'VCARB 01', 'Honda RBPT', './assets/cars/rb.png', './assets/teamlogos/rb_mini.png', './assets/country_flags/it.svg', 1985, 'rb'),
+  ('Racing Bulls', 'Visa Cash App Racing Bulls Formula One Team', 'Italian', 'Faenza, Italy', 'Laurent Mekies', 'Jody Egginton', 'VCARB 01', 'Honda RBPT', './assets/cars/rb.png', './assets/teamlogos/rb_mini.png', './assets/country_flags/it.svg', 1985, 'rb'),
   ('Kick Sauber', 'Stake F1 Team Kick Sauber', 'Swiss', 'Hinwil, Switzerland', 'Alessandro Alunni Bravi', 'James Key', 'C44', 'Ferrari', './assets/cars/sauber.png', './assets/teamlogos/sauber_mini.png', './assets/country_flags/sw.svg', 1993, 'sauber'),
   ('Williams', 'Williams Racing', 'British', 'Grove, United Kingdom', 'James Vowles', 'Pat Fry', 'FW46', 'Mercedes', './assets/cars/williams.png', './assets/teamlogos/williams_mini.png', './assets/country_flags/uk.svg', 1978, 'williams');
 
@@ -390,7 +390,7 @@ INSERT INTO driver (driver_number, first_name, last_name, age, nationality, heig
 VALUES 
   (1, 'Max', 'Verstappen', 26, 'Netherlands', 1.81, 3, './assets/driver_headshot/verstappen.png', './assets/cars/red_bull.png', './assets/teamlogos/red_bull_mini.png', './assets/country_flags/ne.svg'),  
   (11, 'Sergio', 'Perez', 31, 'Mexico', 1.73, 3, './assets/driver_headshot/perez.png', './assets/cars/red_bull.png', './assets/teamlogos/red_bull_mini.png', './assets/country_flags/mx.svg'),
-  (44, 'Lewis', 'Hamilton', 37, 'UK', 1.74, 2, './assets/driver_headshot/hamilton.png', './assets/cars/mercedes.png', './assets/teamlogos/mercedes_mini.png', './assets/country_flags/uk.svg'),
+  (44, 'Lewis', 'Hamilton', 37, 'UK', 1.74, 1, './assets/driver_headshot/hamilton.png', './assets/cars/ferrari.png', './assets/teamlogos/ferrari_mini.png', './assets/country_flags/uk.svg'),
   (63, 'George', 'Russell', 24, 'UK', 1.85, 2, './assets/driver_headshot/russell.png', './assets/cars/mercedes.png', './assets/teamlogos/mercedes_mini.png', './assets/country_flags/uk.svg'),
   (77, 'Valtteri', 'Bottas', 32, 'Finland', 1.73, 9, './assets/driver_headshot/bottas.png', './assets/cars/sauber.png', './assets/teamlogos/sauber_mini.png', './assets/country_flags/fi.svg'),
   (24, 'Guanyu', 'Zhou', 22, 'China', 1.80, 9, './assets/driver_headshot/zhou.png', './assets/cars/sauber.png', './assets/teamlogos/sauber_mini.png', './assets/country_flags/ch.svg'),
@@ -398,27 +398,31 @@ VALUES
   (81, 'Oscar', 'Piastri', 20, 'Australia', 1.80, 4, './assets/driver_headshot/piastri.png', './assets/cars/mclaren.png', './assets/teamlogos/mclaren_mini.png', './assets/country_flags/au.svg'),
   (14, 'Fernando', 'Alonso', 40, 'Spain', 1.71, 6, './assets/driver_headshot/alonso.png', './assets/cars/aston_martin.png', './assets/teamlogos/aston_martin_mini.png', './assets/country_flags/sp.svg'),
   (18, 'Lance', 'Stroll', 23, 'Canada', 1.85, 6, './assets/driver_headshot/stroll.png', './assets/cars/aston_martin.png', './assets/teamlogos/aston_martin_mini.png', './assets/country_flags/ca.svg'),
-  (55, 'Carlos', 'Sainz', 27, 'Spain', 1.75, 1, './assets/driver_headshot/sainz.png', './assets/cars/ferrari.png', './assets/teamlogos/ferrari_mini.png', './assets/country_flags/sp.svg'),
+  (55, 'Carlos', 'Sainz', 27, 'Spain', 1.75, 10, './assets/driver_headshot/sainz.png', './assets/cars/williams.png', './assets/teamlogos/williams_mini.png', './assets/country_flags/sp.svg'),
   (16, 'Charles', 'Leclerc', 24, 'Monaco', 1.80, 1, './assets/driver_headshot/leclerc.png', './assets/cars/ferrari.png', './assets/teamlogos/ferrari_mini.png', './assets/country_flags/mn.svg'),
   (10, 'Pierre', 'Gasly', 25, 'France', 1.74, 5, './assets/driver_headshot/gasly.png', './assets/cars/alpine.png', './assets/teamlogos/alpine_mini.png', './assets/country_flags/fr.svg'),
-  (31, 'Esteban', 'Ocon', 25, 'France', 1.86, 5, './assets/driver_headshot/ocon.png', './assets/cars/alpine.png', './assets/teamlogos/alpine_mini.png', './assets/country_flags/fr.svg'),
-  (27, 'Nico', 'Hulkenberg', 34, 'Germany', 1.84, 7, './assets/driver_headshot/hulkenberg.png', './assets/cars/haas.png', './assets/teamlogos/haas_mini.png', './assets/country_flags/ger.svg'),
+  (31, 'Esteban', 'Ocon', 25, 'France', 1.86, 7, './assets/driver_headshot/ocon.png', './assets/cars/haas.png', './assets/teamlogos/haas_mini.png', './assets/country_flags/fr.svg'),
+  (27, 'Nico', 'Hulkenberg', 34, 'Germany', 1.84, 9, './assets/driver_headshot/hulkenberg.png', './assets/cars/sauber.png', './assets/teamlogos/sauber_mini.png', './assets/country_flags/ger.svg'),
   (20, 'Kevin', 'Magnussen', 29, 'Denmark', 1.74, 7, './assets/driver_headshot/kevin_magnussen.png', './assets/cars/haas.png', './assets/teamlogos/haas_mini.png', './assets/country_flags/de.svg'),
   (22, 'Yuki', 'Tsunoda', 21, 'Japan', 1.59, 8, './assets/driver_headshot/tsunoda.png', './assets/cars/rb.png', './assets/teamlogos/rb_mini.png', './assets/country_flags/jp.svg'),
-  (30, 'Liam', 'Lawson', 19, 'New Zealand', 1.75, 8, './assets/driver_headshot/lawson.png', './assets/cars/rb.png', './assets/teamlogos/rb_mini.png', './assets/country_flags/nz.svg'),
+  (30, 'Liam', 'Lawson', 19, 'New Zealand', 1.75, 3, './assets/driver_headshot/lawson.png', './assets/cars/red_bull.png', './assets/teamlogos/red_bull_mini.png', './assets/country_flags/nz.svg'),
   (23, 'Alex', 'Albon', 25, 'Thailand', 1.86, 10, './assets/driver_headshot/albon.png', './assets/cars/williams.png', './assets/teamlogos/williams_mini.png', './assets/country_flags/th.svg'),
   (43, 'Franco', 'Colapinto', 18, 'Argentina', 1.75, 10, './assets/driver_headshot/colapinto.png', './assets/cars/williams.png', './assets/teamlogos/williams_mini.png', './assets/country_flags/ar.svg'),
   (38, 'Oliver', 'Bearman', 19, 'UK', 1.85, 7, './assets/driver_headshot/bearman.png', './assets/cars/haas.png', './assets/teamlogos/haas_mini.png', './assets/country_flags/uk.svg'),
-  (61, 'Jack', 'Doohan', 21, 'Australia', 1.80, 5, './assets/driver_headshot/doohan.png', './assets/cars/alpine.png', './assets/teamlogos/alpine_mini.png', './assets/country_flags/au.svg');
+  (7, 'Jack', 'Doohan', 21, 'Australia', 1.80, 5, './assets/driver_headshot/doohan.png', './assets/cars/alpine.png', './assets/teamlogos/alpine_mini.png', './assets/country_flags/au.svg'),
+  (12, 'Kimi', 'Antonelli', 18, 'Italy', 1.72, 2, './assets/driver_headshot/antonelli.png', './assets/cars/mercedes.png', './assets/teamlogos/mercedes_mini.png', './assets/country_flags/it.svg'),
+  (5, 'Gabriel', 'Bortoleto', 20, 'Brazil', 1.84, 9, './assets/driver_headshot/bortoleto.png', './assets/cars/sauber.png', './assets/teamlogos/sauber_mini.png', './assets/country_flags/br.svg'),
+  (6, 'Isack', 'Hadjar', 20, 'France', 1.67, 8, './assets/driver_headshot/hadjar.png', './assets/cars/rb.png', './assets/teamlogos/rb_mini.png', './assets/country_flags/fr.svg'),
+  (12, 'Andrea Kimi', 'Antonelli', 18, 'Italy', 1.72, 2, './assets/driver_headshot/antonelli.png', './assets/cars/mercedes.png', './assets/teamlogos/mercedes_mini.png', './assets/country_flags/it.svg');
 
 -- Insert test data for driver table (permanent numbers)
 UPDATE driver
 	set permanent_number = 33
-	WHERE driver_id = 1;
+	WHERE driver_number = 1;
 
 UPDATE driver
-	set permanent_number = 40
-	WHERE driver_id = 18;
+	set permanent_number = 61
+	WHERE driver_number = 7;
 
 -- Insert test data for ballotContent table
 INSERT INTO ballotContent (ballot_id, position, driver_name) 
